@@ -1,0 +1,28 @@
+{
+  "name": "lease-plan-backend",
+  "version": "1.0.0",
+  "description": "car lease",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon node -r esm  -r babel-polyfill ./src/index.js",
+    "start": "nodemon src/index.js"
+  },
+  "author": "plaxonic2023",
+  "license": "ISC",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "http-errors-lite": "^2.0.2",
+    "http-status-codes": "^2.2.0",
+    "md5": "^2.3.0",
+    "mongoose": "^6.9.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^2.0.20"
+  }
+}

@@ -2,8 +2,12 @@ import mongoose from 'mongoose';
 
 const carbrandSchema = new mongoose.Schema(
     {
-        carbrand_id:String,
-        companyname:String,
+        leasetype_id:{
+            type:mongoose.Schema.ObjectId,
+            ref:"leasetype",
+            required:true,
+        },
+        companyname: String,
         is_deleted: {
             type: Boolean,
             default: false,
@@ -15,8 +19,6 @@ const carbrandSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
-
-
 
 export default mongoose.model('carbrand', carbrandSchema);
 

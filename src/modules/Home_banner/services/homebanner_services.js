@@ -9,7 +9,6 @@ const getAllBanner = async()=>{
 const addNewBanner = async (data,reqfile) => {
     const response = await homebanner_model.create({...data,banner:reqfile});
     return response;
-
 };
 
 const getSingleBanner = async(id)=>{
@@ -21,7 +20,7 @@ const updateBanner = async(id,data)=>{
     const response = await homebanner_model.findByIdAndUpdate( 
         { _id: id },
         { $set:data},
-        { newbanner:true}
+        {newbanner:true}
      )
     return response;
 }

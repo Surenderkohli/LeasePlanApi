@@ -1,14 +1,21 @@
 import { Router } from "express";
-import inventoryrouter from './routers/inventoryrouter.js'
+import inventoryRouter from './routers/leasetyperouter.js'
+import carbrandRouter from './routers/carbrandrouter.js'
+import carseriesRouter from './routers/carseriesrouter.js'
+import carRouter from './routers/cardetailrouter.js'
+
 
 const router = Router();
-router.use(`/inventory`, inventoryrouter);
- 
- const InventoryModule={
+router.use(`/leasetype`, inventoryRouter);
+router.use(`/carbrand`, carbrandRouter);
+router.use(`/carseries`,carseriesRouter);
+router.use(`/cardetails`, carRouter);
+
+const InventoryModule = {
     init: (app) => {
         app.use(router);
-            console.log('Inventory is added.....')
-     },
+        console.log('Inventory is added.....')
+    },
 }
 
 

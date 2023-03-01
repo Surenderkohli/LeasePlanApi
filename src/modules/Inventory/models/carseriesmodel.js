@@ -1,43 +1,24 @@
 import mongoose from 'mongoose';
 
-const cardetailSchema = new mongoose.Schema(
-     {
-        series_id:String,
-        series_name:{
-            name:String,
+const carbrandSchema = new mongoose.Schema(
+    {
+       
+        carbrand_id:{
+            type: mongoose.Schema.ObjectId,
+            ref: "carbrand"
         },
-        description:String,
-        img:{
-            type:String,
-            data:buffer
+        series_id: String,
+        seriesname: {
+            type: String,
+            required: true
         },
-        price:Number,
-        door:Number,
-        seat:Number,
-        mileage:Double,
-        co2:Double,
-        fueltype:{
-            type:String,
-            enum:['petrol',"electic","hybrid","diesel"]
-        },
-        transmission:{
-            type:String,
-            enum:['automatic','manual']
-        },
-
         is_deleted: {
             type: Boolean,
             default: false,
         },
-        is_deactivated: {
-            type: Boolean,
-            default: false,
-        },
+      
     },
     { timestamps: true }
 );
 
-
-
-export default mongoose.model('cardetail', carseriesSchema);
-
+export default mongoose.model('carseries', carbrandSchema);

@@ -55,13 +55,22 @@ router.put(
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
-               const data = req.body;
 
-               const result = await CarServices.updateCar(id, data);
+               const result = await CarServices.updateCar(id, req.body);
                res.send(result);
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
+     })
+);
+
+router.delete(
+     '/delete/:id',
+     httpHandler(async (req, res) => {
+          const data = req.body;
+          const { id } = req.params;
+          const result = await CarServices.deleteCar(id, req.body);
+          res.send(result);
      })
 );
 

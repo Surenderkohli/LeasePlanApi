@@ -30,7 +30,10 @@ const updateCar = async (id, data) => {
      try {
           const response = await carDetailModel.findByIdAndUpdate(
                { _id: id },
-               { $set: data }
+               { $set: data },
+               {
+                    new: true,
+               }
           );
           return response;
      } catch (error) {
@@ -39,6 +42,15 @@ const updateCar = async (id, data) => {
 };
 
 const deleteCar = async (id) => {
+     try {
+          const response = await carDetailModel.remove(
+               { _id: id },
+               { isDeleted: true }
+          );
+          return response;
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
      const response = await carDetailModel.remove(
           { _id: id },
           { isDeleted: true }

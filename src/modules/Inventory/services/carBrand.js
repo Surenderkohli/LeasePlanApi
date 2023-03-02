@@ -5,7 +5,7 @@ const getAllCarBrand = async () => {
      return response;
 };
 
-const addNewCarBrand = async (data) => {
+const addCarBrand = async (data) => {
      const response = await carBrandModel.create(data);
      return response;
 };
@@ -15,8 +15,8 @@ const getSingleCarBrand = async (id) => {
      return response;
 };
 
-export const carbrandService = {
+export const carBrandService = {
      getAllCarBrand,
-     addNewCarBrand,
+     addCarBrand,
      getSingleCarBrand,
 };

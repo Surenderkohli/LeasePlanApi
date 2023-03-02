@@ -1,6 +1,6 @@
 import leaseTypeModel from '../models/leaseType.js';
 
-const getAllleaseType = async () => {
+const getAllLeaseType = async () => {
      const response = await leaseTypeModel.find();
      return response;
 };
@@ -14,7 +14,7 @@ const getAllleaseType = async () => {
 //    return response;
 // };
 
-const addNewLeaseType = async (data) => {
+const addLeaseType = async (data) => {
      const response = await leaseTypeModel.create({
           leaseType: data.leaseType,
      });
@@ -43,9 +43,9 @@ const deleteLeaseType = async (id) => {
 };
 
 export const leasetypeService = {
-     getAllleaseType,
+     getAllLeaseType,
      getSingleLeaseType,
      updateLeaseType,
      deleteLeaseType,
-     addNewLeaseType,
+     addLeaseType,
 };

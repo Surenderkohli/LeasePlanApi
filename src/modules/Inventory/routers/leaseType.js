@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { leasetypeService } from '../services/leaseType.js';
+import { leasetypeService as leaseTypeService } from '../services/leaseType.js';
 import multer from 'multer';
 
 // const leasetypeStorage = multer.diskStorage({
@@ -26,7 +26,7 @@ router.get(
      '/',
      httpHandler(async (req, res) => {
           // const {id} = req.params
-          const result = await leasetypeService.getAllleasetype();
+          const result = await leaseTypeService.getAllLeaseType();
           res.send(result);
      })
 );
@@ -34,7 +34,7 @@ router.get(
 router.post(
      '/add',
      httpHandler(async (req, res) => {
-          const result = await leasetypeService.addNewleasetype(req.body);
+          const result = await leaseTypeService.addLeaseType(req.body);
           res.send(result);
      })
 );
@@ -51,13 +51,13 @@ router.post(
 router.get('/fetch-single/:id', async (req, res) => {
      const { id } = req.params;
      // const data = req.body;
-     const result = await leasetypeService.getSingleleasetype(id);
+     const result = await leaseTypeService.getSingleLeaseType(id);
      res.send(result);
 });
 
 router.put('/update', async (req, res) => {
      const data = req.body;
-     const result = await leasetypeService.updateleasetype(data);
+     const result = await leaseTypeService.updateLeaseType(data);
      res.send(result);
 });
 

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { leasetypeService as leaseTypeService } from '../services/leaseType.js';
+import { leaseTypeService } from '../services/leaseType.js';
 import multer from 'multer';
 
 // const leasetypeStorage = multer.diskStorage({

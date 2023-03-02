@@ -42,7 +42,7 @@ const deleteLeaseType = async (id) => {
      return response;
 };
 
-export const leasetypeService = {
+export const leaseTypeService = {
      getAllLeaseType,
      getSingleLeaseType,
      updateLeaseType,

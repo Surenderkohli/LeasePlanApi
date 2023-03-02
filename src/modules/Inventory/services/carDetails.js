@@ -27,11 +27,15 @@ const getSingleCar = async (id) => {
 };
 
 const updateCar = async (id, data) => {
-     const response = await carDetailModel.updateOne(
-          { Car_id: data.Car_id },
-          { data }
-     );
-     return response;
+     try {
+          const response = await carDetailModel.findByIdAndUpdate(
+               { _id: id },
+               { $set: data }
+          );
+          return response;
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
 };
 
 const deleteCar = async (id) => {

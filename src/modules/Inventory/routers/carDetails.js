@@ -50,10 +50,19 @@ router.get('/fetch-single/:id', async (req, res) => {
      res.send(result);
 });
 
-router.put('/update', async (req, res) => {
-     const data = req.body;
-     const result = await CarServices.updateCar(data);
-     res.send(result);
-});
+router.put(
+     '/update/:id',
+     httpHandler(async (req, res) => {
+          try {
+               const { id } = req.params;
+               const data = req.body;
+
+               const result = await CarServices.updateCar(id, data);
+               res.send(result);
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
+     })
+);
 
 export default router;

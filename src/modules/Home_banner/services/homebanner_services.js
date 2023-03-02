@@ -20,9 +20,10 @@ const getSingleBanner = async (id) => {
 
 const updateBanner = async (id, data) => {
      try {
+          const data = { title, description };
           const response = await homeBannerModel.findByIdAndUpdate(
                { _id: id },
-               data,
+               { $set: data },
                {
                     new: true,
                }

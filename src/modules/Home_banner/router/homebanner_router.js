@@ -55,10 +55,11 @@ router.put(
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
-               const { title, description } = req.body;
-               const data = { title, description };
+               // const { title, description } = req.body;
+               // const data = { title, description };
+               // console.log(data, 'lol');
 
-               const result = await bannerService.updateBanner(id, data);
+               const result = await bannerService.updateBanner(id, req.body);
                console.log(data);
                res.send(result);
           } catch (error) {

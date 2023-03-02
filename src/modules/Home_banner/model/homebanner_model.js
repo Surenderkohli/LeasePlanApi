@@ -25,6 +25,12 @@ const homebannerSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
+          from: {
+               type: Number,
+          },
+          to: {
+               type: Number,
+          },
      },
      { timestamps: true }
 );

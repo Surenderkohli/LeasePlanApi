@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { CarServices } from '../services/cardetailservices.js';
+import { CarServices } from '../services/carDetails.js';
 import multer from 'multer';
 
 const carStorage = multer.diskStorage({

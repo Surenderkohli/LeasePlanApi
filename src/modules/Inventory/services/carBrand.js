@@ -1,25 +1,22 @@
+import carBrandModel from '../models/carBrand.js';
 
-import carbrandmodel from "../models/carbrandmodel.js";
-
-const getAllCarbrand = async () => {
-    const response = await carbrandmodel.find().populate("leasetype_id");
-    return response
-
+const getAllCarBrand = async () => {
+     const response = await carBrandModel.find().populate('leaseType_id');
+     return response;
 };
 
-const addNewCarbrand = async (data) => {
-    const response = await carbrandmodel.create(data);
-    return response;
-}
-
-const getSingleCarbrand = async (id) => {
-    const response = await carbrandmodel.findById(id);
-    return response
+const addNewCarBrand = async (data) => {
+     const response = await carBrandModel.create(data);
+     return response;
 };
 
-
-
+const getSingleCarBrand = async (id) => {
+     const response = await carBrandModel.findById(id);
+     return response;
+};
 
 export const carbrandService = {
-    getAllCarbrand, addNewCarbrand, getSingleCarbrand
+     getAllCarBrand,
+     addNewCarBrand,
+     getSingleCarBrand,
 };

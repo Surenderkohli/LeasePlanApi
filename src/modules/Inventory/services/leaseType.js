@@ -1,10 +1,8 @@
-import leasetypemodel from "../models/leaseTypemodel.js";
+import leaseTypeModel from '../models/leaseType.js';
 
-
-const getAllleasetype = async () => {
-    const response = await leasetypemodel.find();
-    return response;
-
+const getAllleaseType = async () => {
+     const response = await leaseTypeModel.find();
+     return response;
 };
 
 // const addNewleasetype = async (data,reqfile) => {
@@ -16,31 +14,38 @@ const getAllleasetype = async () => {
 //    return response;
 // };
 
-const addNewleasetype = async(data)=>{
-    const response = await leasetypemodel.create({leasetypename:data.leasetypename});
-    return response;
-}
-
-const getSingleleasetype = async (id) => {
-    const response = await leasetypemodel.findById({_id:id});
-    return response
+const addNewLeaseType = async (data) => {
+     const response = await leaseTypeModel.create({
+          leaseType: data.leaseType,
+     });
+     return response;
 };
 
-
-const updateleasetype = async (id,data) => {
-    const response = await leasetypemodel.updateOne({leasetype_id:data.leasetype_id}, {data});
-    return response;
+const getSingleLeaseType = async (id) => {
+     const response = await leaseTypeModel.findById({ _id: id });
+     return response;
 };
 
-const deleteleasetype = async (id) => {
-    const response = await leasetypemodel.remove({_id:id},{is_deleted:true});
-    return response;
+const updateLeaseType = async (id, data) => {
+     const response = await leaseTypeModel.updateOne(
+          { leaseType_id: data.leaseType_id },
+          { data }
+     );
+     return response;
+};
+
+const deleteLeaseType = async (id) => {
+     const response = await leaseTypeModel.remove(
+          { _id: id },
+          { isDeleted: true }
+     );
+     return response;
 };
 
 export const leasetypeService = {
-    getAllleasetype, getSingleleasetype,updateleasetype,deleteleasetype,addNewleasetype
-
+     getAllleaseType,
+     getSingleLeaseType,
+     updateLeaseType,
+     deleteLeaseType,
+     addNewLeaseType,
 };
-
-
-

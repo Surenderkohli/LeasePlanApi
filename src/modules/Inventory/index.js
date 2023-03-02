@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import inventoryRouter from './routers/leasetyperouter.js';
-import carbrandRouter from './routers/carbrandrouter.js';
-import carseriesRouter from './routers/carseriesrouter.js';
-import carRouter from './routers/cardetailrouter.js';
+import inventoryRouter from './routers/leaseType.js';
+import carbrandRouter from './routers/carBrand.js';
+import carseriesRouter from './routers/carSeries.js';
+import carRouter from './routers/carDetails.js';
 
 const router = Router();
 router.use(`/leasetype`, inventoryRouter);

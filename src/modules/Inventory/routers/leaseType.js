@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { leasetypeService } from '../services/leasetypeservices.js';
+import { leasetypeService } from '../services/leaseType.js';
 import multer from 'multer';
 
 // const leasetypeStorage = multer.diskStorage({
@@ -20,24 +20,24 @@ import multer from 'multer';
 //     }
 // })
 
-
-
 const router = Router();
 
-router.get('/',
-    httpHandler(async (req, res) => {
-        // const {id} = req.params
-        const result = await leasetypeService.getAllleasetype()
-        res.send(result)
-    })
-)
+router.get(
+     '/',
+     httpHandler(async (req, res) => {
+          // const {id} = req.params
+          const result = await leasetypeService.getAllleasetype();
+          res.send(result);
+     })
+);
 
-router.post('/add', httpHandler(async (req, res) => {
-    const result = await leasetypeService.addNewleasetype(req.body);
-    res.send(result);
-}))
-
-
+router.post(
+     '/add',
+     httpHandler(async (req, res) => {
+          const result = await leasetypeService.addNewleasetype(req.body);
+          res.send(result);
+     })
+);
 
 // router.get(
 //     '/fetch-all',
@@ -48,24 +48,18 @@ router.post('/add', httpHandler(async (req, res) => {
 //     })
 // );
 
-router.get(
-    '/fetch-single/:id',
-    (async (req, res) => {
-        const { id } = req.params
-        // const data = req.body;
-        const result = await leasetypeService.getSingleleasetype(id);
-        res.send(result)
-    })
-);
+router.get('/fetch-single/:id', async (req, res) => {
+     const { id } = req.params;
+     // const data = req.body;
+     const result = await leasetypeService.getSingleleasetype(id);
+     res.send(result);
+});
 
-router.put(
-    '/update',
-    (async (req, res) => {
-        const data = req.body;
-        const result = await leasetypeService.updateleasetype(data);
-        res.send(result)
-    })
-);
+router.put('/update', async (req, res) => {
+     const data = req.body;
+     const result = await leasetypeService.updateleasetype(data);
+     res.send(result);
+});
 
 // // router.delete(
 // //     '/delete',
@@ -75,7 +69,4 @@ router.put(
 // //     })
 // // );
 
-
-
 export default router;
-

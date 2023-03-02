@@ -4,7 +4,7 @@ const carBrandSchema = new mongoose.Schema(
      {
           leaseType_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'leasetype',
+               ref: 'leaseType',
                required: true,
           },
           companyName: String,

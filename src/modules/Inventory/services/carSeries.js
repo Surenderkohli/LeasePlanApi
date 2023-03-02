@@ -1,22 +1,22 @@
-import carseriesmodel from '../models/car-series.js';
+import carSeriesModel from '../models/carSeries.js';
 
-const getAllCarseries = async () => {
-     const response = await carseriesmodel.find().populate('carbrand_id');
+const getAllCarSeries = async () => {
+     const response = await carSeriesModel.find().populate('carbrand_id');
      return response;
 };
 
-const addNewCarseries = async (data) => {
-     const response = await carseriesmodel.create(data);
+const addNewCarSeries = async (data) => {
+     const response = await carSeriesModel.create(data);
      return response;
 };
 
-const getSingleCarseries = async (id) => {
-     const response = await carseriesmodel.findById(id);
+const getSingleCarSeries = async (id) => {
+     const response = await carSeriesModel.findById(id);
      return response;
 };
 
 export const carSeriesServices = {
-     getSingleCarseries,
-     addNewCarseries,
-     getAllCarseries,
+     getSingleCarSeries,
+     addNewCarSeries,
+     getAllCarSeries,
 };

@@ -1,8 +1,24 @@
 import carDetailModel from '../models/carDetails.js';
 
-const getAllCar = async () => {
-     const response = await carDetailModel.find().populate('carSeries_id');
-     return response;
+const getAllCar = async (filter) => {
+     try {
+          const priceMin = parseInt(filter.priceMin);
+          const priceMax = parseInt(filter.priceMax);
+
+          filter = {
+               price: { $gte: priceMin, $lte: priceMax },
+               bodyType: { $in: filter.bodyType },
+               fuelType: { $in: filter.fuelType },
+          };
+
+          const response = await carDetailModel
+               .find(filter)
+               .populate('carSeries_id');
+
+          return response;
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
 };
 
 const addNewCar = async (data, reqfile) => {

@@ -31,6 +31,12 @@ const carDetailSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
+          priceMin: {
+               type: Number,
+          },
+          priceMax: {
+               type: Number,
+          },
      },
      { timestamps: true }
 );

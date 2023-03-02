@@ -20,7 +20,8 @@ const getSingleBanner = async (id) => {
 
 const updateBanner = async (id, data) => {
      try {
-          const data = { title, description };
+          // const data = { title, description };
+          console.log(data);
           const response = await homeBannerModel.findByIdAndUpdate(
                { _id: id },
                { $set: data },
@@ -31,6 +32,7 @@ const updateBanner = async (id, data) => {
 
           return response;
      } catch (error) {
+          console.log(error);
           res.send({ status: 400, success: false, msg: error.message });
      }
 };

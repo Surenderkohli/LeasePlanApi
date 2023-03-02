@@ -1,26 +1,33 @@
-import cardetailmodel from '../models/carDetails.js';
+import carDetailModel from '../models/carDetails.js';
 
 const getAllCar = async () => {
-     const response = await cardetailmodel.find().populate('carSeries_id');
+     const response = await carDetailModel.find().populate('carSeries_id');
      return response;
 };
 
-const addNewCar = async (data) => {
-     // let carimage = []
-     // reqfile.map((img) => {
-     //     carimage.push(img.filename)
-     // })
-     const response = await cardetailmodel.create(data);
-     return response;
+const addNewCar = async (data, reqfile) => {
+     try {
+          let carimage = [];
+          reqfile.map((img) => {
+               carimage.push(img.filename);
+          });
+          const response = await carDetailModel.create({
+               ...data,
+               img: reqfile,
+          });
+          return response;
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
 };
 
 const getSingleCar = async (id) => {
-     const response = await cardetailmodel.findById({ _id: id });
+     const response = await carDetailModel.findById({ _id: id });
      return response;
 };
 
 const updateCar = async (id, data) => {
-     const response = await cardetailmodel.updateOne(
+     const response = await carDetailModel.updateOne(
           { Car_id: data.Car_id },
           { data }
      );
@@ -28,9 +35,9 @@ const updateCar = async (id, data) => {
 };
 
 const deleteCar = async (id) => {
-     const response = await cardetailmodel.remove(
+     const response = await carDetailModel.remove(
           { _id: id },
-          { is_deleted: true }
+          { isDeleted: true }
      );
      return response;
 };

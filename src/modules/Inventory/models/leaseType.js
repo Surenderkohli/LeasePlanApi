@@ -14,4 +14,4 @@ const leaseTypeSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('leasetype', leaseTypeSchema);
+export default mongoose.model('leaseType', leaseTypeSchema);

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { carSeriesServices } from '../services/carSeries.js';
+import { carSeriesService } from '../services/carSeries.js';
 
 const router = Router();
 
@@ -8,7 +8,7 @@ router.get(
      '/',
      httpHandler(async (req, res) => {
           // const {id} = req.params
-          const result = await carSeriesServices.getAllCarseries();
+          const result = await carSeriesService.getAllCarSeries();
           res.send(result);
      })
 );
@@ -16,7 +16,7 @@ router.get(
 router.post(
      '/add-carseries',
      httpHandler(async (req, res) => {
-          const result = await carSeriesServices.addNewCarseries(req.body);
+          const result = await carSeriesService.addCarSeries(req.body);
           res.send(result);
      })
 );

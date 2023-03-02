@@ -1,11 +1,11 @@
 import carSeriesModel from '../models/carSeries.js';
 
 const getAllCarSeries = async () => {
-     const response = await carSeriesModel.find().populate('carbrand_id');
+     const response = await carSeriesModel.find().populate('carBrand_id');
      return response;
 };
 
-const addNewCarSeries = async (data) => {
+const addCarSeries = async (data) => {
      const response = await carSeriesModel.create(data);
      return response;
 };
@@ -15,8 +15,8 @@ const getSingleCarSeries = async (id) => {
      return response;
 };
 
-export const carSeriesServices = {
+export const carSeriesService = {
      getSingleCarSeries,
-     addNewCarSeries,
+     addCarSeries,
      getAllCarSeries,
 };

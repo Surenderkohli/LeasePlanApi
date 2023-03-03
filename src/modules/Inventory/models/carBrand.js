@@ -20,4 +20,4 @@ const carBrandSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('carbrand', carBrandSchema);
+export default mongoose.model('carBrand', carBrandSchema);

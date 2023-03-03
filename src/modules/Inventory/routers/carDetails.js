@@ -27,9 +27,9 @@ router.get(
      '/',
      httpHandler(async (req, res) => {
           try {
-               // let filter = filter;
-               const result = await CarServices.getAllCar(req.body);
+               const result = await CarServices.getAllCar(req.query);
                res.send(result);
+               // console.log('llllllllll', req.query);
           } catch (error) {
                console.log(error);
                res.send({ status: 400, success: false, msg: error.message });

@@ -4,15 +4,19 @@ const getAllCar = async (filter) => {
      try {
           const priceMin = parseInt(filter.priceMin);
           const priceMax = parseInt(filter.priceMax);
+          // const companyName = filter.companyName;
 
           filter = {
                price: { $gte: priceMin, $lte: priceMax },
                bodyType: { $in: filter.bodyType },
                fuelType: { $in: filter.fuelType },
+               mileage: { $in: filter.mileage },
+
+               // companyName: { $regex: `.*${companyName}.*`, $options: 'i' },
           };
 
           const response = await carDetailModel
-               .find(filter)
+               .find({ filter })
                .populate('carSeries_id');
 
           return response;

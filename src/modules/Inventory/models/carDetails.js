@@ -4,7 +4,7 @@ const carDetailSchema = new mongoose.Schema(
      {
           carSeries_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carseries',
+               ref: 'carSeries',
           },
           description: String,
           img: {
@@ -41,4 +41,4 @@ const carDetailSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('cardetail', carDetailSchema);
+export default mongoose.model('carDetails', carDetailSchema);

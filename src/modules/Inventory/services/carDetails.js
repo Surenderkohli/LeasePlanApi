@@ -10,6 +10,7 @@ const getAllCar = async (
 ) => {
      try {
           // const filter = { $text: { $search: companyName } };
+
           // const filter = { $regex: `.*${companyName}.*`, $options: 'i' };
           const filter = {};
 
@@ -48,7 +49,10 @@ const getAllCar = async (
                },
                {
                     $match: {
-                         'carBrand.companyName': companyName,
+                         'carBrand.companyName': {
+                              $regex: `.*${companyName}.*`,
+                              $options: 'i',
+                         },
                     },
                },
           ]);

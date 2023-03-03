@@ -26,7 +26,15 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                enum: ['automatic', 'manual'],
           },
-
+          upfrontPayment: {
+               type: Number,
+          },
+          maintenanceOption: {
+               type: Boolean,
+          },
+          contractLength: {
+               type: Number,
+          },
           isDeleted: {
                type: Boolean,
                default: false,

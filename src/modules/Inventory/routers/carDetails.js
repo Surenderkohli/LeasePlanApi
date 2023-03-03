@@ -27,11 +27,26 @@ router.get(
      '/',
      httpHandler(async (req, res) => {
           try {
-               const result = await CarServices.getAllCar(req.query);
-               res.send(result);
-               // console.log('llllllllll', req.query);
+               const { fuelType, priceMin, priceMax, bodyType, mileage } =
+                    req.query;
+
+               const result = await CarServices.getAllCar(
+                    fuelType,
+                    priceMin,
+                    priceMax,
+                    bodyType,
+                    mileage
+               );
+
+               if (result.length) {
+                    res.status(200).json({ success: true, data: result });
+               } else {
+                    res.status(404).json({
+                         success: false,
+                         message: 'No cars found with the given filters.',
+                    });
+               }
           } catch (error) {
-               console.log(error);
                res.send({ status: 400, success: false, msg: error.message });
           }
      })

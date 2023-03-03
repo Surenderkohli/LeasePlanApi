@@ -1,22 +1,20 @@
 import carDetailModel from '../models/carDetails.js';
 
-const getAllCar = async (filter) => {
+const getAllCar = async (fuelType, priceMin, priceMax, bodyType, mileage) => {
      try {
-          const priceMin = parseInt(filter.priceMin);
-          const priceMax = parseInt(filter.priceMax);
-          // const companyName = filter.companyName;
+          const filter = {};
 
-          filter = {
-               price: { $gte: priceMin, $lte: priceMax },
-               bodyType: { $in: filter.bodyType },
-               fuelType: { $in: filter.fuelType },
-               mileage: { $in: filter.mileage },
-
-               // companyName: { $regex: `.*${companyName}.*`, $options: 'i' },
-          };
+          if (fuelType) filter.fuelType = fuelType;
+          if (priceMin && priceMax)
+               filter.price = {
+                    $gte: parseInt(priceMin),
+                    $lte: parseInt(priceMax),
+               };
+          if (mileage) filter.mileage = mileage;
+          if (bodyType) filter.bodyType = bodyType;
 
           const response = await carDetailModel
-               .find({ filter })
+               .find(filter)
                .populate('carSeries_id');
 
           return response;

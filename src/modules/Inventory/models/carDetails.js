@@ -6,13 +6,29 @@ const carDetailSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'carSeries',
           },
+          carBrand: {
+               type: mongoose.Schema.ObjectId,
+               ref: 'carBrand',
+          },
           description: String,
           img: {
                type: [],
                data: Buffer,
           },
           price: Number,
-          bodyType: String,
+          bodyType: {
+               type: String,
+               enum: [
+                    'City-Car',
+                    'Coupe',
+                    'Estate',
+                    'Sedan',
+                    'Hatchback',
+                    'MPV',
+                    'Saloon',
+                    'Sports',
+               ],
+          },
           door: Number,
           seat: Number,
           mileage: Number,
@@ -20,7 +36,7 @@ const carDetailSchema = new mongoose.Schema(
           milesPerGallon: Number,
           fuelType: {
                type: String,
-               enum: ['petrol', 'electic', 'hybrid', 'diesel'],
+               enum: ['Petrol', 'Diesel', 'Hybrid', 'Electric'],
           },
           transmission: {
                type: String,

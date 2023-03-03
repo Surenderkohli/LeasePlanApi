@@ -4,7 +4,11 @@ const carDetailSchema = new mongoose.Schema(
      {
           carSeries_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carseries',
+               ref: 'carSeries',
+          },
+          carBrand_id: {
+               type: mongoose.Schema.ObjectId,
+               ref: 'carBrand',
           },
           description: String,
           img: {
@@ -12,7 +16,19 @@ const carDetailSchema = new mongoose.Schema(
                data: Buffer,
           },
           price: Number,
-          bodyType: String,
+          bodyType: {
+               type: String,
+               enum: [
+                    'City-Car',
+                    'Coupe',
+                    'Estate',
+                    'Sedan',
+                    'Hatchback',
+                    'MPV',
+                    'Saloon',
+                    'Sports',
+               ],
+          },
           door: Number,
           seat: Number,
           mileage: Number,
@@ -20,7 +36,7 @@ const carDetailSchema = new mongoose.Schema(
           milesPerGallon: Number,
           fuelType: {
                type: String,
-               enum: ['petrol', 'electic', 'hybrid', 'diesel'],
+               enum: ['Petrol', 'Diesel', 'Hybrid', 'Electric'],
           },
           transmission: {
                type: String,
@@ -31,8 +47,14 @@ const carDetailSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
+          priceMin: {
+               type: Number,
+          },
+          priceMax: {
+               type: Number,
+          },
      },
      { timestamps: true }
 );
 
-export default mongoose.model('cardetail', carDetailSchema);
+export default mongoose.model('carDetails', carDetailSchema);

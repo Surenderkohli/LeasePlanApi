@@ -1,8 +1,67 @@
 import carDetailModel from '../models/carDetails.js';
 
-const getAllCar = async () => {
-     const response = await carDetailModel.find().populate('carSeries_id');
-     return response;
+const getAllCar = async (
+     fuelType,
+     priceMin,
+     priceMax,
+     bodyType,
+     mileage,
+     companyName
+) => {
+     try {
+          // const filter = { $text: { $search: companyName } };
+
+          // const filter = { $regex: `.*${companyName}.*`, $options: 'i' };
+          const filter = {};
+
+          if (fuelType) {
+               filter['fuelType'] = fuelType;
+          }
+          if (priceMin || priceMax) {
+               filter['price'] = {};
+               if (priceMin) {
+                    filter['price'].$gte = parseInt(priceMin);
+               }
+               if (priceMax) {
+                    filter['price'].$lte = parseInt(priceMax);
+               }
+          }
+
+          if (bodyType) filter['bodyType'] = bodyType;
+
+          // const response = await carDetailModel
+          //      .find(filter)
+          //      .populate(['carSeries_id', 'carBrand_id']);
+
+          const response = await carDetailModel.aggregate([
+               { $unwind: '$carBrand_id' },
+               { $match: filter },
+               {
+                    $lookup: {
+                         from: 'carbrands',
+                         localField: 'carBrand_id',
+                         foreignField: '_id',
+                         as: 'carBrand',
+                    },
+               },
+               {
+                    $unwind: '$carBrand',
+               },
+               {
+                    $match: {
+                         'carBrand.companyName': {
+                              $regex: `.*${companyName}.*`,
+                              $options: 'i',
+                         },
+                    },
+               },
+          ]);
+
+          return response;
+     } catch (error) {
+          console.log(error);
+          res.send({ status: 400, success: false, msg: error.message });
+     }
 };
 
 const addNewCar = async (data, reqfile) => {
@@ -17,6 +76,7 @@ const addNewCar = async (data, reqfile) => {
           });
           return response;
      } catch (error) {
+          console.log(error);
           res.send({ status: 400, success: false, msg: error.message });
      }
 };

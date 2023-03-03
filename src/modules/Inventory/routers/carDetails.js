@@ -27,15 +27,22 @@ router.get(
      '/',
      httpHandler(async (req, res) => {
           try {
-               const { fuelType, priceMin, priceMax, bodyType, mileage } =
-                    req.query;
+               const {
+                    fuelType,
+                    priceMin,
+                    priceMax,
+                    bodyType,
+                    mileage,
+                    companyName,
+               } = req.query;
 
                const result = await CarServices.getAllCar(
                     fuelType,
                     priceMin,
                     priceMax,
                     bodyType,
-                    mileage
+                    mileage,
+                    companyName
                );
 
                if (result.length) {

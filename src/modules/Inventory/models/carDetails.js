@@ -6,7 +6,7 @@ const carDetailSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'carSeries',
           },
-          carBrand: {
+          carBrand_id: {
                type: mongoose.Schema.ObjectId,
                ref: 'carBrand',
           },

@@ -1,21 +1,36 @@
 import carDetailModel from '../models/carDetails.js';
 
-const getAllCar = async (fuelType, priceMin, priceMax, bodyType, mileage) => {
+const getAllCar = async (
+     fuelType,
+     priceMin,
+     priceMax,
+     bodyType,
+     mileage,
+     companyName
+) => {
      try {
-          const filter = {};
+          // const filter = { $text: { $search: companyName } };
 
-          if (fuelType) filter.fuelType = fuelType;
-          if (priceMin && priceMax)
-               filter.price = {
-                    $gte: parseInt(priceMin),
-                    $lte: parseInt(priceMax),
-               };
-          if (mileage) filter.mileage = mileage;
-          if (bodyType) filter.bodyType = bodyType;
+          const filter = { $regex: `.*${companyName}.*`, $options: 'i' };
+
+          if (fuelType) {
+               filter[fuelType] = fuelType;
+          }
+          if (priceMin || priceMax) {
+               filter['price'] = {};
+               if (priceMin) {
+                    filter['price'].$gte = parseInt(priceMin);
+               }
+               if (priceMax) {
+                    filter['price'].$lte = parseInt(priceMax);
+               }
+          }
+          if (mileage) filter['mileage'] = parseInt(mileage);
+          if (bodyType) filter['bodyType'] = bodyType;
 
           const response = await carDetailModel
                .find(filter)
-               .populate('carSeries_id');
+               .populate(['carSeries_id', 'carBrand_id']);
 
           return response;
      } catch (error) {
@@ -35,6 +50,7 @@ const addNewCar = async (data, reqfile) => {
           });
           return response;
      } catch (error) {
+          console.log(error);
           res.send({ status: 400, success: false, msg: error.message });
      }
 };

@@ -19,14 +19,14 @@ const carDetailSchema = new mongoose.Schema(
           bodyType: {
                type: String,
                enum: [
-                    'City-Car',
-                    'Coupe',
-                    'Estate',
-                    'Sedan',
-                    'Hatchback',
-                    'MPV',
-                    'Saloon',
-                    'Sports',
+                    'city-car',
+                    'coupe',
+                    'estate',
+                    'sedan',
+                    'hatchback',
+                    'mpv',
+                    'saloon',
+                    'sports',
                ],
           },
           door: Number,
@@ -36,7 +36,7 @@ const carDetailSchema = new mongoose.Schema(
           milesPerGallon: Number,
           fuelType: {
                type: String,
-               enum: ['Petrol', 'Diesel', 'Hybrid', 'Electric'],
+               enum: ['petrol', 'diesel', 'hybrid', 'electric'],
           },
           transmission: {
                type: String,

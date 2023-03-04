@@ -1,5 +1,9 @@
 import carDetailModel from '../models/carDetails.js';
 
+// const response = await carDetailModel
+//      .find(filter)
+//      .populate(['carSeries_id', 'carBrand_id']);
+
 const getAllCar = async (
      fuelType,
      priceMin,
@@ -9,33 +13,7 @@ const getAllCar = async (
      companyName
 ) => {
      try {
-          // const filter = { $text: { $search: companyName } };
-
-          // const filter = { $regex: `.*${companyName}.*`, $options: 'i' };
-          const filter = {};
-
-          if (fuelType) {
-               filter['fuelType'] = fuelType;
-          }
-          if (priceMin || priceMax) {
-               filter['price'] = {};
-               if (priceMin) {
-                    filter['price'].$gte = parseInt(priceMin);
-               }
-               if (priceMax) {
-                    filter['price'].$lte = parseInt(priceMax);
-               }
-          }
-
-          if (bodyType) filter['bodyType'] = bodyType;
-
-          // const response = await carDetailModel
-          //      .find(filter)
-          //      .populate(['carSeries_id', 'carBrand_id']);
-
-          const response = await carDetailModel.aggregate([
-               { $unwind: '$carBrand_id' },
-               { $match: filter },
+          const aggregateFilter = [
                {
                     $lookup: {
                          from: 'carbrands',
@@ -47,15 +25,51 @@ const getAllCar = async (
                {
                     $unwind: '$carBrand',
                },
-               {
+          ];
+          if (companyName) {
+               aggregateFilter.push({
                     $match: {
                          'carBrand.companyName': {
                               $regex: `.*${companyName}.*`,
                               $options: 'i',
                          },
                     },
-               },
-          ]);
+               });
+          }
+          if (fuelType) {
+               aggregateFilter.push({
+                    $match: {
+                         fuelType: fuelType,
+                    },
+               });
+          }
+          if (bodyType) {
+               aggregateFilter.push({
+                    $match: {
+                         bodyType,
+                    },
+               });
+          }
+          if (priceMin) {
+               aggregateFilter.push({
+                    $match: {
+                         price: {
+                              $gte: parseInt(priceMin),
+                         },
+                    },
+               });
+          }
+          if (priceMax) {
+               aggregateFilter.push({
+                    $match: {
+                         price: {
+                              $lte: parseInt(priceMax),
+                         },
+                    },
+               });
+          }
+
+          const response = await carDetailModel.aggregate(aggregateFilter);
 
           return response;
      } catch (error) {

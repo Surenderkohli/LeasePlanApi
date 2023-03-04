@@ -1,9 +1,5 @@
 import carDetailModel from '../models/carDetails.js';
 
-// const response = await carDetailModel
-//      .find(filter)
-//      .populate(['carSeries_id', 'carBrand_id']);
-
 const getAllCar = async (
      fuelType,
      priceMin,

@@ -35,4 +35,4 @@ const homebannerSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('homeBannerModel', homebannerSchema);
+export default mongoose.model('homeBanner', homebannerSchema);

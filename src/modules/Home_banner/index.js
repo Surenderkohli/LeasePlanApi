@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import bannerhome from './router/homebanner_router.js';
+import bannerhome from './router/homeBanner.js';
 
 const router = Router();
 router.use(`/banner`, bannerhome);

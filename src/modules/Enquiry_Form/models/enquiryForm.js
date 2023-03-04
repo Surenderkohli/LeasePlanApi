@@ -11,6 +11,7 @@ const EnquiryFormSchema = new mongoose.Schema(
           mobileNumber: Number,
           emailAddress: String,
           questions: String,
+          receiveUpdates: { type: Boolean, default: false },
      },
      {
           timestamps: true,

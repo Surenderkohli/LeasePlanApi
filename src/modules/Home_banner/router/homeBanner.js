@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { httpHandler } from '../../../helpers/error-handler.js';
-import { bannerService } from '../services/homebanner_services.js';
+import { bannerService } from '../services/homeBanner.js';
 
 const bannerStorage = multer.diskStorage({
      destination: 'public/images',

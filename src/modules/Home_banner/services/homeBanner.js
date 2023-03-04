@@ -1,4 +1,4 @@
-import homeBannerModel from '../model/homebanner_model.js';
+import homeBannerModel from '../model/homeBanner.js';
 
 const getAllBanner = async () => {
      const response = await homeBannerModel.find({ is_deactivated: false });

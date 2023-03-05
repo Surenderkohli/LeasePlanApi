@@ -18,20 +18,20 @@ const getAllCar = async (
                          as: 'carBrand',
                     },
                },
-               {
-                    $lookup: {
-                         from: 'leasetypes',
-                         localField: 'leaseType_id',
-                         foreignField: '_id',
-                         as: 'leaseType',
-                    },
-               },
+               // {
+               //      $lookup: {
+               //           from: 'leasetypes',
+               //           localField: 'leaseType_id',
+               //           foreignField: '_id',
+               //           as: 'leaseType',
+               //      },
+               // },
                {
                     $unwind: '$carBrand',
                },
-               {
-                    $unwind: '$leaseType',
-               },
+               // {
+               //      $unwind: '$leaseType',
+               // },
           ];
           if (companyName) {
                aggregateFilter.push({

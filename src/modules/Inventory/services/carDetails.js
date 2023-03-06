@@ -255,44 +255,54 @@ const deleteCar = async (id) => {
      return response;
 };
 
-// const getPdf = async (id) => {
-//      try {
-//           // Generate a PDF summary of the selected options
-//           const doc = new PDFDocument();
-//           doc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
-//           doc.fontSize(16).text('Car Summary');
-//           doc.text(`Car Details - ${car.model}`);
-//           doc.text(`Lease Type: ${car.leaseType}`);
-//           doc.text(`Lease Term: ${car.minLeaseTerm} - ${car.maxLeaseTerm}`);
-//           doc.text(`Annual Mileage: ${car.mileage}`);
-//           doc.text(`Maintenance: ${car.maintenanceOption}`);
-//           doc.text(`Total Price: $${car.totalPrice.toFixed(2)}`);
-//           doc.end();
+const getPdf = async (id) => {
+     try {
+          // Generate a PDF summary of the selected options
+          const doc = new PDFDocument();
+          doc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
+          pdfDoc.pipe(fs.createWriteStream(`${car.model}-details.pdf`));
+          pdfDoc
+               .fontSize(24)
+               .text(`${car.make} ${car.model} Details`, { align: 'center' });
+          pdfDoc.fontSize(14).text(`bodyType: ${car.bodyType}`);
+          pdfDoc
+               .fontSize(14)
+               .text(`companyName: ${car.carBrand_Id.companyName}`);
+          pdfDoc.fontSize(14).text(`Price: $${car.price}`);
+          pdfDoc.fontSize(14).text(`Lease Type: ${leaseType}`);
+          pdfDoc.fontSize(14).text(`Annual Mileage: ${annualMileage}`);
+          pdfDoc.fontSize(14).text(`includeMaintenance: ${includeMaintenance}`);
+          pdfDoc.fontSize(14).text(`Upfront Payment: $${upfrontPayment}`);
+          pdfDoc
+               .fontSize(16)
+               .text(`Total Price: $${totalPrice}`, { align: 'center' });
+          pdfDoc.end();
+          // return `PDF generated successfully for ${car.make} ${car.model}!`;
 
-//           // Save the PDF summary in MongoDB
-//           const summary = fs.readFileSync(`summary_${id}.pdf`);
-//           const summaryDoc = {
-//                id,
-//                leaseType,
-//                contractLength,
-//                mileage,
-//                upfrontPayment,
-//                maintenanceOption,
-//                summary,
-//           };
-//           await carDetailModel.create(summaryDoc);
+          // Save the PDF summary in MongoDB
+          const summary = fs.readFileSync(`summary_${id}.pdf`);
+          const summaryDoc = {
+               id,
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+               summary,
+          };
+          await carDetailModel.create(summaryDoc);
 
-//           return {
-//                price: car.price,
-//                summary: car.summary,
-//                maintenanceOption: car.maintenanceOption,
-//                upfrontPayment: car.upfrontPayment,
-//                totalPrice: totalPrice.toFixed(2),
-//           };
-//      } catch (error) {
-//           res.send({ status: 400, success: false, msg: error.message });
-//      }
-// };
+          return {
+               price: car.price,
+               summary: car.summary,
+               includeMaintenance: car.includeMaintenance,
+               upfrontPayment: car.upfrontPayment,
+               totalPrice: totalPrice.toFixed(2),
+          };
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+};
 
 export const CarServices = {
      getAllCar,
@@ -300,4 +310,5 @@ export const CarServices = {
      getSingleCar,
      updateCar,
      deleteCar,
+     getPdf,
 };

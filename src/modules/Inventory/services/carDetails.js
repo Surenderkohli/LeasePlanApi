@@ -116,31 +116,49 @@ const getSingleCar = async (
           // calculate base price
           let basePrice = car.price;
 
-          // apply leaseType factor
-          switch (leaseType) {
-               case 'flexi':
-                    basePrice *= 1.2; // 20% markup for flexi lease
-                    break;
-               case 'long-term':
-                    basePrice *= 0.9; // 10% discount for long-term lease
-                    break;
-               default:
-                    throw new Error('Invalid leaseType');
+          if (leaseType === 'flexi') {
+               if (![6, 12, 24, 36].includes(contractLengthInMonth)) {
+                    throw new Error(
+                         'Invalid contractLengthInMonth for flexi lease'
+                    );
+               }
+          } else if (leaseType === 'long-term') {
+               if (![12, 24, 36, 48].includes(contractLengthInMonth)) {
+                    throw new Error(
+                         'Invalid contractLengthInMonth for long-term lease'
+                    );
+               }
+          } else {
+               throw new Error('Invalid leaseType');
           }
 
-          // apply contractLengthInMonths factor
-          switch (contractLengthInMonth) {
-               case 24:
-                    basePrice *= 0.95; // 5% discount for 24-month contract
+          switch (leaseType) {
+               case 'flexi':
+                    if (contractLengthInMonth === 6) {
+                         basePrice *= 0.8;
+                    } else if (contractLengthInMonth === 12) {
+                         basePrice *= 0.7;
+                    } else if (contractLengthInMonth === 24) {
+                         basePrice *= 0.6;
+                    } else if (contractLengthInMonth === 36) {
+                         basePrice *= 0.5;
+                    }
                     break;
-               case 36:
-                    // no discount or markup for 36-month contract
-                    break;
-               case 48:
-                    basePrice *= 1.1; // 10% markup for 48-month contract
+               case 'long-term':
+                    if (contractLengthInMonth === 12) {
+                         basePrice *= 0.6;
+                    } else if (contractLengthInMonth === 24) {
+                         basePrice *= 0.5;
+                    } else if (contractLengthInMonth === 36) {
+                         basePrice *= 0.4;
+                    } else if (contractLengthInMonth === 48) {
+                         basePrice *= 0.4;
+                    }
                     break;
                default:
-                    throw new Error('Invalid contractLengthInMonth');
+                    throw new Error(
+                         'Invalid contractLengthInMonth or leaseType'
+                    );
           }
 
           // apply annualMileageInThousands factor
@@ -204,8 +222,6 @@ const getSingleCar = async (
           throw new Error(error.message);
      }
 };
-
-//getSingleCarDetailsById and calculate Total price based on various filter as leaseType either flexi in months [12,24,36,48] or long-term in months [24,36,48], contractLengthInMonths [24,36,48],annualMileageInThousands [4,6,8,10,12] , upfrontPayment in months [1,3,9,12] includeMaintainence boolean with switch case in nodejs and mongodb with controller and service file.
 
 const updateCar = async (id, data) => {
      try {

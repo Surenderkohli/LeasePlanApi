@@ -55,7 +55,7 @@ const carDetailSchema = new mongoose.Schema(
           },
           contractLengthInMonth: {
                type: Number,
-               enum: [24, 36, 48, 60],
+               enum: [6, 12, 24, 36, 48, 60],
           },
           annualMileageInThousands: {
                type: Number,

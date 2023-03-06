@@ -206,7 +206,7 @@ const getSingleCar = async (
           }
 
           // return total price
-          let sumAll = basePrice.toFixed(2);
+          let totalPrice = basePrice.toFixed(2);
 
           return {
                car: car,
@@ -215,7 +215,7 @@ const getSingleCar = async (
                annualMileage: annualMileage,
                upfrontPayment: upfrontPayment,
                includeMaintenance: includeMaintenance,
-               totalPrice: sumAll,
+               totalPrice: totalPrice,
           };
      } catch (error) {
           // res.send({ status: 400, success: false, msg: error.message });

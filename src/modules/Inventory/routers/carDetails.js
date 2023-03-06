@@ -94,30 +94,30 @@ router.get('/fetch-single/:id', async (req, res) => {
           res.send({ status: 400, success: false, msg: error.message });
      }
 });
-router.get('/fetch-single/:id/pdf', async (req, res) => {
-     try {
-          const { id } = req.params;
+// router.get('/fetch-single/:id/pdf', async (req, res) => {
+//      try {
+//           const { id } = req.params;
 
-          const {
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-          } = req.body;
-          const result = await CarServices.getSingleCar(
-               id,
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance
-          );
-          res.send(result);
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
+//           const {
+//                leaseType,
+//                contractLengthInMonth,
+//                annualMileage,
+//                upfrontPayment,
+//                includeMaintenance,
+//           } = req.body;
+//           const result = await CarServices.getSingleCar(
+//                id,
+//                leaseType,
+//                contractLengthInMonth,
+//                annualMileage,
+//                upfrontPayment,
+//                includeMaintenance
+//           );
+//           res.send(result);
+//      } catch (error) {
+//           res.send({ status: 400, success: false, msg: error.message });
+//      }
+// });
 
 router.put(
      '/update/:id',

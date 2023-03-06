@@ -76,18 +76,18 @@ router.get('/fetch-single/:id', async (req, res) => {
 
           const {
                leaseType,
-               contractLength,
+               contractLengthInMonth,
                annualMileage,
                upfrontPayment,
-               maintenanceOption,
+               includeMaintenance,
           } = req.body;
           const result = await CarServices.getSingleCar(
                id,
                leaseType,
-               contractLength,
+               contractLengthInMonth,
                annualMileage,
                upfrontPayment,
-               maintenanceOption
+               includeMaintenance
           );
           res.send(result);
      } catch (error) {

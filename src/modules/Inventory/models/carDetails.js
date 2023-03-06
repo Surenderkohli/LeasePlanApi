@@ -50,7 +50,7 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                enum: [1, 3, 6, 9, 12],
           },
-          maintenanceOption: {
+          includeMaintenance: {
                type: Boolean,
           },
           contractLengthInMonth: {

@@ -13,6 +13,15 @@ router.get(
      })
 );
 
+router.get(
+     '/:id',
+     httpHandler(async (req, res) => {
+          const { id } = req.params;
+          const result = await carSeriesService.getSingleCarSeries(id);
+          res.send(result);
+     })
+);
+
 router.post(
      '/add-carseries',
      httpHandler(async (req, res) => {

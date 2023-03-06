@@ -71,10 +71,28 @@ router.post(
 );
 
 router.get('/fetch-single/:id', async (req, res) => {
-     const { id } = req.params;
-     // const data = req.body;
-     const result = await CarServices.getSingleCar(id);
-     res.send(result);
+     try {
+          const { id } = req.params;
+
+          const {
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+          } = req.body;
+          const result = await CarServices.getSingleCar(
+               id,
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance
+          );
+          res.send(result);
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
 });
 
 router.put(

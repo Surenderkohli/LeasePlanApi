@@ -12,13 +12,11 @@ router.post(
                if (result.receiveUpdates) {
                     sendEmail(result);
                }
-               return res
-                    .status(201)
-                    .json({
-                         success: true,
-                         data: result,
-                         message: 'Enquiry created successfully',
-                    });
+               return res.status(201).json({
+                    success: true,
+                    data: result,
+                    message: 'Enquiry created successfully',
+               });
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
@@ -35,6 +33,15 @@ router.get(
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
+     })
+);
+
+router.get(
+     '/:id',
+     httpHandler(async (req, res) => {
+          const { id } = req.params;
+          const result = await enquiryFormService.getSingleForm(id);
+          res.send(result);
      })
 );
 

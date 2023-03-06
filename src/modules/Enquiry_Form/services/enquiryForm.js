@@ -10,7 +10,13 @@ const getAllForm = async () => {
      return response;
 };
 
+const getSingleForm = async (id) => {
+     const response = await enquiryFormModel.findById(id);
+     return response;
+};
+
 export const enquiryFormService = {
      addForm,
      getAllForm,
+     getSingleForm,
 };

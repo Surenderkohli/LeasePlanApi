@@ -34,8 +34,8 @@ router.post(
      httpHandler(async (req, res) => {
           try {
                const reqfile = req.file.filename;
-               const { name, email, password } = req.body;
-               const data = { name, email, password };
+               const { name, email, password, roles } = req.body;
+               const data = { name, email, password, roles };
 
                const userExists = await userModel.findOne({ email });
 

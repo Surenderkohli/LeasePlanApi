@@ -33,7 +33,7 @@ router.post(
      profileUpload.single('profile'),
      httpHandler(async (req, res) => {
           try {
-               const reqfile = req.file.filename;
+               const { filename } = req.file;
                const { name, email, password, roles } = req.body;
                const data = { name, email, password, roles };
 
@@ -44,7 +44,7 @@ router.post(
                     throw new Error('User already exists');
                }
 
-               const user = await userService.register(data, reqfile);
+               const user = await userService.register(data, filename);
 
                if (user) {
                     res.status(201).json({

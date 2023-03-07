@@ -12,7 +12,6 @@ const getSingleUser = async (id) => {
 };
 
 const register = async (data, reqfile) => {
-     // const response = await User.create({ ...data, profile: reqfile });
      try {
           const user = await userModel.create({
                ...data,

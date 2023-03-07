@@ -29,6 +29,14 @@ const getAllCar = async (
                     },
                },
                {
+                    $lookup: {
+                         from: 'carseries',
+                         localField: 'carSeries_id',
+                         foreignField: '_id',
+                         as: 'carSeries',
+                    },
+               },
+               {
                     $unwind: '$carBrand',
                },
           ];

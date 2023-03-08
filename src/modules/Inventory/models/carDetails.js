@@ -52,6 +52,7 @@ const carDetailSchema = new mongoose.Schema(
           },
           includeMaintenance: {
                type: Boolean,
+               default: false,
           },
           contractLengthInMonth: {
                type: Number,

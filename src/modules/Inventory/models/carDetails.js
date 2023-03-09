@@ -18,6 +18,7 @@ const carDetailSchema = new mongoose.Schema(
           img: {
                type: [],
                data: Buffer,
+               required: false,
           },
           price: Number,
           bodyType: {
@@ -35,9 +36,22 @@ const carDetailSchema = new mongoose.Schema(
           },
           door: Number,
           seat: Number,
-          mileage: Number,
-          co2: Number,
+          gears: {
+               type: String,
+               required: false,
+               default: '6 SPEED',
+          },
           milesPerGallon: Number,
+          annualMileage: {
+               type: Number,
+               required: false,
+          },
+          acceleration: {
+               type: String,
+               required: false,
+               default: '0-62 mph 9.4 seconds',
+          },
+          co2: Number,
           fuelType: {
                type: String,
                enum: ['petrol', 'diesel', 'hybrid', 'electric'],
@@ -56,10 +70,6 @@ const carDetailSchema = new mongoose.Schema(
           contractLengthInMonth: {
                type: Number,
                enum: [6, 12, 24, 36, 48, 60],
-          },
-          annualMileageInThousands: {
-               type: Number,
-               enum: [4, 6, 8, 10, 12, 15, 20],
           },
           isDeleted: {
                type: Boolean,

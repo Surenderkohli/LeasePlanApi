@@ -63,10 +63,14 @@ router.post(
      '/add',
      carUpload.array('img', 6),
      httpHandler(async (req, res) => {
-          const reqfile = req.files;
-          const data = req.body;
-          const result = await CarServices.addNewCar(data, reqfile);
-          res.send(result);
+          try {
+               const reqfile = req.files;
+               const data = req.body;
+               const result = await CarServices.addNewCar(data, reqfile);
+               res.send(result);
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
      })
 );
 

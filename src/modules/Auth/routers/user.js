@@ -50,7 +50,7 @@ router.post(
                     res.status(201).json({
                          success: true,
                          data: user,
-                         token: generateToken(user._id),
+                         token: generateToken(user._id, user.roles),
                     });
                } else {
                     res.status(400);
@@ -75,7 +75,7 @@ router.post(
                          _id: user._id,
                          name: user.name,
                          email: user.email,
-                         token: generateToken(user._id),
+                         token: generateToken(user._id, user.roles),
                     });
                } else {
                     res.status(401);

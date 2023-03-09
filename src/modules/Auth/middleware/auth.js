@@ -15,6 +15,7 @@ const protect = async (req, res, next) => {
                const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
                req.user = await User.findById(decoded.id).select('-password');
+               req.roles = decoded.roles; // Adds the decoded role to the request object
 
                next();
           } catch (error) {
@@ -48,7 +49,7 @@ const isAuthenticated = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
      if (!req.profile.roles === 'admin') {
           return res.status(403).json({
-               error: 'You are not ADMIN, Access denied',
+               error: 'Forbidden, user is not an admin',
           });
      }
      next();

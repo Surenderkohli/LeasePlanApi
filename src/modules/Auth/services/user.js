@@ -32,8 +32,7 @@ const login = async (data) => {
                _id: user._id,
                name: user.name,
                email: user.email,
-               isAdmin: user.isAdmin,
-               pic: user.pic,
+               role,
                token: generateToken(user._id),
           });
      } else {

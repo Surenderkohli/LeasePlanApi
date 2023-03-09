@@ -122,7 +122,7 @@ const getSingleCar = async (
           const car = await carDetailModel.findById({ _id: id });
 
           // calculate base price
-          let basePrice = car.price;
+          let basePrice = car.price / 12;
 
           if (leaseType === 'flexi') {
                if (![6, 12, 24, 36].includes(contractLengthInMonth)) {
@@ -169,22 +169,25 @@ const getSingleCar = async (
                     );
           }
 
-          // apply annualMileageInThousands factor
+          // convert to monthly price
+          let perMonthPrice = basePrice / contractLengthInMonth;
+
+          // apply annualMileage factor
           switch (annualMileage) {
-               case 4:
-                    basePrice *= 0.9; // 10% discount for 4,000 annual mileage
+               case 4000:
+                    perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
                     break;
-               case 6:
+               case 6000:
                     // no discount or markup for 6,000 annual mileage
                     break;
-               case 8:
-                    basePrice *= 1.05; // 5% markup for 8,000 annual mileage
+               case 8000:
+                    perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
                     break;
-               case 10:
-                    basePrice *= 1.1; // 10% markup for 10,000 annual mileage
+               case 10000:
+                    perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
                     break;
-               case 12:
-                    basePrice *= 1.2; // 20% markup for 12,000 annual mileage
+               case 12000:
+                    perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
                     break;
                default:
                     throw new Error('Invalid annualMileage');
@@ -193,16 +196,16 @@ const getSingleCar = async (
           // apply upfrontPayment factor
           switch (upfrontPayment) {
                case 1:
-                    basePrice *= 1.1; // 10% markup for 1-month upfront payment
+                    perMonthPrice *= 1.1; // 10% markup for 1-month upfront payment
                     break;
                case 3:
                     // no discount or markup for 3-month upfront payment
                     break;
                case 9:
-                    basePrice *= 0.95; // 5% discount for 9-month upfront payment
+                    perMonthPrice *= 0.95; // 5% discount for 9-month upfront payment
                     break;
                case 12:
-                    basePrice *= 0.9; // 10% discount for 12-month upfront payment
+                    perMonthPrice *= 0.9; // 10% discount for 12-month upfront payment
                     break;
                default:
                     throw new Error('Invalid upfrontPayment');
@@ -210,13 +213,13 @@ const getSingleCar = async (
 
           // apply maintenance factor
           if (includeMaintenance) {
-               basePrice *= 1.1; // 10% markup for maintenance inclusion
+               perMonthPrice *= 1.1; // 10% markup for maintenance inclusion
           }
 
           // return total price
-          let totalPrice = basePrice.toFixed(2);
+          let totalPrice = perMonthPrice.toFixed();
 
-          // Generate a PDF summary of the selected options
+          /*    // Generate a PDF summary of the selected options
           const pdfDoc = new PDFDocument();
           pdfDoc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
           pdfDoc.fontSize(24).text(`${car.fuelType} ${car.bodyType} Details`, {
@@ -247,7 +250,7 @@ const getSingleCar = async (
                includeMaintenance,
                summary,
           };
-          await carDetailModel.create(summaryDoc);
+          await carDetailModel.create(summaryDoc); */
 
           return {
                car: car,

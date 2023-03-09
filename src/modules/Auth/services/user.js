@@ -33,7 +33,7 @@ const login = async (data) => {
                name: user.name,
                email: user.email,
                role,
-               token: generateToken(user._id),
+               token: generateToken(user._id, user.roles),
           });
      } else {
           res.status(401);

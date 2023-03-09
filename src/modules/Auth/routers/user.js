@@ -5,7 +5,7 @@ import { userService } from '../services/user.js';
 import { check } from 'express-validator';
 import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
-import { protect } from '../middleware/auth.js';
+import { isAdmin, protect } from '../middleware/auth.js';
 
 const userProfileStorage = multer.diskStorage({
      destination: 'public/images/profile',
@@ -87,7 +87,7 @@ router.post(
      })
 );
 
-router.get('/get-user', async (req, res) => {
+router.get('/get-user', protect, isAdmin, async (req, res) => {
      const result = await userService.getAllUser();
      res.send(result);
 });

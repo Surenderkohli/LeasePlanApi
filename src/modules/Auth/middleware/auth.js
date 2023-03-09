@@ -46,12 +46,16 @@ const isAuthenticated = async (req, res, next) => {
      next();
 };
 
-const isAdmin = async (req, res, next) => {
-     if (!req.profile.roles === 'admin') {
-          return res.status(403).json({
-               error: 'Forbidden, user is not an admin',
+const isAdmin = (req, res, next) => {
+     if (req.roles === 'admin') {
+          next();
+     } else {
+          res.send({
+               status: 403,
+               success: false,
+               msg: 'Forbidden, user is not an admin',
           });
      }
-     next();
 };
+
 export { protect, isAuthenticated, isAdmin };

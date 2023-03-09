@@ -122,7 +122,7 @@ const getSingleCar = async (
           const car = await carDetailModel.findById({ _id: id });
 
           // calculate base price
-          let basePrice = car.price / 12;
+          let basePrice = car.price;
 
           if (leaseType === 'flexi') {
                if (![6, 12, 24, 36].includes(contractLengthInMonth)) {
@@ -262,6 +262,7 @@ const getSingleCar = async (
                totalPrice: totalPrice,
           };
      } catch (error) {
+          console.log(error);
           // res.send({ status: 400, success: false, msg: error.message });
           throw new Error(error.message);
      }

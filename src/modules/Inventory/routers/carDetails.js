@@ -93,7 +93,7 @@ router.get('/fetch-single/:id', async (req, res) => {
                upfrontPayment,
                includeMaintenance
           );
-          console.log(result);
+
           res.send(result);
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });

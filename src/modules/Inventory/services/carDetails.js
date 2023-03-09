@@ -219,7 +219,7 @@ const getSingleCar = async (
           // return total price
           let totalPrice = perMonthPrice.toFixed();
 
-          // Generate a PDF summary of the selected options
+          //Generate a PDF summary of the selected options
           // const pdfDoc = new PDFDocument();
           // pdfDoc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
           // pdfDoc.fontSize(24).text(`${car.fuelType} ${car.bodyType} Details`, {
@@ -265,7 +265,6 @@ const getSingleCar = async (
                totalPrice: totalPrice,
           };
      } catch (error) {
-          console.log(error);
           // res.send({ status: 400, success: false, msg: error.message });
           throw new Error(error.message);
      }

@@ -5,7 +5,7 @@ import { userService } from '../services/user.js';
 import { check } from 'express-validator';
 import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
-import { isAdmin, protect } from '../middleware/auth.js';
+import { isAdmin, protect, isAuthenticated } from '../middleware/auth.js';
 
 const userProfileStorage = multer.diskStorage({
      destination: 'public/images/profile',
@@ -92,7 +92,7 @@ router.get('/get-user', protect, isAdmin, async (req, res) => {
      res.send(result);
 });
 
-router.get('/get-single-user/:id', async (req, res) => {
+router.get('/get-single-user/:id', protect, async (req, res) => {
      const { id } = req.params;
      const result = await userService.getSingleUser(id);
      res.send(result);

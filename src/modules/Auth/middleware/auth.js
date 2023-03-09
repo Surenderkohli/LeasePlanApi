@@ -14,10 +14,26 @@ const protect = async (req, res, next) => {
                //decodes token id
                const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-               req.user = await User.findById(decoded.id).select('-password');
-               req.roles = decoded.roles; // Adds the decoded role to the request object
+               // req.user = await User.findById(decoded.id).select('-password');
+               // req.roles = decoded.roles; // Adds the decoded role to the request object
 
-               next();
+               // Check if user has the same id as the requested profile, or if the user has admin privileges
+               if (decoded.id === req.params.id || decoded.roles === 'admin') {
+                    req.user = await User.findById(decoded.id).select(
+                         '-password'
+                    );
+                    req.roles = decoded.roles;
+
+                    next();
+               } else {
+                    res.send({
+                         status: 403,
+                         success: false,
+                         msg: 'Forbidden, user is not authorized to access this profile',
+                    });
+               }
+
+               //next()
           } catch (error) {
                res.send({
                     status: 400,

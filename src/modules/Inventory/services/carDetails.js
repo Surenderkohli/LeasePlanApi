@@ -219,38 +219,41 @@ const getSingleCar = async (
           // return total price
           let totalPrice = perMonthPrice.toFixed();
 
-          /*    // Generate a PDF summary of the selected options
-          const pdfDoc = new PDFDocument();
-          pdfDoc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
-          pdfDoc.fontSize(24).text(`${car.fuelType} ${car.bodyType} Details`, {
-               align: 'center',
-          });
-          pdfDoc.fontSize(14).text(`bodyType: ${car.bodyType}`);
-          pdfDoc.fontSize(14).text(`fuelType: ${car.fuelType}`);
-          pdfDoc.fontSize(14).text(`Price: $${car.price}`);
-          pdfDoc.fontSize(14).text(`Lease Type: ${car.leaseType}`);
-          pdfDoc.fontSize(14).text(`Annual Mileage: ${car.annualMileage}`);
-          pdfDoc
-               .fontSize(14)
-               .text(`includeMaintenance: ${car.includeMaintenance}`);
-          pdfDoc.fontSize(14).text(`Upfront Payment: $${car.upfrontPayment}`);
-          pdfDoc
-               .fontSize(16)
-               .text(`Total Price: $${car.totalPrice}`, { align: 'center' });
-          pdfDoc.end();
+          // Generate a PDF summary of the selected options
+          // const pdfDoc = new PDFDocument();
+          // pdfDoc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
+          // pdfDoc.fontSize(24).text(`${car.fuelType} ${car.bodyType} Details`, {
+          //      align: 'center',
+          // });
+          // pdfDoc.fontSize(14).text(`bodyType: $${car.bodyType}`);
+          // pdfDoc.fontSize(14).text(`fuelType: $${car.fuelType}`);
+          // pdfDoc.fontSize(14).text(`Price: $${car.price}`);
+          // pdfDoc.fontSize(14).text(`Lease Type: $${car.leaseType_id}`);
+          // pdfDoc
+          //      .fontSize(14)
+          //      .text(`Contract length: $${contractLengthInMonth}`);
+          // pdfDoc.fontSize(14).text(`Annual Mileage: $${car.annualMileage}`);
+          // pdfDoc
+          //      .fontSize(14)
+          //      .text(`Include Maintenance: $${includeMaintenance}`);
+          // pdfDoc.fontSize(14).text(`Upfront Payment: $${upfrontPayment}`);
+          // pdfDoc
+          //      .fontSize(16)
+          //      .text(`Total Price: $${totalPrice}`, { align: 'center' });
+          // pdfDoc.end();
 
-          // Save the PDF summary in MongoDB
-          const summary = fs.readFileSync(`summary_${id}.pdf`);
-          const summaryDoc = {
-               id,
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               summary,
-          };
-          await carDetailModel.create(summaryDoc); */
+          // // Save the PDF summary in MongoDB
+          // const summary = fs.readFileSync(`summary_${id}.pdf`);
+          // const summaryDoc = {
+          //      id,
+          //      leaseType,
+          //      contractLengthInMonth,
+          //      annualMileage,
+          //      upfrontPayment,
+          //      includeMaintenance,
+          //      summary,
+          // };
+          // await carDetailModel.create(summaryDoc);
 
           return {
                car: car,

@@ -5,11 +5,11 @@ const getAllBanner = async () => {
      return response;
 };
 
-const addNewBanner = async (data, reqfile) => {
+const addNewBanner = async (data, bannerData) => {
      try {
           const response = await homeBannerModel.create({
                ...data,
-               banner: reqfile,
+               ...bannerData,
           });
           return response;
      } catch (error) {

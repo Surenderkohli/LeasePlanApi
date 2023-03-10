@@ -7,7 +7,7 @@ const getAllCar = async (
      priceMin,
      priceMax,
      bodyType,
-     mileage,
+     annualMileage,
      companyName
 ) => {
      try {
@@ -79,6 +79,14 @@ const getAllCar = async (
                          price: {
                               $lte: parseInt(priceMax),
                          },
+                    },
+               });
+          }
+
+          if (annualMileage) {
+               aggregateFilter.push({
+                    $match: {
+                         annualMileage: parseInt(annualMileage),
                     },
                });
           }

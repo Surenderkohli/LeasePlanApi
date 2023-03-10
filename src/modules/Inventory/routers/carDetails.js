@@ -32,7 +32,7 @@ router.get(
                     priceMin,
                     priceMax,
                     bodyType,
-                    mileage,
+                    annualMileage,
                     companyName,
                } = req.query;
 
@@ -41,7 +41,7 @@ router.get(
                     priceMin,
                     priceMax,
                     bodyType,
-                    mileage,
+                    annualMileage,
                     companyName
                );
 
@@ -64,9 +64,9 @@ router.post(
      carUpload.array('img', 6),
      httpHandler(async (req, res) => {
           try {
-               const reqfile = req.files;
+               const { filename } = req.file || { filename: null };
                const data = req.body;
-               const result = await CarServices.addNewCar(data, reqfile);
+               const result = await CarServices.addNewCar(data, filename);
                res.send(result);
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });

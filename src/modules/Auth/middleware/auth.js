@@ -2,59 +2,44 @@ import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 
 const protect = async (req, res, next) => {
-     let token;
+     try {
+          const authHeader = req.headers.authorization;
 
-     if (
-          req.headers.authorization &&
-          req.headers.authorization.startsWith('Bearer')
-     ) {
-          try {
-               token = req.headers.authorization.split(' ')[1];
-
-               //decodes token id
-               const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-               // req.user = await User.findById(decoded.id).select('-password');
-               // req.roles = decoded.roles; // Adds the decoded role to the request object
-
-               // Check if user has the same id as the requested profile, or if the user has admin privileges
-               if (decoded.id === req.params.id || decoded.roles === 'admin') {
-                    req.user = await User.findById(decoded.id).select(
-                         '-password'
-                    );
-                    req.roles = decoded.roles;
-
-                    next();
-               } else {
-                    res.send({
-                         status: 403,
-                         success: false,
-                         msg: 'Forbidden, user is not authorized to access this profile',
-                    });
-               }
-
-               //next()
-          } catch (error) {
-               res.send({
-                    status: 400,
-                    success: false,
-                    msg: 'Not authorized, token failed',
+          if (!authHeader || !authHeader.startsWith('Bearer')) {
+               return res.status(401).json({
+                    error: 'Invalid Authorization scheme or No Token',
                });
           }
-     }
-     if (!token) {
-          res.send({
-               status: 400,
-               success: false,
-               msg: 'Not authorized, no token',
-          });
+
+          const token = authHeader.split(' ')[1];
+
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          req.auth = decoded;
+
+          const user = await User.findById(decoded.id).select('-password');
+          if (!user) {
+               return res.status(401).json({ error: 'Unauthorized' });
+          }
+
+          if (
+               user._id.toString() === req.params.id ||
+               decoded.roles === 'admin'
+          ) {
+               req.user = user;
+               req.roles = decoded.roles;
+               next();
+          } else {
+               return res.status(403).json({ error: 'Forbidden' });
+          }
+     } catch (error) {
+          return res.status(401).json({ error: 'Unauthorized' });
      }
 };
 
 //custom middlewares
 const isAuthenticated = async (req, res, next) => {
-     let checker = req.profile && req.auth && req.profile._id === req.auth._id;
-     if (!checker) {
+     const { user, auth } = req;
+     if (!(user && auth && user.id === auth.id)) {
           return res.status(403).json({
                error: 'ACCESS DENIED',
           });

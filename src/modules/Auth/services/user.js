@@ -1,14 +1,18 @@
 import userModel from '../models/user.js';
-import generateToken from '../utils/generateToken.js';
 
-const getAllUser = async () => {
-     const response = await userModel.find();
-     return response;
+const getAllUsers = async (query) => {
+     try {
+          const users = await userModel.find(query);
+          return users;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Failed to get users');
+     }
 };
 
 const getSingleUser = async (id) => {
-     const response = await userModel.findById({ _id: id });
-     return response;
+     const user = await userModel.findById({ _id: id });
+     return user;
 };
 
 const register = async (data, reqfile) => {
@@ -20,27 +24,21 @@ const register = async (data, reqfile) => {
 
           return user;
      } catch (error) {
-          console.error(error);
+          throw new Error('An error occurred while creating user');
      }
 };
 
-const login = async (data) => {
-     const user = await userModel.findOne({ email });
+const login = async (email, password) => {
+     try {
+          const user = await userModel.findOne({ email });
 
-     // if (user && (await user.matchPassword(password))) {
-     //      res.json({
-     //           _id: user._id,
-     //           name: user.name,
-     //           email: user.email,
-     //           role,
-     //           token: generateToken(user._id, user.roles),
-     //      });
-     // } else {
-     //      res.status(401);
-     //      throw new Error('Invalid Email or Password');
-     // }
-
-     return user;
+          if (!user || !(await user.matchPassword(password))) {
+               throw { status: 401, message: 'Invalid email or password' };
+          }
+          return user;
+     } catch (error) {
+          throw new Error(`Error in login service: ${error.message}`);
+     }
 };
 
 const updateUser = async (id, data) => {
@@ -62,6 +60,6 @@ export const userService = {
      register,
      login,
      updateUser,
-     getAllUser,
+     getAllUsers,
      getSingleUser,
 };

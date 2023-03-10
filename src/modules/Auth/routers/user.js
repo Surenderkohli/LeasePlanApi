@@ -32,7 +32,7 @@ router.post(
      profileUpload.single('profile'),
      httpHandler(async (req, res) => {
           try {
-               const { filename } = req.file;
+               const { filename } = req.file || { filename: null };
                const { name, email, password, roles } = req.body;
                const data = { name, email, password, roles };
 

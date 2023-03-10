@@ -6,11 +6,15 @@ const getAllBanner = async () => {
 };
 
 const addNewBanner = async (data, reqfile) => {
-     const response = await homeBannerModel.create({
-          ...data,
-          banner: reqfile,
-     });
-     return response;
+     try {
+          const response = await homeBannerModel.create({
+               ...data,
+               banner: reqfile,
+          });
+          return response;
+     } catch (error) {
+          throw new Error('An error occurred while creating ');
+     }
 };
 
 const getSingleBanner = async (id) => {

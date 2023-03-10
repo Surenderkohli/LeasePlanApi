@@ -37,20 +37,28 @@ router.post(
      '/upload-banner',
      bannerUpload.single('banner'),
      httpHandler(async (req, res) => {
-          const reqfile = req.file.filename;
-          const data = req.body;
+          try {
+               const { filename } = req.file || { filename: null };
+               const data = req.body;
 
-          const result = await bannerService.addNewBanner(data, reqfile);
-          res.send(result);
+               const result = await bannerService.addNewBanner(data, filename);
+               res.send(result);
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
      })
 );
 
 router.get(
      '/single-banner/:id',
      httpHandler(async (req, res) => {
-          const { id } = req.params;
-          const result = await bannerService.getSingleBanner(id);
-          res.send(result);
+          try {
+               const { id } = req.params;
+               const result = await bannerService.getSingleBanner(id);
+               res.status(200).json({ success: true, data: result });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
      })
 );
 
@@ -61,7 +69,7 @@ router.put(
                const { id } = req.params;
                const result = await bannerService.updateBanner(id, req.body);
 
-               res.send(result);
+               res.status(200).json({ success: true, data: result });
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
@@ -71,10 +79,17 @@ router.put(
 router.delete(
      '/delete/:id',
      httpHandler(async (req, res) => {
-          const data = req.body;
-          const { id } = req.params;
-          const result = await bannerService.deleteBanner(id, data);
-          res.send(result);
+          try {
+               const data = req.body;
+               const { id } = req.params;
+               const result = await bannerService.deleteBanner(id, data);
+               res.status(200).json({
+                    success: true,
+                    msg: 'Banner deleted successfully',
+               });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
      })
 );
 

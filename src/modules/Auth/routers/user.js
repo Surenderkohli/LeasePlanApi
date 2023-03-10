@@ -19,7 +19,11 @@ const profileUpload = multer({
      },
      fileFilter(req, file, cb) {
           if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-               cb(new Error('Plz upload profile picture'));
+               cb(
+                    new Error(
+                         'Please upload an image file with .png, .jpg, or .jpeg extension.'
+                    )
+               );
           }
           cb(undefined, true);
      },

@@ -7,7 +7,7 @@ const protect = async (req, res, next) => {
 
           if (!authHeader || !authHeader.startsWith('Bearer')) {
                return res.status(401).json({
-                    error: 'Invalid Authorization scheme or No Token',
+                    error: 'Unauthorized: Invalid or missing Authorization token',
                });
           }
 
@@ -29,7 +29,9 @@ const protect = async (req, res, next) => {
                req.roles = decoded.roles;
                next();
           } else {
-               return res.status(403).json({ error: 'Forbidden' });
+               return res.status(403).json({
+                    error: 'Access Forbidden: You are not authorized to access this profile.',
+               });
           }
      } catch (error) {
           return res.status(401).json({ error: 'Unauthorized' });

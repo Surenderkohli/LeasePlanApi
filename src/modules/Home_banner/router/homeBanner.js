@@ -22,7 +22,8 @@ const bannerStorage = new CloudinaryStorage({
      },
 });
 
-const bannerUpload = multer({
+// Configure Multer upload middleware
+const upload = multer({
      storage: bannerStorage,
      limits: {
           fileSize: 2000000,
@@ -34,6 +35,10 @@ const bannerUpload = multer({
                          'Please upload an image file with .png, .jpg, or .jpeg extension.'
                     )
                );
+          }
+          // Only accept one file with the field name 'image'
+          if (req.files && req.files.length >= 1) {
+               cb(new Error('Only one file allowed.'));
           }
           cb(undefined, true);
      },
@@ -48,7 +53,7 @@ router.get('/get-banner', async (req, res) => {
 
 router.post(
      '/upload-banner',
-     bannerUpload.single('image'),
+     upload.single('image'),
      httpHandler(async (req, res) => {
           try {
                let result = await cloudinary.uploader.upload(req.file.path); // Upload image to Cloudinary
@@ -82,7 +87,6 @@ router.get(
 
 router.put(
      '/update/:id',
-     bannerUpload.single('banner'),
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;

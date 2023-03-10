@@ -34,8 +34,7 @@ const updateBanner = async (id, data) => {
 
           return response;
      } catch (error) {
-          // console.log(error);
-          res.send({ status: 400, success: false, msg: error.message });
+          console.log(error);
      }
 };
 

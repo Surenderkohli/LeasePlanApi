@@ -64,14 +64,22 @@ router.get(
 
 router.put(
      '/update/:id',
+     bannerUpload.single('banner'),
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
-               const result = await bannerService.updateBanner(id, req.body);
+               const { filename } = req.file || { filename: null };
+               const data = req.body;
 
-               res.status(200).json({ success: true, data: result });
+               const result = await bannerService.updateBanner(
+                    id,
+                    data,
+                    filename
+               );
+               console.log(result);
+               res.send(result);
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               res.status(400).json({ success: false, msg: error.message });
           }
      })
 );

@@ -66,7 +66,10 @@ router.post(
           try {
                const { filename } = req.file || { filename: null };
                const data = req.body;
-               const result = await CarServices.addNewCar(data, filename);
+               const result = await CarServices.addNewCar(
+                    data,
+                    req.files || null
+               );
                res.send(result);
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });

@@ -102,13 +102,15 @@ const getAllCar = async (
 
 const addNewCar = async (data, reqfile) => {
      try {
-          let carimage = [];
-          reqfile.map((img) => {
-               carimage.push(img.filename);
-          });
+          let carImage = [];
+          if (reqfile) {
+               carImage = reqfile.map((img) => {
+                    return img.filename;
+               });
+          }
           const response = await carDetailModel.create({
                ...data,
-               img: reqfile,
+               img: carImage,
           });
           return response;
      } catch (error) {

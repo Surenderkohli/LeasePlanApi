@@ -3,7 +3,7 @@ import multer from 'multer';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { bannerService } from '../services/homeBanner.js';
 import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -19,6 +19,16 @@ const bannerStorage = multer.diskStorage({
           cb(null, file.fieldname + '_' + Date.now() + file.originalname);
      },
 });
+
+//import { CloudinaryStorage } from 'multer-storage-cloudinary';
+// const bannerStorage = new CloudinaryStorage({
+//      cloudinary: cloudinary,
+//      params: {
+//           folder: 'public/images',
+//           format: async (req, file) => 'png', //set the format of the image
+//           public_id: (req, file) => Date.now() + file.originalname,
+//      },
+// });
 
 // Configure Multer upload middleware
 const upload = multer({

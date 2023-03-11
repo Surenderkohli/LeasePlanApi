@@ -15,11 +15,11 @@ const getSingleUser = async (id) => {
      return user;
 };
 
-const register = async (data, reqfile) => {
+const register = async (data, profileData) => {
      try {
           const user = await userModel.create({
                ...data,
-               profile: reqfile,
+               ...profileData,
           });
 
           return user;

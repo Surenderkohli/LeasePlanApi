@@ -87,19 +87,38 @@ router.get(
 
 router.put(
      '/update/:id',
+     upload.single('image'),
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
-               const { filename } = req.file || { filename: null };
+
+               // retrieve the data to be updated
                const data = req.body;
 
-               const result = await bannerService.updateBanner(
-                    id,
-                    data,
-                    filename
-               );
-               console.log(result);
-               res.send(result);
+               // check if there's a new file uploaded
+               if (req.file) {
+                    // delete the old image from cloudinary
+                    const banner = await bannerService.getSingleBanner(id);
+
+                    if (banner && banner.publicId) {
+                         await cloudinary.uploader.destroy(banner.publicId);
+                    }
+
+                    // upload the new image file to cloudinary
+                    const result = await cloudinary.uploader.upload(
+                         req.file.path
+                    );
+
+                    // update the image URL in the request body
+                    data.imageUrl = result.secure_url;
+                    data.publicId = result.public_id;
+               }
+
+               // update the data in the database
+               const response = await bannerService.updateBanner(id, data);
+
+               // return the updated data
+               res.send(response);
           } catch (error) {
                res.status(400).json({ success: false, msg: error.message });
           }

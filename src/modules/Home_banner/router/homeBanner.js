@@ -13,12 +13,10 @@ cloudinary.config({
      api_secret: process.env.API_SECRET,
 });
 
-const bannerStorage = new CloudinaryStorage({
-     cloudinary: cloudinary,
-     params: {
-          folder: 'public/images',
-          format: async (req, file) => 'png', //set the format of the image
-          public_id: (req, file) => Date.now() + file.originalname,
+const bannerStorage = multer.diskStorage({
+     destination: 'public/images/car',
+     filename: (req, file, cb) => {
+          cb(null, file.fieldname + '_' + Date.now() + file.originalname);
      },
 });
 

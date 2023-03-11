@@ -6,9 +6,17 @@ const homebannerSchema = new mongoose.Schema(
                type: Number,
           },
 
-          banner: {
+          image: {
                type: String,
                data: Buffer,
+          },
+          imageUrl: {
+               type: String,
+               required: false,
+          },
+          publicId: {
+               type: String,
+               required: false,
           },
           title: {
                type: String,

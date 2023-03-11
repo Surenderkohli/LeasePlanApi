@@ -2,14 +2,26 @@ import { Router } from 'express';
 import multer from 'multer';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { bannerService } from '../services/homeBanner.js';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import dotenv from 'dotenv';
+dotenv.config();
+
+cloudinary.config({
+     cloud_name: process.env.CLOUD_NAME,
+     api_key: process.env.API_KEY,
+     api_secret: process.env.API_SECRET,
+});
 
 const bannerStorage = multer.diskStorage({
-     destination: 'public/images',
+     destination: 'public/images/car',
      filename: (req, file, cb) => {
           cb(null, file.fieldname + '_' + Date.now() + file.originalname);
      },
 });
-const bannerUpload = multer({
+
+// Configure Multer upload middleware
+const upload = multer({
      storage: bannerStorage,
      limits: {
           fileSize: 2000000,
@@ -21,6 +33,10 @@ const bannerUpload = multer({
                          'Please upload an image file with .png, .jpg, or .jpeg extension.'
                     )
                );
+          }
+          // Only accept one file with the field name 'image'
+          if (req.files && req.files.length >= 1) {
+               cb(new Error('Only one file allowed.'));
           }
           cb(undefined, true);
      },
@@ -35,13 +51,18 @@ router.get('/get-banner', async (req, res) => {
 
 router.post(
      '/upload-banner',
-     bannerUpload.single('banner'),
+     upload.single('image'),
      httpHandler(async (req, res) => {
           try {
-               const { filename } = req.file || { filename: null };
-               const data = req.body;
+               let result = await cloudinary.uploader.upload(req.file.path); // Upload image to Cloudinary
+               const imageUrl = result.secure_url; // Get the URL of the uploaded image
+               const publicId = result.public_id; // Get the public ID of the uploaded image
 
-               const result = await bannerService.addNewBanner(data, filename);
+               // Save Cloudinary image URL and public ID in the database
+               const data = req.body;
+               const bannerData = { imageUrl, publicId };
+
+               result = await bannerService.addNewBanner(data, bannerData);
                res.send(result);
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
@@ -64,20 +85,38 @@ router.get(
 
 router.put(
      '/update/:id',
-     bannerUpload.single('banner'),
+     upload.single('image'),
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
-               const { filename } = req.file || { filename: null };
+
+               // retrieve the data to be updated
                const data = req.body;
 
-               const result = await bannerService.updateBanner(
-                    id,
-                    data,
-                    filename
-               );
-               console.log(result);
-               res.send(result);
+               // check if there's a new file uploaded
+               if (req.file) {
+                    // delete the old image from cloudinary
+                    const banner = await bannerService.getSingleBanner(id);
+
+                    if (banner && banner.publicId) {
+                         await cloudinary.uploader.destroy(banner.publicId);
+                    }
+
+                    // upload the new image file to cloudinary
+                    const result = await cloudinary.uploader.upload(
+                         req.file.path
+                    );
+
+                    // update the image URL in the request body
+                    data.imageUrl = result.secure_url;
+                    data.publicId = result.public_id;
+               }
+
+               // update the data in the database
+               const response = await bannerService.updateBanner(id, data);
+
+               // return the updated data
+               res.send(response);
           } catch (error) {
                res.status(400).json({ success: false, msg: error.message });
           }

@@ -15,9 +15,17 @@ const carDetailSchema = new mongoose.Schema(
                ref: 'leaseType',
           },
           description: String,
-          img: {
+          image: {
                type: [],
                data: Buffer,
+               required: false,
+          },
+          imageUrl: {
+               type: String,
+               required: false,
+          },
+          publicId: {
+               type: String,
                required: false,
           },
           price: Number,

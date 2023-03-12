@@ -5,6 +5,16 @@ import { userService } from '../services/user.js';
 import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
 import { isAdmin, protect, isAuthenticated } from '../middleware/auth.js';
+import { v2 as cloudinary } from 'cloudinary';
+
+import dotenv from 'dotenv';
+dotenv.config();
+
+cloudinary.config({
+     cloud_name: process.env.CLOUD_NAME,
+     api_key: process.env.API_KEY,
+     api_secret: process.env.API_SECRET,
+});
 
 const userProfileStorage = multer.diskStorage({
      destination: 'public/images/profile',
@@ -12,6 +22,7 @@ const userProfileStorage = multer.diskStorage({
           cb(null, file.fieldname + '_' + Date.now() + file.originalname);
      },
 });
+
 const profileUpload = multer({
      storage: userProfileStorage,
      limits: {
@@ -36,7 +47,11 @@ router.post(
      profileUpload.single('profile'),
      httpHandler(async (req, res) => {
           try {
-               const { filename } = req.file || { filename: null };
+               let result = await cloudinary.uploader.upload(req.file.path); // Upload image to Cloudinary
+
+               const imageUrl = result.secure_url; // Get the URL of the uploaded image
+               const publicId = result.public_id; // Get the public ID of the uploaded image
+
                const { name, email, password, roles } = req.body;
                const data = { name, email, password, roles };
 
@@ -47,7 +62,9 @@ router.post(
                     throw new Error('User already exists');
                }
 
-               const user = await userService.register(data, filename);
+               const profileData = { imageUrl, publicId };
+
+               const user = await userService.register(data, profileData);
 
                res.status(201).send({
                     success: true,
@@ -118,15 +135,38 @@ router.get(
 
 router.put(
      '/profile-update/:id',
+     profileUpload.single('profile'),
      protect,
      isAuthenticated,
      httpHandler(async (req, res) => {
           try {
                const { id } = req.params;
 
-               const result = await userService.updateUser(id, req.body);
+               // retrieve the data to be updated
+               const data = req.body;
 
-               res.send({ status: 200, success: true, data: result });
+               // check if there's a new file uploaded
+               if (req.file) {
+                    // delete the old image from cloudinary
+                    const profile = await userService.getSingleUser(id);
+
+                    if (profile && profile.publicId) {
+                         await cloudinary.uploader.destroy(profile.publicId);
+                    }
+
+                    // upload the new image file to cloudinary
+                    const result = await cloudinary.uploader.upload(
+                         req.file.path
+                    );
+
+                    // update the image URL in the request body
+                    data.imageUrl = result.secure_url;
+                    data.publicId = result.public_id;
+               }
+
+               const response = await userService.updateUser(id, data);
+
+               res.send({ status: 200, success: true, data: response });
           } catch (error) {
                res.send({ status: 500, success: false, msg: error.message });
           }

@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema(
                type: String,
                data: Buffer,
           },
+          imageUrl: {
+               type: String,
+               required: false,
+          },
+          publicId: {
+               type: String,
+               required: false,
+          },
           roles: {
                type: String,
                enum: ['superadmin', 'admin', 'user'],

@@ -146,9 +146,16 @@ router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
 
-          const response = await CarServices.getSingleCar(id);
+          const result = await CarServices.getSingleCar(id);
 
-          res.status(200).json({ success: true, data: response });
+          if (result.length) {
+               res.status(200).json({ success: true, data: result });
+          } else {
+               res.status(404).json({
+                    success: false,
+                    message: 'No car found with the specified id.',
+               });
+          }
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
      }

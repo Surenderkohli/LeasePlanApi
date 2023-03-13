@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import carDetailModel from '../models/carDetails.js';
+import mongoose from 'mongoose';
 
 const getAllCar = async (
      leaseType,
@@ -151,8 +152,25 @@ const addNewCar = async (data, carImage) => {
 };
 
 const getSingleCar = async (id) => {
-     const response = await carDetailModel.findById({ _id: id });
-     return response;
+     const aggregateFilter = [
+          {
+               $match: {
+                    _id: mongoose.Types.ObjectId(id), // convert the string id to an ObjectId
+               },
+          },
+          {
+               $lookup: {
+                    from: 'carfeatures', // the name of the collection to join with
+                    localField: 'carFeatures_id',
+                    foreignField: '_id',
+                    as: 'carFeature', // the name of the array to store the joined documents
+               },
+          },
+     ];
+
+     const result = await carDetailModel.aggregate(aggregateFilter);
+
+     return result;
 };
 
 const generatePdf = async (

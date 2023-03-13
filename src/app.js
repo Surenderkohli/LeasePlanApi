@@ -9,8 +9,15 @@ import InventoryModule from './modules/Inventory/index.js';
 import BannerModule from './modules/Home_banner/index.js';
 import userModule from './modules/Auth/index.js';
 import EnquiryFormModule from './modules/Enquiry_Form/index.js';
+import QueryDetailsModule from './modules/content/index.js';
 
-const modules = [InventoryModule, BannerModule, userModule, EnquiryFormModule];
+const modules = [
+     InventoryModule,
+     BannerModule,
+     userModule,
+     EnquiryFormModule,
+     QueryDetailsModule,
+];
 
 export const CreateApp = () => {
      const app = express();

@@ -3,6 +3,9 @@ import fs from 'fs';
 import carDetailModel from '../models/carDetails.js';
 
 const getAllCar = async (
+     leaseType,
+     carBrand,
+     carSeries,
      fuelType,
      priceMin,
      priceMax,
@@ -11,7 +14,32 @@ const getAllCar = async (
      companyName
 ) => {
      try {
+          const preFilter = {};
+
+          if (leaseType) {
+               preFilter.leaseType_id = leaseType;
+          }
+
+          if (carBrand) {
+               preFilter.carBrand_id = carBrand;
+          }
+
+          if (carSeries) {
+               preFilter.carSeries_id = carSeries;
+          }
+
+          const carDetails = await carDetailModel.find(preFilter);
+
+          const carDetailIds = carDetails.map((car) => car._id);
+
           const aggregateFilter = [
+               {
+                    $match: {
+                         _id: {
+                              $in: carDetailIds,
+                         },
+                    },
+               },
                {
                     $lookup: {
                          from: 'carbrands',
@@ -39,7 +67,14 @@ const getAllCar = async (
                {
                     $unwind: '$carBrand',
                },
+               {
+                    $unwind: '$carSeries',
+               },
+               {
+                    $unwind: '$leaseType',
+               },
           ];
+
           if (companyName) {
                aggregateFilter.push({
                     $match: {
@@ -50,6 +85,7 @@ const getAllCar = async (
                     },
                });
           }
+
           if (fuelType) {
                aggregateFilter.push({
                     $match: {
@@ -57,6 +93,7 @@ const getAllCar = async (
                     },
                });
           }
+
           if (bodyType) {
                aggregateFilter.push({
                     $match: {
@@ -64,6 +101,7 @@ const getAllCar = async (
                     },
                });
           }
+
           if (priceMin) {
                aggregateFilter.push({
                     $match: {
@@ -96,7 +134,6 @@ const getAllCar = async (
           return response;
      } catch (error) {
           console.log(error);
-          res.send({ status: 400, success: false, msg: error.message });
      }
 };
 

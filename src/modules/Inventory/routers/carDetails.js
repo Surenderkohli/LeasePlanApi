@@ -43,6 +43,9 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const {
+                    leaseType,
+                    carBrand,
+                    carSeries,
                     fuelType,
                     priceMin,
                     priceMax,
@@ -52,6 +55,9 @@ router.get(
                } = req.query;
 
                const result = await CarServices.getAllCar(
+                    leaseType,
+                    carBrand,
+                    carSeries,
                     fuelType,
                     priceMin,
                     priceMax,

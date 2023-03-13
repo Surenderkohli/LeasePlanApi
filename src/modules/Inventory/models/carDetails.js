@@ -14,6 +14,10 @@ const carDetailSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'leaseType',
           },
+          carFeatures_id: {
+               type: mongoose.Schema.ObjectId,
+               ref: 'carFeature',
+          },
           description: String,
           image: {
                type: [],

@@ -112,7 +112,7 @@ router.post(
      })
 );
 
-router.get('/fetch-single/:id', async (req, res) => {
+router.get('/fetch-single/:id/pdf', async (req, res) => {
      try {
           const { id } = req.params;
 
@@ -122,45 +122,36 @@ router.get('/fetch-single/:id', async (req, res) => {
                annualMileage,
                upfrontPayment,
                includeMaintenance,
-          } = req.body;
-          const result = await CarServices.getSingleCar(
+               monthlyLeasePrice,
+          } = req.query;
+          const result = await CarServices.generatePdf(
                id,
                leaseType,
                contractLengthInMonth,
                annualMileage,
                upfrontPayment,
-               includeMaintenance
+               includeMaintenance,
+               monthlyLeasePrice
           );
+
+          res.setHeader('Content-Type', 'application/pdf');
 
           res.send(result);
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
      }
 });
-// router.get('/fetch-single/:id/pdf', async (req, res) => {
-//      try {
-//           const { id } = req.params;
 
-//           const {
-//                leaseType,
-//                contractLengthInMonth,
-//                annualMileage,
-//                upfrontPayment,
-//                includeMaintenance,
-//           } = req.body;
-//           const result = await CarServices.getSingleCar(
-//                id,
-//                leaseType,
-//                contractLengthInMonth,
-//                annualMileage,
-//                upfrontPayment,
-//                includeMaintenance
-//           );
-//           res.send(result);
-//      } catch (error) {
-//           res.send({ status: 400, success: false, msg: error.message });
-//      }
-// });
+router.get('/fetch-single/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+
+          const result = await CarServices.getSingleCar(id);
+          res.status(200).json({ success: true, data: result });
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
 
 router.put(
      '/update/:id',

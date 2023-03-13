@@ -150,163 +150,85 @@ const addNewCar = async (data, carImage) => {
      }
 };
 
-const getSingleCar = async (
+const getSingleCar = async (id) => {
+     const response = await carDetailModel.findById({ _id: id });
+     return response;
+};
+
+const generatePdf = async (
      id,
      leaseType,
      contractLengthInMonth,
      annualMileage,
      includeMaintenance,
-     upfrontPayment
+     upfrontPayment,
+     monthlyLeasePrice
 ) => {
      try {
           // Find the car in the database using its ID
           const car = await carDetailModel.findById({ _id: id });
 
-          // calculate base price
-          let basePrice = car.price;
+          // Generate a PDF summary of the selected options
+          const pdfDoc = new PDFDocument({ margin: 20 });
+          pdfDoc.pipe(
+               fs.createWriteStream(
+                    `public/pdf/summary_${car._id}_${Date.now()}.pdf`
+               )
+          );
+          // Add an image/logo to the PDF
+          pdfDoc.rect(55, 10, 500, 120).fillAndStroke('#fff', '#000');
+          pdfDoc.fill('black').stroke();
+          pdfDoc.image('public/LeasePlan_Logo.jpg', 60, 20, {
+               fit: [100, 100],
+          });
+          pdfDoc
+               .text('Leaseplan Emirates LLC ', 200, 30)
+               .text('Abu Dhabi - United Arab Emirates', 235)
+               .text('Musaffah Industrial', 245)
+               .text('Musaffah', 240)
+               .text('Street # 10', 200);
 
-          if (leaseType === 'flexi') {
-               if (![6, 12, 24, 36].includes(contractLengthInMonth)) {
-                    throw new Error(
-                         'Invalid contractLengthInMonth for flexi lease'
-                    );
-               }
-          } else if (leaseType === 'long-term') {
-               if (![12, 24, 36, 48].includes(contractLengthInMonth)) {
-                    throw new Error(
-                         'Invalid contractLengthInMonth for long-term lease'
-                    );
-               }
-          } else {
-               throw new Error('Invalid leaseType');
-          }
+          pdfDoc.text('Car Lease Summary', 235, 150).text('Dated', 500, 160);
 
-          switch (leaseType) {
-               case 'flexi':
-                    if (contractLengthInMonth === 6) {
-                         basePrice *= 0.8;
-                    } else if (contractLengthInMonth === 12) {
-                         basePrice *= 0.7;
-                    } else if (contractLengthInMonth === 24) {
-                         basePrice *= 0.6;
-                    } else if (contractLengthInMonth === 36) {
-                         basePrice *= 0.5;
-                    }
-                    break;
-               case 'long-term':
-                    if (contractLengthInMonth === 12) {
-                         basePrice *= 0.6;
-                    } else if (contractLengthInMonth === 24) {
-                         basePrice *= 0.5;
-                    } else if (contractLengthInMonth === 36) {
-                         basePrice *= 0.4;
-                    } else if (contractLengthInMonth === 48) {
-                         basePrice *= 0.4;
-                    }
-                    break;
-               default:
-                    throw new Error(
-                         'Invalid contractLengthInMonth or leaseType'
-                    );
-          }
+          pdfDoc
+               .text(`Contract length: $${contractLengthInMonth}`, 70, 220)
+               .text(`fuelType: $${car.fuelType}`)
+               .text(`Price: $${car.price}`)
+               .text(`Lease Type: $${car.leaseType_id}`)
+               .text(`Contract length: $${contractLengthInMonth}`)
+               .text(`Annual Mileage: $${annualMileage}`)
+               .text(`Upfront Payment: $${upfrontPayment}`)
+               .text(`Include Maintenance: $${includeMaintenance}`);
+          pdfDoc
+               .fontSize(14)
+               .text(`Monthly Lease Price: $${monthlyLeasePrice}`);
 
-          // convert to monthly price
-          let perMonthPrice = basePrice / contractLengthInMonth;
-
-          // apply annualMileage factor
-          switch (annualMileage) {
-               case 4000:
-                    perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
-                    break;
-               case 6000:
-                    // no discount or markup for 6,000 annual mileage
-                    break;
-               case 8000:
-                    perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
-                    break;
-               case 10000:
-                    perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
-                    break;
-               case 12000:
-                    perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
-                    break;
-               default:
-                    throw new Error('Invalid annualMileage');
-          }
-
-          // apply upfrontPayment factor
-          switch (upfrontPayment) {
-               case 1:
-                    perMonthPrice *= 1.1; // 10% markup for 1-month upfront payment
-                    break;
-               case 3:
-                    // no discount or markup for 3-month upfront payment
-                    break;
-               case 9:
-                    perMonthPrice *= 0.95; // 5% discount for 9-month upfront payment
-                    break;
-               case 12:
-                    perMonthPrice *= 0.9; // 10% discount for 12-month upfront payment
-                    break;
-               default:
-                    throw new Error('Invalid upfrontPayment');
-          }
-
-          // apply maintenance factor
-          if (includeMaintenance) {
-               perMonthPrice *= 1.1; // 10% markup for maintenance inclusion
-          }
-
-          // return total price
-          let totalPrice = perMonthPrice.toFixed();
-
-          //Generate a PDF summary of the selected options
-          // const pdfDoc = new PDFDocument();
-          // pdfDoc.pipe(fs.createWriteStream(`./summary_${car._id}.pdf`));
-          // pdfDoc.fontSize(24).text(`${car.fuelType} ${car.bodyType} Details`, {
-          //      align: 'center',
-          // });
-          // pdfDoc.fontSize(14).text(`bodyType: $${car.bodyType}`);
-          // pdfDoc.fontSize(14).text(`fuelType: $${car.fuelType}`);
-          // pdfDoc.fontSize(14).text(`Price: $${car.price}`);
-          // pdfDoc.fontSize(14).text(`Lease Type: $${car.leaseType_id}`);
-          // pdfDoc
-          //      .fontSize(14)
-          //      .text(`Contract length: $${contractLengthInMonth}`);
-          // pdfDoc.fontSize(14).text(`Annual Mileage: $${car.annualMileage}`);
-          // pdfDoc
-          //      .fontSize(14)
-          //      .text(`Include Maintenance: $${includeMaintenance}`);
-          // pdfDoc.fontSize(14).text(`Upfront Payment: $${upfrontPayment}`);
-          // pdfDoc
-          //      .fontSize(16)
-          //      .text(`Total Price: $${totalPrice}`, { align: 'center' });
           // pdfDoc.end();
+          const pdfBuffer = await new Promise((resolve, reject) => {
+               const chunks = [];
+               pdfDoc.on('data', (chunk) => {
+                    chunks.push(chunk);
+               });
+               pdfDoc.on('end', () => {
+                    resolve(Buffer.concat(chunks));
+               });
+               pdfDoc.end();
+          });
 
-          // // Save the PDF summary in MongoDB
-          // const summary = fs.readFileSync(`summary_${id}.pdf`);
-          // const summaryDoc = {
-          //      id,
-          //      leaseType,
-          //      contractLengthInMonth,
-          //      annualMileage,
-          //      upfrontPayment,
-          //      includeMaintenance,
-          //      summary,
-          // };
-          // await carDetailModel.create(summaryDoc);
-
-          return {
-               car: car,
-               leaseType: leaseType,
-               contractLengthInMonth: contractLengthInMonth,
-               annualMileage: annualMileage,
-               upfrontPayment: upfrontPayment,
-               includeMaintenance: includeMaintenance,
-               totalPrice: totalPrice,
+          const summaryDoc = {
+               id,
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+               monthlyLeasePrice,
+               summary: pdfBuffer,
           };
+          await carDetailModel.create(summaryDoc);
+
+          return pdfBuffer;
      } catch (error) {
-          // res.send({ status: 400, success: false, msg: error.message });
           throw new Error(error.message);
      }
 };
@@ -346,7 +268,8 @@ const deleteCar = async (id) => {
 export const CarServices = {
      getAllCar,
      addNewCar,
-     getSingleCar,
+     generatePdf,
      updateCar,
      deleteCar,
+     getSingleCar,
 };

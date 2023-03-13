@@ -169,7 +169,7 @@ const generatePdf = async (
           const car = await carDetailModel.findById({ _id: id });
 
           // Generate a PDF summary of the selected options
-          const pdfDoc = new PDFDocument({ margin: 20 });
+          const pdfDoc = new PDFDocument({ margin: 30 });
           pdfDoc.pipe(
                fs.createWriteStream(
                     `public/pdf/summary_${car._id}_${Date.now()}.pdf`
@@ -182,26 +182,38 @@ const generatePdf = async (
                fit: [100, 100],
           });
           pdfDoc
-               .text('Leaseplan Emirates LLC ', 200, 30)
-               .text('Abu Dhabi - United Arab Emirates', 235)
-               .text('Musaffah Industrial', 245)
-               .text('Musaffah', 240)
-               .text('Street # 10', 200);
+               .fontSize(16)
+               .text('Leaseplan Emirates LLC', 200, 30, { align: 'center' })
+               .fontSize(12)
+               .text('Abu Dhabi - United Arab Emirates', { align: 'center' })
+               .text('Musaffah Industrial', { align: 'center' })
+               .text('Musaffah', { align: 'center' })
+               .text('Street # 10', { align: 'center' })
+               .moveDown();
 
           pdfDoc.text('Car Lease Summary', 235, 150).text('Dated', 500, 160);
 
           pdfDoc
-               .text(`Contract length: $${contractLengthInMonth}`, 70, 220)
-               .text(`fuelType: $${car.fuelType}`)
-               .text(`Price: $${car.price}`)
-               .text(`Lease Type: $${car.leaseType_id}`)
-               .text(`Contract length: $${contractLengthInMonth}`)
-               .text(`Annual Mileage: $${annualMileage}`)
-               .text(`Upfront Payment: $${upfrontPayment}`)
-               .text(`Include Maintenance: $${includeMaintenance}`);
+               .text(`Contract length: ${contractLengthInMonth}`, 70, 220)
+               .moveDown(0.3)
+               .text(`fuelType: ${car.fuelType}`)
+               .moveDown(0.3)
+               .text(`Price: ${car.price}`)
+               .moveDown(0.3)
+               .text(`Lease Type: ${leaseType}`)
+               .moveDown(0.3)
+               .text(`Contract length: ${contractLengthInMonth}`)
+               .moveDown(0.3)
+               .text(`Annual Mileage: ${annualMileage}`)
+               .moveDown(0.3)
+               .text(`Upfront Payment: ${upfrontPayment}`)
+               .moveDown(0.3)
+               .text(`Include Maintenance: ${includeMaintenance}`)
+               .moveDown(0.3);
           pdfDoc
                .fontSize(14)
-               .text(`Monthly Lease Price: $${monthlyLeasePrice}`);
+               .text(`Monthly Lease Price: ${monthlyLeasePrice}`)
+               .moveDown(0.3);
 
           // pdfDoc.end();
           const pdfBuffer = await new Promise((resolve, reject) => {

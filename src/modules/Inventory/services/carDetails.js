@@ -194,8 +194,8 @@ const generatePdf = async (
      leaseType,
      contractLengthInMonth,
      annualMileage,
-     includeMaintenance,
      upfrontPayment,
+     includeMaintenance,
      monthlyLeasePrice
 ) => {
      try {

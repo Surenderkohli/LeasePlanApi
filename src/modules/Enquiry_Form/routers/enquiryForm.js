@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { enquiryFormService } from '../services/enquiryForm.js';
-import nodemailer from 'nodemailer';
 
 const router = new Router();
 
@@ -9,15 +8,35 @@ router.post(
      '/add-enquireForm',
      httpHandler(async (req, res) => {
           try {
-               const result = await enquiryFormService.addForm(req.body);
-               if (result.receiveUpdates) {
-                    sendEmail(result);
+               try {
+                    const enquiryData = {
+                         leaseType: req.query.leaseType,
+                         contractLengthInMonth: req.query.contractLengthInMonth,
+                         annualMileage: req.query.annualMileage,
+                         upfrontCost: req.query.upfrontCost,
+                         fuelType: req.query.fuelType,
+                         gears: req.query.gears,
+                         upfrontPayment: req.query.upfrontPayment,
+                    };
+                    const enquireFormData = req.body;
+
+                    const emailSent = await enquiryFormService.sendEnquiryEmail(
+                         enquiryData,
+                         enquireFormData
+                    );
+
+                    if (emailSent) {
+                         res.status(200).json({
+                              success: true,
+                              msg: 'Thank you for your enquiry!',
+                         });
+                    } else {
+                         throw new Error('Error sending enquiry email');
+                    }
+               } catch (error) {
+                    console.log(error);
+                    res.status(500).send('Error sending enquiry email');
                }
-               return res.status(201).json({
-                    success: true,
-                    data: result,
-                    message: 'Enquiry created successfully',
-               });
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
@@ -30,7 +49,7 @@ router.get(
           try {
                const result = await enquiryFormService.getAllForm();
 
-               res.send(result);
+               res.status(200).json({ success: true, data: result });
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
@@ -40,35 +59,15 @@ router.get(
 router.get(
      '/:id',
      httpHandler(async (req, res) => {
-          const { id } = req.params;
-          const result = await enquiryFormService.getSingleForm(id);
-          res.send(result);
+          try {
+               const { id } = req.params;
+               const result = await enquiryFormService.getSingleForm(id);
+
+               res.status(200).json({ success: true, data: result });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
      })
 );
-
-const sendEmail = (enquiry) => {
-     const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-               user: 'your-email@gmail.com',
-               pass: 'your-password',
-          },
-     });
-
-     const mailOptions = {
-          from: 'your-email@gmail.com',
-          to: enquiry.email,
-          subject: 'Thank you for your enquiry',
-          text: 'Thank you for your enquiry. We will get back to you as soon as possible.',
-     };
-
-     transporter.sendMail(mailOptions, (err, info) => {
-          if (err) {
-               console.log(err);
-          } else {
-               console.log('Email sent: ' + info.response);
-          }
-     });
-};
 
 export default router;

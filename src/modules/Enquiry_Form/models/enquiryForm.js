@@ -12,6 +12,11 @@ const EnquiryFormSchema = new mongoose.Schema(
           emailAddress: String,
           questions: String,
           receiveUpdates: { type: Boolean, default: false },
+          carDetails_id: {
+               type: mongoose.Schema.ObjectId,
+               ref: 'carDetails',
+               required: false,
+          },
      },
      {
           timestamps: true,

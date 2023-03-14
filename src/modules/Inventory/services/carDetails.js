@@ -166,6 +166,22 @@ const getSingleCar = async (id) => {
                     as: 'carFeature', // the name of the array to store the joined documents
                },
           },
+          {
+               $lookup: {
+                    from: 'carbrands',
+                    localField: 'carBrand_id',
+                    foreignField: '_id',
+                    as: 'carBrand',
+               },
+          },
+          {
+               $lookup: {
+                    from: 'leasetypes',
+                    localField: 'leaseType_id',
+                    foreignField: '_id',
+                    as: 'leaseType',
+               },
+          },
      ];
 
      const result = await carDetailModel.aggregate(aggregateFilter);

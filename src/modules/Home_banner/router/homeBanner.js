@@ -64,6 +64,10 @@ router.post(
      upload.single('image'),
      httpHandler(async (req, res) => {
           try {
+               if (!req.file || !req.file.path) {
+                    throw new Error('Image not provided or invalid');
+               }
+
                let result = await cloudinary.uploader.upload(req.file.path); // Upload image to Cloudinary
                const imageUrl = result.secure_url; // Get the URL of the uploaded image
                const publicId = result.public_id; // Get the public ID of the uploaded image
@@ -75,7 +79,16 @@ router.post(
                result = await bannerService.addNewBanner(data, bannerData);
                res.send(result);
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               let statusCode = 500; // Default status code
+               let message = 'Internal server error'; // Default error message
+               if (error.message === 'Image not provided or invalid') {
+                    statusCode = 400; // Bad Request status code
+                    message = error.message;
+               }
+               res.status(statusCode).json({
+                    success: false,
+                    error: message,
+               });
           }
      })
 );

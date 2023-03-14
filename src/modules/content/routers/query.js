@@ -28,8 +28,7 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const result = await queryDetailsService.getAllQueryDetails();
-
-               res.send(result);
+               res.status(200).json({ success: true, data: result });
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }
@@ -41,7 +40,7 @@ router.get(
      httpHandler(async (req, res) => {
           const { id } = req.params;
           const result = await queryDetailsService.getAllQueryDetails(id);
-          res.send(result);
+          res.status(200).json({ success: true, data: result });
      })
 );
 

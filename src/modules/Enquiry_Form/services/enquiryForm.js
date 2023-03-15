@@ -50,75 +50,77 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           <html>
           <head>
                <style>
-                    body {
-                         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                         font-size: 16px;
-                         color: #333;
-                    }
-                    h1 {
-                         font-size: 28px;
-                         font-weight: bold;
-                         margin-bottom: 32px;
-                    }
-                    h2 {
-                         font-size: 24px;
-                         font-weight: bold;
-                         margin-bottom: 16px;
-                    }
-                    ul {
-                         list-style: none;
-                         margin: 0;
-                         padding: 0;
-                    }
-                    li {
-                         margin-bottom: 16px;
-                    }
-                    .header {
-                         background-color: #F7D488;
-                         color: #333;
-                         padding: 32px;
-                         text-align: center;
-                         border-radius: 8px 8px 0 0;
-                    }
-                    .content {
-                         padding: 32px;
-                         background-color: #FFF9EB;
-                         border-radius: 0 0 8px 8px;
-                    }
-                    .label {
-                         font-size: 20px;
-                         font-weight: bold;
-                         margin-right: 16px;
-                    }
-                    .logo {
-                         display: block;
-                         margin: 0 auto;
-                         width: 200px;
-                         height: auto;
-                         margin-bottom: 32px;
-                    }
-                    .message {
-                         font-size: 20px;
-                         margin-bottom: 32px;
-                    }
-                    /* Add your custom styles for the thank you message */
-                    .thank-you {
-                        background-color: #F1F1F1;
-                        color: #333;
-                        padding: 32px;
-                        text-align: center;
-                        border-radius: 8px;
-                        margin-top: 32px;
-                    }
-                    .thank-you h2 {
-                        font-size: 24px;
-                        font-weight: bold;
-                        margin-bottom: 16px;
-                    }
-                    .thank-you p {
-                        font-size: 20px;
-                        line-height: 1.5;
-                    }
+               body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-size: 16px;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                  }
+                  /* Add your custom styles for the header */
+                  .header {
+                    background-color: #F7D488;
+                    color: #333;
+                    padding: 32px;
+                    text-align: center;
+                    border-radius: 8px 8px 0 0;
+                  }
+                  /* Add your custom styles for the logo */
+                  .logo {
+                    display: block;
+                    margin: 0 auto;
+                    width: 200px;
+                    height: auto;
+                    margin-bottom: 32px;
+                  }
+                  /* Add your custom styles for the main content */
+                  .content {
+                    padding: 32px;
+                    background-color: #FFF9EB;
+                    border-radius: 0 0 8px 8px;
+                  }
+                  /* Add your custom styles for the enquiry details */
+                  .details {
+                    margin-top: 32px;
+                    font-size: 20px;
+                    line-height: 1.5;
+                  }
+                  .details h2 {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 16px;
+                  }
+                  .details ul {
+                    list-style: none;
+                    margin: 0;
+                    padding: 0;
+                  }
+                  .details li {
+                    margin-bottom: 16px;
+                  }
+                  .details .label {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin-right: 16px;
+                  }
+                  /* Add your custom styles for the thank you message */
+                  .thank-you {
+                    background-color: #F1F1F1;
+                    color: #333;
+                    padding: 32px;
+                    text-align: center;
+                    border-radius: 8px;
+                    margin-top: 32px;
+                  }
+                  .thank-you h2 {
+                    font-size: 24px;
+                    font-weight: bold;
+                    margin-bottom: 16px;
+                  }
+                  .thank-you p {
+                    font-size: 20px;
+                    line-height: 1.5;
+                  }
                </style>
           </head>
           <body>

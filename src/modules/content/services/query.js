@@ -15,8 +15,21 @@ const getSingleQueryDetails = async (id) => {
      return response;
 };
 
+const deleteQueryDetails = async (id) => {
+     const response = await queryDetailsModel.findOneAndDelete(
+          {
+               _id: id,
+          },
+          {
+               is_deleted: true,
+          }
+     );
+     return response;
+};
+
 export const queryDetailsService = {
      addQueryDetails,
      getAllQueryDetails,
      getSingleQueryDetails,
+     deleteQueryDetails,
 };

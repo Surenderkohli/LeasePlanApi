@@ -132,6 +132,9 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                <div class="content">
                     <h2>Enquiry Details</h2>
                     <ul>
+                    <li>
+                    <span class="label">Car Brand Name:</span> ${enquiryData.companyName}
+               </li>
                          <li>
                               <span class="label">Lease Type:</span> ${enquiryData.leaseType}
                          </li>

@@ -1,13 +1,11 @@
 import mongoose from 'mongoose';
 
 const QueryDetailsSchema = new mongoose.Schema({
-     longTerm: {
-          details: String,
-          required: false,
-     },
-     flexi: {
-          details: String,
-          required: false,
+     longTerm: String,
+     flexi: String,
+     is_deleted: {
+          type: Boolean,
+          default: false,
      },
 });
 

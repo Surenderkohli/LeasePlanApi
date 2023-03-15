@@ -101,6 +101,24 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                          font-size: 20px;
                          margin-bottom: 32px;
                     }
+                    /* Add your custom styles for the thank you message */
+                    .thank-you {
+                        background-color: #F1F1F1;
+                        color: #333;
+                        padding: 32px;
+                        text-align: center;
+                        border-radius: 8px;
+                        margin-top: 32px;
+                    }
+                    .thank-you h2 {
+                        font-size: 24px;
+                        font-weight: bold;
+                        margin-bottom: 16px;
+                    }
+                    .thank-you p {
+                        font-size: 20px;
+                        line-height: 1.5;
+                    }
                </style>
           </head>
           <body>
@@ -142,6 +160,10 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                          
                     </ul>
                </div>
+               <div class="thank-you">
+               <h2>Thank you for your enquiry!</h2>
+               <p>We appreciate your interest in our car lease services. Our team will get back to you shortly with more information.</p>
+           </div>
           </body>
      
         `;

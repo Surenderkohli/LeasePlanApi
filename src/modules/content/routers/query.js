@@ -55,7 +55,7 @@ router.get(
      '/:id',
      httpHandler(async (req, res) => {
           const { id } = req.params;
-          const result = await queryDetailsService.getAllQueryDetails(id);
+          const result = await queryDetailsService.getSingleQueryDetails(id);
           res.status(200).json({ success: true, data: result });
      })
 );

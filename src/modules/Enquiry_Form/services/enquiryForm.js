@@ -48,85 +48,103 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
 
           const message = `
           <html>
-               <head>
-                    <style>
-                         body {
-                              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                              font-size: 16px;
-                              color: #333;
-                         }
-                         h1 {
-                              font-size: 28px;
-                              font-weight: bold;
-                              margin-bottom: 32px;
-                         }
-                         h2 {
-                              font-size: 24px;
-                              font-weight: bold;
-                              margin-bottom: 16px;
-                         }
-                         ul {
-                              list-style: none;
-                              margin: 0;
-                              padding: 0;
-                         }
-                         li {
-                              margin-bottom: 16px;
-                         }
-                         .header {
-                              background-color: #F7D488;
-                              color: #333;
-                              padding: 32px;
-                              text-align: center;
-                              border-radius: 8px 8px 0 0;
-                         }
-                         .content {
-                              padding: 32px;
-                              background-color: #FFF9EB;
-                              border-radius: 0 0 8px 8px;
-                         }
-                         .label {
-                              font-size: 20px;
-                              font-weight: bold;
-                              margin-right: 16px;
-                         }
-                    </style>
-               </head>
-               <body>
-                    <div class="header">
-                         <h1>Car Lease Enquiry</h1>
-                         <p>Thank you for your interest in our car lease services. Please find below the details of your enquiry:</p>
-                    </div>
-                    <div class="content">
-                         <h2>Enquiry Details</h2>
-                         <ul>
-                              <li>
-                                   <span class="label">Lease Type:</span> ${enquiryData.leaseType}
-                              </li>
-                              <li>
-                                   <span class="label">Contract Type:</span> ${enquiryData.contractLengthInMonth} months
-                              </li>
-                              <li>
-                                   <span class="label">Annual Mileage:</span> ${enquiryData.annualMileage} miles
-                              </li>
-                              <li>
-                                   <span class="label">Upfront Payment:</span> ${enquiryData.upfrontPayment}
-                              </li>
-                              <li>
-                                   <span class="label">Fuel Type:</span> ${enquiryData.fuelType}
-                              </li>
-                              <li>
-                                   <span class="label">Gearbox Type:</span> ${enquiryData.gears}
-                              </li>
-                              <li>
-                                   <span class="label">Upfront Cost:</span> ${enquiryData.upfrontCost}
-                              </li> 
-                         </ul>
-                    </div>
-               </body>
-          </html>
-     `;
-
+          <head>
+               <style>
+                    body {
+                         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                         font-size: 16px;
+                         color: #333;
+                    }
+                    h1 {
+                         font-size: 28px;
+                         font-weight: bold;
+                         margin-bottom: 32px;
+                    }
+                    h2 {
+                         font-size: 24px;
+                         font-weight: bold;
+                         margin-bottom: 16px;
+                    }
+                    ul {
+                         list-style: none;
+                         margin: 0;
+                         padding: 0;
+                    }
+                    li {
+                         margin-bottom: 16px;
+                    }
+                    .header {
+                         background-color: #F7D488;
+                         color: #333;
+                         padding: 32px;
+                         text-align: center;
+                         border-radius: 8px 8px 0 0;
+                    }
+                    .content {
+                         padding: 32px;
+                         background-color: #FFF9EB;
+                         border-radius: 0 0 8px 8px;
+                    }
+                    .label {
+                         font-size: 20px;
+                         font-weight: bold;
+                         margin-right: 16px;
+                    }
+                    .logo {
+                         display: block;
+                         margin: 0 auto;
+                         width: 200px;
+                         height: auto;
+                         margin-bottom: 32px;
+                    }
+                    .message {
+                         font-size: 20px;
+                         margin-bottom: 32px;
+                    }
+               </style>
+          </head>
+          <body>
+               <div class="header">
+                    <img class="logo" src="https://res.cloudinary.com/dqkag6b79/image/upload/v1678857402/geuhjim76t6gl22havg3.jpg" alt="LeasePlan Logo">
+                    <h1>Car Lease Enquiry</h1>
+                    <p class="message">Thank you for your interest in our car lease services. Please find below the details of your enquiry:</p>
+               </div>
+               <div class="content">
+                    <h2>Enquiry Details</h2>
+                    <ul>
+                         <li>
+                              <span class="label">Lease Type:</span> ${enquiryData.leaseType}
+                         </li>
+                         <li>
+                              <span class="label">Contract Type:</span>  ${enquiryData.contractLengthInMonth}  months
+                         </li>
+                         <li>
+                              <span class="label">Annual Mileage:</span>${enquiryData.annualMileage} miles
+                         </li>
+                         <li>
+                              <span class="label">Upfront Payment:</span> ${enquiryData.upfrontPayment}
+                         </li>
+                         <li>
+                              <span class="label">Fuel Type:</span> ${enquiryData.fuelType}
+                         </li>
+                         <li>
+                              <span class="label">Gearbox Type:</span>  ${enquiryData.gears}
+                         </li>
+                         <li>
+                              <span class="label">Upfront Cost:</span> ${enquiryData.upfrontCost}
+                         </li>
+                         <li>
+                              <span class="label">First Name:</span>  ${enquireFormData.firstName} ${enquireFormData.lastName}
+                         </li>
+                         <li>
+                              <span class="label">Email:</span> ${enquireFormData.emailAddress}
+                         </li>
+                         
+                    </ul>
+               </div>
+          </body>
+     
+        `;
           // Construct the email message with the car details
           let mailOptions = {
                from: 'cecelia.kemmer82@ethereal.email',

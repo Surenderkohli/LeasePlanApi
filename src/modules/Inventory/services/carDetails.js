@@ -281,16 +281,6 @@ const generatePdf = async (
 
 const updateCar = async (id, data) => {
      try {
-          // const carDetail = await carDetailModel.findById(id);
-          // const currentImages = carDetail.image;
-
-          // // If new images were provided, update them in the data object
-          // if (data.image && Array.isArray(data.image)) {
-          //      data.image = data.image.concat(currentImages);
-          // } else {
-          //      data.image = currentImages;
-          // }
-
           const carDetail = await carDetailModel.findById(id);
           const currentImages = carDetail.image;
 

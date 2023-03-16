@@ -3,6 +3,7 @@ import { httpHandler } from '../../../helpers/error-handler.js';
 import { CarServices } from '../services/carDetails.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
+import mongoose from 'mongoose';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -103,10 +104,25 @@ router.post(
                          carImage.push(carDetailsData); // For each upload result, push the secure URL to the carImage array
                     });
                }
+               // Check if id is a valid ObjectId
+               const fieldsToCheck = [
+                    'carBrand_id',
+                    'carSeries_id',
+                    'leaseType_id',
+               ];
+               for (let field of fieldsToCheck) {
+                    if (!mongoose.Types.ObjectId.isValid(data[field])) {
+                         return res.status(400).send({
+                              success: false,
+                              msg: `Invalid ObjectId `,
+                         });
+                    }
+               }
 
                const result = await CarServices.addNewCar(data, carImage);
                res.send(result);
           } catch (error) {
+               console.error('Error adding new car:', error);
                res.send({ status: 400, success: false, msg: error.message });
           }
      })

@@ -122,7 +122,7 @@ router.post(
                const result = await CarServices.addNewCar(data, carImage);
                res.send(result);
           } catch (error) {
-               console.error('Error adding new car:', error);
+               console.error('Error in adding new carDetails:', error);
                res.send({ status: 400, success: false, msg: error.message });
           }
      })
@@ -177,15 +177,62 @@ router.get('/fetch-single/:id', async (req, res) => {
      }
 });
 
+// router.put(
+//      '/update/:id',
+//      httpHandler(async (req, res) => {
+//           try {
+//                const { id } = req.params;
+
+//                const result = await CarServices.updateCar(id, req.body);
+//                res.send(result);
+//           } catch (error) {
+//                res.send({ status: 400, success: false, msg: error.message });
+//           }
+//      })
+// );
+
 router.put(
      '/update/:id',
+     carUpload.array('image', 6),
      httpHandler(async (req, res) => {
           try {
+               // check if there are new files uploaded
                const { id } = req.params;
+               const data = req.body;
+               const images = [];
 
-               const result = await CarServices.updateCar(id, req.body);
+               // check if there are new files uploaded
+               if (req.files && req.files.length > 0) {
+                    // delete old images from cloudinary
+                    const carImage = await CarServices.getSingleCar(id);
+
+                    if (carImage && carImage.image) {
+                         for (const image of carImage.image) {
+                              await cloudinary.uploader.destroy(image.publicId);
+                         }
+                    }
+
+                    // upload new image files to cloudinary
+                    for (const file of req.files) {
+                         const result = await cloudinary.uploader.upload(
+                              file.path
+                         );
+
+                         images.push({
+                              imageUrl: result.secure_url,
+                              publicId: result.public_id,
+                         });
+                    }
+
+                    // update the images array in the request body
+                    data.image = images;
+               }
+
+               const result = await CarServices.updateCar(id, data);
+
                res.send(result);
           } catch (error) {
+               console.error('Error in updating  carDetails:', error);
                res.send({ status: 400, success: false, msg: error.message });
           }
      })

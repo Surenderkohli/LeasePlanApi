@@ -3,6 +3,9 @@ import mongoose from 'mongoose';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { carBrandService } from '../services/carBrand.js';
 import leaseTypeModel from '../models/leaseType.js';
+import multer from 'multer';
+
+const upload = multer(); // Create an instance of the multer middleware
 
 const router = Router();
 
@@ -26,23 +29,17 @@ router.get(
 
 router.post(
      '/add-carbrand',
+     upload.none(), // Use the `none()` function to accept form-data with no file uploads
      httpHandler(async (req, res) => {
           try {
-               const { leaseType_id, companyName } = req.body;
+               const leaseType_id = req.body.leaseType_id;
+               const companyName = req.body.companyName;
 
-               // Validate input data
-               if (
-                    !leaseType_id ||
-                    !mongoose.Types.ObjectId.isValid(leaseType_id)
-               ) {
-                    return res.status(400).send({
-                         success: false,
-                         msg: 'Invalid leaseType_id',
-                    });
-               }
-
-               if (!companyName || typeof companyName !== 'string') {
-                    return res.status(400).send('Invalid company name');
+               // Check if leaseType_id is provided and valid
+               if (!leaseType_id) {
+                    throw new Error('leaseType_id is required');
+               } else if (!mongoose.Types.ObjectId.isValid(leaseType_id)) {
+                    throw new Error('leaseType_id is invalid');
                }
 
                // Check if leaseType_id exists
@@ -50,17 +47,20 @@ router.post(
                     _id: leaseType_id,
                });
                if (!leaseType) {
-                    return res.status(404).send({
+                    return res.status(404).json({
                          success: false,
                          msg: 'LeaseType not found',
                     });
                }
 
+               // Call the carBrandService to add the car brand
                const result = await carBrandService.addCarBrand(req.body);
-
-               res.send(result);
+               res.json(result);
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               res.status(400).json({
+                    success: false,
+                    msg: error.message,
+               });
           }
      })
 );

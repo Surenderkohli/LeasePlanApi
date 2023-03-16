@@ -100,7 +100,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                   }
                   /* Add your custom styles for the thank you message */
                   .thank-you {
-                    background-color: #F1F1F1;
+                    background-color: #FFF9EB;
                     color: #333;
                     padding: 32px;
                     text-align: center;

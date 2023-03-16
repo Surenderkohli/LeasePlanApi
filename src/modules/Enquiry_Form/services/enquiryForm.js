@@ -59,12 +59,12 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                   }
                   /* Add your custom styles for the header */
                   .header {
-                    background-color: #F7D488;
-                    color: #333;
+                    background-color: #EF700F;
+                    color: #FFF; /* change text color to white for better contrast */
                     padding: 32px;
                     text-align: center;
                     border-radius: 8px 8px 0 0;
-                  }
+                  }           
                   /* Add your custom styles for the logo */
                   .logo {
                     display: block;
@@ -72,6 +72,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                     width: 200px;
                     height: auto;
                     margin-bottom: 32px;
+                    filter: invert(100%); /* invert the logo color to white for better contrast */
                   }
                   /* Add your custom styles for the main content */
                   .content {
@@ -84,24 +85,18 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                     margin-top: 32px;
                     font-size: 20px;
                     line-height: 1.5;
+                    border-collapse: collapse;
+                    width: 100%;
                   }
-                  .details h2 {
-                    font-size: 24px;
+                  .details th,
+                  .details td {
+                    padding: 10px;
+                    text-align: left;
+                  }
+                  .details th {
+                    background-color: #F7D488;
+                    color: #333;
                     font-weight: bold;
-                    margin-bottom: 16px;
-                  }
-                  .details ul {
-                    list-style: none;
-                    margin: 0;
-                    padding: 0;
-                  }
-                  .details li {
-                    margin-bottom: 16px;
-                  }
-                  .details .label {
-                    font-size: 20px;
-                    font-weight: bold;
-                    margin-right: 16px;
                   }
                   /* Add your custom styles for the thank you message */
                   .thank-you {
@@ -121,6 +116,10 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                     font-size: 20px;
                     line-height: 1.5;
                   }
+                  .message {
+                    color: #FFF; /* change text color to white for better contrast */
+                  }
+               </style>
                </style>
           </head>
           <body>
@@ -130,40 +129,40 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                     <p class="message">Thank you for your interest in our car lease services. Please find below the details of your enquiry:</p>
                </div>
                <div class="content">
-                    <h2>Enquiry Details</h2>
-                    <ul>
-                    <li>
-                    <span class="label">Car Brand Name:</span> ${enquiryData.companyName}
-               </li>
-                         <li>
-                              <span class="label">Lease Type:</span> ${enquiryData.leaseType}
-                         </li>
-                         <li>
-                              <span class="label">Contract Type:</span>  ${enquiryData.contractLengthInMonth}  months
-                         </li>
-                         <li>
-                              <span class="label">Annual Mileage:</span>${enquiryData.annualMileage} miles
-                         </li>
-                         <li>
-                              <span class="label">Upfront Payment:</span> ${enquiryData.upfrontPayment}
-                         </li>
-                         <li>
-                              <span class="label">Fuel Type:</span> ${enquiryData.fuelType}
-                         </li>
-                         <li>
-                              <span class="label">Gearbox Type:</span>  ${enquiryData.gears}
-                         </li>
-                         <li>
-                              <span class="label">Upfront Cost:</span> ${enquiryData.upfrontCost}
-                         </li>
-                         <li>
-                              <span class="label">First Name:</span>  ${enquireFormData.firstName} ${enquireFormData.lastName}
-                         </li>
-                         <li>
-                              <span class="label">Email:</span> ${enquireFormData.emailAddress}
-                         </li>
-                         
-                    </ul>
+               <table class="details">
+               <tr>
+                 <th>Enquiry Details</th>
+                 <th></th>
+               </tr>
+               <tr>
+                 <td>Car Brand Name:</td>
+                 <td>${enquiryData.companyName}</td>
+               </tr>
+               <tr>
+                 <td>Lease Type:</td>
+                 <td>${enquiryData.leaseType}</td>
+               </tr>
+               <tr>
+                 <td>Contract Type:</td>
+                 <td>${enquiryData.contractLengthInMonth} months</td>
+               </tr>
+               <tr>
+                 <td>Annual Mileage:</td>
+                 <td>${enquiryData.annualMileage} miles</td>
+               </tr>
+               <tr>
+               <td>Upfront Payment:</td>
+               <td>${enquiryData.upfrontPayment} miles</td>
+             </tr>
+             <tr>
+               <td>Fuel Type:</td>
+               <td>${enquiryData.fuelType} miles</td>
+             </tr>
+             <tr>
+             <td>Gearbox Type:</td>
+             <td>${enquiryData.gears} miles</td>
+           </tr>
+           </table>      
                </div>
                <div class="thank-you">
                <h2>Thank you for your enquiry!</h2>

@@ -281,16 +281,55 @@ const generatePdf = async (
 
 const updateCar = async (id, data) => {
      try {
+          // const carDetail = await carDetailModel.findById(id);
+          // const currentImages = carDetail.image;
+
+          // // If new images were provided, update them in the data object
+          // if (data.image && Array.isArray(data.image)) {
+          //      data.image = data.image.concat(currentImages);
+          // } else {
+          //      data.image = currentImages;
+          // }
+
+          const carDetail = await carDetailModel.findById(id);
+          const currentImages = carDetail.image;
+
+          // If new images were provided, update them in the data object
+          if (data.image && Array.isArray(data.image)) {
+               // Replace old images with new ones
+               data.image.forEach((newImage, index) => {
+                    if (newImage.publicId) {
+                         // Check if new image has a public ID (i.e. it was uploaded to Cloudinary)
+                         const matchingImage = currentImages.find(
+                              (oldImage) =>
+                                   oldImage.publicId === newImage.publicId
+                         );
+                         if (matchingImage) {
+                              // If a matching image was found, replace it with the new image
+                              currentImages.splice(
+                                   currentImages.indexOf(matchingImage),
+                                   1,
+                                   newImage
+                              );
+                              data.image[index] = matchingImage;
+                         } else {
+                              // Otherwise, add the new image to the array
+                              currentImages.push(newImage);
+                         }
+                    }
+               });
+          } else {
+               data.image = currentImages;
+          }
+          // Update the document with the new data
           const response = await carDetailModel.findByIdAndUpdate(
                { _id: id },
                { $set: data },
-               {
-                    new: true,
-               }
+               { new: true }
           );
           return response;
      } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
+          console.log(error);
      }
 };
 

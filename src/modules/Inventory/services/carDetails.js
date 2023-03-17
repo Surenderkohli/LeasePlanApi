@@ -13,7 +13,8 @@ const getAllCar = async (
      priceMax,
      bodyType,
      annualMileage,
-     companyName
+     companyName,
+     seriesName
 ) => {
      try {
           const preFilter = {};
@@ -77,13 +78,23 @@ const getAllCar = async (
                },
           ];
 
-          if (companyName) {
+          if (companyName || seriesName) {
                aggregateFilter.push({
                     $match: {
-                         'carBrand.companyName': {
-                              $regex: `.*${companyName}.*`,
-                              $options: 'i',
-                         },
+                         $or: [
+                              {
+                                   'carBrand.companyName': {
+                                        $regex: `.*${companyName}.*`,
+                                        $options: 'i',
+                                   },
+                              },
+                              {
+                                   'carSeries.seriesName': {
+                                        $regex: `.*${seriesName}.*`,
+                                        $options: 'i',
+                                   },
+                              },
+                         ],
                     },
                });
           }

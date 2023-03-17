@@ -53,6 +53,7 @@ router.get(
                     bodyType,
                     annualMileage,
                     companyName,
+                    seriesName,
                } = req.query;
 
                const result = await CarServices.getAllCar(
@@ -64,7 +65,8 @@ router.get(
                     priceMax,
                     bodyType,
                     annualMileage,
-                    companyName
+                    companyName,
+                    seriesName
                );
 
                if (result.length) {

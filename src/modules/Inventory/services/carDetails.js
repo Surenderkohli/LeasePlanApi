@@ -355,7 +355,7 @@ const generatePdf = async (
           pdfDoc.text(car.fuelType, column2X, pdfDoc.y);
 
           pdfDoc.text('Price:', column1X, pdfDoc.y, { continued: true });
-          pdfDoc.text(car.price.toString() + ' AED', column2X, pdfDoc.y);
+          pdfDoc.text(car.price + ' AED', column2X, pdfDoc.y);
 
           pdfDoc.text('Lease Type:', column1X, pdfDoc.y, { continued: true });
           pdfDoc.text(leaseType, column2X, pdfDoc.y);
@@ -368,12 +368,12 @@ const generatePdf = async (
           pdfDoc.text('Annual Mileage:', column1X, pdfDoc.y, {
                continued: true,
           });
-          pdfDoc.text(annualMileage.toString() + ' km', column2X, pdfDoc.y);
+          pdfDoc.text(annualMileage + ' km', column2X, pdfDoc.y);
 
           pdfDoc.text('Upfront Payment:', column1X, pdfDoc.y, {
                continued: true,
           });
-          pdfDoc.text(upfrontPayment.toString() + ' AED', column2X, pdfDoc.y);
+          pdfDoc.text(upfrontPayment + ' AED', column2X, pdfDoc.y);
 
           pdfDoc.text('Include Maintenance:', column1X, pdfDoc.y, {
                continued: true,
@@ -383,11 +383,7 @@ const generatePdf = async (
           pdfDoc.text('Monthly Lease Price:', column1X, pdfDoc.y, {
                continued: true,
           });
-          pdfDoc.text(
-               monthlyLeasePrice.toString() + ' AED',
-               column2X,
-               pdfDoc.y
-          );
+          pdfDoc.text(monthlyLeasePrice + ' AED', column2X, pdfDoc.y);
 
           // End and save the PDF document
           pdfDoc.end();

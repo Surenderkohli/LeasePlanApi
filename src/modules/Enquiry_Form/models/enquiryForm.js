@@ -17,6 +17,7 @@ const EnquiryFormSchema = new mongoose.Schema(
                ref: 'carDetails',
                required: false,
           },
+          htmlTemplate: String,
      },
      {
           timestamps: true,

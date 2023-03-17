@@ -187,10 +187,10 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           await transporter.sendMail(mailOptions);
 
           //Save the enquiry data to MongoDB
+          enquireFormData.htmlTemplate = message;
           const enquiry = new enquiryFormModel(enquireFormData);
-          await enquiry.save();
-
-          return 'Thank you for your enquiry!';
+          const res = await enquiry.save();
+          return res.id;
      } catch (error) {
           console.error(error);
           return false;

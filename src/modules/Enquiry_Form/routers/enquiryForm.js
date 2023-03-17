@@ -4,6 +4,7 @@ import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
 import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
+import { generatePdf } from 'html-pdf-node';
 
 const router = new Router();
 
@@ -63,20 +64,25 @@ router.post(
                     };
                     const enquireFormData = req.body;
 
-                    const emailSent = await enquiryFormService.sendEnquiryEmail(
+                    const enquiryId = await enquiryFormService.sendEnquiryEmail(
                          enquiryData,
                          enquireFormData
                     );
-
-                    if (emailSent) {
-                         res.status(200).json({
-                              success: true,
-                              msg: 'Thank you for your enquiry!',
-                              data: enquiryData,
-                         });
-                    } else {
+                    if (!enquiryId) {
                          throw new Error('Error sending enquiry email');
                     }
+                    res.status(200).json({
+                         success: true,
+                         msg: 'Thank you for your enquiry!',
+                         enquiryId,
+                         data: enquiryData,
+                    });
+                    // const pdfBuffer = generatePdf(
+                    //      { content: htmlTemplate },
+                    //      { format: 'A4' }
+                    // );
+                    // res.setHeader('Content-Type', 'application/pdf');
+                    // res.send(pdfBuffer);
                } catch (error) {
                     console.log(error);
                     res.status(500).send('Error sending enquiry email');
@@ -106,8 +112,26 @@ router.get(
           try {
                const { id } = req.params;
                const result = await enquiryFormService.getSingleForm(id);
+               res.status(200).json({ success: true, data: result[0] });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
+     })
+);
 
-               res.status(200).json({ success: true, data: result });
+router.get(
+     '/:id/download',
+     httpHandler(async (req, res) => {
+          try {
+               const { id } = req.params;
+               const result = await enquiryFormService.getSingleForm(id);
+
+               const pdfBuffer = await generatePdf(
+                    { content: result[0].htmlTemplate },
+                    { format: 'A4' }
+               );
+               res.setHeader('Content-Type', 'application/pdf');
+               res.send(pdfBuffer);
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });
           }

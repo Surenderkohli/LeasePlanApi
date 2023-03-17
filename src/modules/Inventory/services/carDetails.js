@@ -330,16 +330,12 @@ const generatePdf = async (
                fit: [100, 100],
           });
 
-          // Add heading and date
-          pdfDoc.fontSize(20).text('Lease Plan Emirates LLC', 200, 70, {
+          pdfDoc.fontSize(20).text('Lease Plan Emirates LLC', {
                align: 'center',
           });
           pdfDoc.fontSize(12).text('Abu Dhabi - United Arab Emirates', {
                align: 'center',
           });
-          pdfDoc.text('Musaffah Industrial', { align: 'center' });
-          pdfDoc.text('Musaffah', { align: 'center' });
-          pdfDoc.text('Street # 10', { align: 'center' });
           pdfDoc.moveDown();
 
           pdfDoc
@@ -357,43 +353,41 @@ const generatePdf = async (
           pdfDoc.fillColor('#000000');
           pdfDoc.strokeColor('#000000');
           pdfDoc.font('Helvetica-Bold');
-          const column1X = 100;
-          const column2X = 300;
+
+          const column1X = 50;
+          const column2X = 350;
+          const rowSpacing = 25;
 
           // Add the data in a column-wise form
-
-          pdfDoc.text('Fuel Type:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.text('Fuel Type:', column1X, pdfDoc.y);
           pdfDoc.text(car.fuelType, column2X, pdfDoc.y);
 
-          pdfDoc.text('Price:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.moveDown();
+          pdfDoc.text('Price:', column1X, pdfDoc.y);
           pdfDoc.text(car.price + ' AED', column2X, pdfDoc.y);
 
-          pdfDoc.text('Lease Type:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.moveDown();
+          pdfDoc.text('Lease Type:', column1X, pdfDoc.y);
           pdfDoc.text(leaseType, column2X, pdfDoc.y);
 
-          pdfDoc.text('Contract Length:', column1X, pdfDoc.y, {
-               continued: true,
-          });
+          pdfDoc.moveDown();
+          pdfDoc.text('Contract Length:', column1X, pdfDoc.y);
           pdfDoc.text(contractLengthInMonth + ' months', column2X, pdfDoc.y);
 
-          pdfDoc.text('Annual Mileage:', column1X, pdfDoc.y, {
-               continued: true,
-          });
+          pdfDoc.moveDown();
+          pdfDoc.text('Annual Mileage:', column1X, pdfDoc.y);
           pdfDoc.text(annualMileage + ' km', column2X, pdfDoc.y);
 
-          pdfDoc.text('Upfront Payment:', column1X, pdfDoc.y, {
-               continued: true,
-          });
+          pdfDoc.moveDown();
+          pdfDoc.text('Upfront Payment:', column1X, pdfDoc.y);
           pdfDoc.text(upfrontPayment + ' AED', column2X, pdfDoc.y);
 
-          pdfDoc.text('Include Maintenance:', column1X, pdfDoc.y, {
-               continued: true,
-          });
+          pdfDoc.moveDown();
+          pdfDoc.text('Include Maintenance:', column1X, pdfDoc.y);
           pdfDoc.text(includeMaintenance ? 'Yes' : 'No', column2X, pdfDoc.y);
 
-          pdfDoc.text('Monthly Lease Price:', column1X, pdfDoc.y, {
-               continued: true,
-          });
+          pdfDoc.moveDown();
+          pdfDoc.text('Monthly Lease Price:', column1X, pdfDoc.y);
           pdfDoc.text(monthlyLeasePrice + ' AED', column2X, pdfDoc.y);
 
           // End and save the PDF document

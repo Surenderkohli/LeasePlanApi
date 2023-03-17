@@ -96,41 +96,38 @@ router.get('/fetch-single/:id/:pdf?', async (req, res) => {
                monthlyLeasePrice,
           } = req.query;
 
-          let result;
-
-          if (req.params.pdf) {
-               // If the user wants a PDF, generate the PDF
-               result = await CarServices.generatePdf(
-                    id,
-                    leaseType,
-                    contractLengthInMonth,
-                    annualMileage,
-                    upfrontPayment,
-                    includeMaintenance,
-                    monthlyLeasePrice
-               );
-
-               res.setHeader('Content-Type', 'application/pdf');
-               res.send(result);
-          } else {
-               // Otherwise, return the car details as JSON
-               result = await CarServices.getSingleCar(
-                    id,
-                    contractLengthInMonth,
-                    annualMileage,
-                    upfrontPayment,
-                    includeMaintenance
-               );
-
-               if (result) {
-                    res.status(200).json({ success: true, data: result });
-               } else {
-                    res.status(404).json({
-                         success: false,
-                         message: 'No car found with the specified id.',
-                    });
-               }
+          const result = await CarServices.getSingleCar(
+               id,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+               monthlyLeasePrice
+          );
+          if (!result) {
+               res.status(404).json({
+                    success: false,
+                    message: 'No car found with the specified id.',
+               });
+               return;
           }
+          if (!req.params.pdf) {
+               res.status(200).json({ success: true, data: result });
+               return;
+          }
+
+          // generate PDF
+          const pdf = await CarServices.generatePdf(
+               id,
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+               result.monthlyLeasePrice
+          );
+          res.setHeader('Content-Type', 'application/pdf');
+          res.send(pdf);
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
      }

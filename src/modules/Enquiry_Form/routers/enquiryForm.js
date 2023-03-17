@@ -13,7 +13,7 @@ router.post(
           try {
                try {
                     // Retrieve car details using relevant query and criteria
-
+                    const { monthlyLeasePrice } = req.query;
                     const { carDetails_id } = req.body;
 
                     // Retrieve car details using carId from carDetails collection
@@ -59,6 +59,7 @@ router.post(
                          gears,
                          leaseType,
                          companyName,
+                         monthlyLeasePrice,
                     };
                     const enquireFormData = req.body;
 

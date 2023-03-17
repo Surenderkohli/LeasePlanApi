@@ -162,9 +162,22 @@ router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
 
-          const result = await CarServices.getSingleCar(id);
+          const {
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+          } = req.query;
 
-          if (result.length) {
+          const result = await CarServices.getSingleCar(
+               id,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance
+          );
+
+          if (result) {
                res.status(200).json({ success: true, data: result });
           } else {
                res.status(404).json({
@@ -176,20 +189,6 @@ router.get('/fetch-single/:id', async (req, res) => {
           res.send({ status: 400, success: false, msg: error.message });
      }
 });
-
-// router.put(
-//      '/update/:id',
-//      httpHandler(async (req, res) => {
-//           try {
-//                const { id } = req.params;
-
-//                const result = await CarServices.updateCar(id, req.body);
-//                res.send(result);
-//           } catch (error) {
-//                res.send({ status: 400, success: false, msg: error.message });
-//           }
-//      })
-// );
 
 router.put(
      '/update/:id',

@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import carDetailModel from '../models/carDetails.js';
+import leaseTypeModel from '../models/leaseType.js';
 import mongoose from 'mongoose';
 
 const getAllCar = async (
@@ -151,42 +152,153 @@ const addNewCar = async (data, carImage) => {
      }
 };
 
-const getSingleCar = async (id) => {
-     const aggregateFilter = [
-          {
-               $match: {
-                    _id: mongoose.Types.ObjectId(id), // convert the string id to an ObjectId
-               },
-          },
-          {
-               $lookup: {
-                    from: 'carfeatures', // the name of the collection to join with
-                    localField: 'carFeatures_id',
-                    foreignField: '_id',
-                    as: 'carFeature', // the name of the array to store the joined documents
-               },
-          },
-          {
-               $lookup: {
-                    from: 'carbrands',
-                    localField: 'carBrand_id',
-                    foreignField: '_id',
-                    as: 'carBrand',
-               },
-          },
-          {
-               $lookup: {
-                    from: 'leasetypes',
-                    localField: 'leaseType_id',
-                    foreignField: '_id',
-                    as: 'leaseType',
-               },
-          },
-     ];
+// const getSingleCar = async (id) => {
+//      const aggregateFilter = [
+//           {
+//                $match: {
+//                     _id: mongoose.Types.ObjectId(id), // convert the string id to an ObjectId
+//                },
+//           },
+//           {
+//                $lookup: {
+//                     from: 'carfeatures', // the name of the collection to join with
+//                     localField: 'carFeatures_id',
+//                     foreignField: '_id',
+//                     as: 'carFeature', // the name of the array to store the joined documents
+//                },
+//           },
+//           {
+//                $lookup: {
+//                     from: 'carbrands',
+//                     localField: 'carBrand_id',
+//                     foreignField: '_id',
+//                     as: 'carBrand',
+//                },
+//           },
+//           {
+//                $lookup: {
+//                     from: 'leasetypes',
+//                     localField: 'leaseType_id',
+//                     foreignField: '_id',
+//                     as: 'leaseType',
+//                },
+//           },
+//      ];
 
-     const result = await carDetailModel.aggregate(aggregateFilter);
+//      const result = await carDetailModel.aggregate(aggregateFilter);
 
-     return result;
+//      return result;
+// };
+
+const getSingleCar = async (
+     id,
+     contractLengthInMonth,
+     annualMileage,
+     upfrontPayment,
+     includeMaintenance
+) => {
+     try {
+          // // Find the car in the database using its ID
+          const carDetails = await carDetailModel.findById({ _id: id });
+
+          const { leaseType_id, price } = carDetails;
+
+          // calculate base price
+          let basePrice = price;
+
+          // Retrieve lease type details using leaseTypeId from leasetypes collection
+          const leaseTypes = await leaseTypeModel.findById({
+               _id: leaseType_id,
+          });
+
+          if (!leaseTypes) {
+               throw new Error('Lease type details not found');
+          }
+          const { leaseType } = leaseTypes;
+
+          switch (leaseType) {
+               case 'flexi':
+                    if (contractLengthInMonth === 6) {
+                         basePrice *= 0.8;
+                    } else if (contractLengthInMonth === 12) {
+                         basePrice *= 0.7;
+                    } else if (contractLengthInMonth === 24) {
+                         basePrice *= 0.6;
+                    } else if (contractLengthInMonth === 36) {
+                         basePrice *= 0.5;
+                    }
+                    break;
+               case 'longTerm':
+                    if (contractLengthInMonth === 12) {
+                         basePrice *= 0.6;
+                    } else if (contractLengthInMonth === 24) {
+                         basePrice *= 0.5;
+                    } else if (contractLengthInMonth === 36) {
+                         basePrice *= 0.4;
+                    } else if (contractLengthInMonth === 48) {
+                         basePrice *= 0.4;
+                    }
+                    break;
+          }
+
+          // convert to monthly price
+          let perMonthPrice = basePrice / contractLengthInMonth;
+
+          // apply annualMileage factor
+          switch (annualMileage) {
+               case 4000:
+                    perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
+                    break;
+               case 6000:
+                    // no discount or markup for 6,000 annual mileage
+                    break;
+               case 8000:
+                    perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
+                    break;
+               case 10000:
+                    perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
+                    break;
+               case 12000:
+                    perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
+                    break;
+          }
+
+          // apply upfrontPayment factor
+          switch (upfrontPayment) {
+               case 1:
+                    perMonthPrice *= 1.1; // 10% markup for 1-month upfront payment
+                    break;
+               case 3:
+                    // no discount or markup for 3-month upfront payment
+                    break;
+               case 9:
+                    perMonthPrice *= 0.95; // 5% discount for 9-month upfront payment
+                    break;
+               case 12:
+                    perMonthPrice *= 0.9; // 10% discount for 12-month upfront payment
+                    break;
+          }
+
+          // apply maintenance factor
+          if (includeMaintenance) {
+               perMonthPrice *= 1.1; // 10% markup for maintenance inclusion
+          }
+
+          // return total price
+          let monthlyLeasePrice = perMonthPrice.toFixed();
+
+          return {
+               carDetails: carDetails,
+               leaseType: leaseType,
+               contractLengthInMonth: contractLengthInMonth,
+               annualMileage: annualMileage,
+               upfrontPayment: upfrontPayment,
+               includeMaintenance: includeMaintenance,
+               monthlyLeasePrice: monthlyLeasePrice,
+          };
+     } catch (error) {
+          throw new Error(error.message);
+     }
 };
 
 const generatePdf = async (
@@ -201,55 +313,87 @@ const generatePdf = async (
      try {
           // Find the car in the database using its ID
           const car = await carDetailModel.findById({ _id: id });
+          const pdfDoc = new PDFDocument({ margin: 50 });
 
-          // Generate a PDF summary of the selected options
-          const pdfDoc = new PDFDocument({ margin: 30 });
-          pdfDoc.pipe(
-               fs.createWriteStream(
-                    `public/pdf/summary_${car._id}_${Date.now()}.pdf`
-               )
-          );
-          // Add an image/logo to the PDF
-          pdfDoc.rect(55, 10, 500, 120).fillAndStroke('#fff', '#000');
-          pdfDoc.fill('black').stroke();
-          pdfDoc.image('public/LeasePlan_Logo.jpg', 60, 20, {
+          pdfDoc.image('public/LeasePlan_Logo.jpg', 50, 50, {
                fit: [100, 100],
           });
+
+          // Add heading and date
+          pdfDoc.fontSize(20).text('Lease Plan Emirates LLC', 200, 70, {
+               align: 'center',
+          });
+          pdfDoc.fontSize(12).text('Abu Dhabi - United Arab Emirates', {
+               align: 'center',
+          });
+          pdfDoc.text('Musaffah Industrial', { align: 'center' });
+          pdfDoc.text('Musaffah', { align: 'center' });
+          pdfDoc.text('Street # 10', { align: 'center' });
+          pdfDoc.moveDown();
+
           pdfDoc
                .fontSize(16)
-               .text('Leaseplan Emirates LLC', 200, 30, { align: 'center' })
+               .text('Car Lease Summary', { align: 'center' })
                .fontSize(12)
-               .text('Abu Dhabi - United Arab Emirates', { align: 'center' })
-               .text('Musaffah Industrial', { align: 'center' })
-               .text('Musaffah', { align: 'center' })
-               .text('Street # 10', { align: 'center' })
-               .moveDown();
+               .text(`Dated: ${new Date().toLocaleDateString()}`, {
+                    align: 'right',
+               });
 
-          pdfDoc.text('Car Lease Summary', 235, 150).text('Dated', 500, 160);
+          pdfDoc.moveDown();
 
-          pdfDoc
-               .text(`Contract length: ${contractLengthInMonth}`, 70, 220)
-               .moveDown(0.3)
-               .text(`fuelType: ${car.fuelType}`)
-               .moveDown(0.3)
-               .text(`Price: ${car.price}`)
-               .moveDown(0.3)
-               .text(`Lease Type: ${leaseType}`)
-               .moveDown(0.3)
-               .text(`Contract length: ${contractLengthInMonth}`)
-               .moveDown(0.3)
-               .text(`Annual Mileage: ${annualMileage}`)
-               .moveDown(0.3)
-               .text(`Upfront Payment: ${upfrontPayment}`)
-               .moveDown(0.3)
-               .text(`Include Maintenance: ${includeMaintenance}`)
-               .moveDown(0.3);
-          pdfDoc
-               .fontSize(14)
-               .text(`Monthly Lease Price: ${monthlyLeasePrice}`)
-               .moveDown(0.3);
+          // Set the column styling
+          pdfDoc.lineWidth(0.5);
+          pdfDoc.fillColor('#000000');
+          pdfDoc.strokeColor('#000000');
+          pdfDoc.font('Helvetica-Bold');
+          const column1X = 100;
+          const column2X = 300;
 
-          // pdfDoc.end();
+          // Add the data in a column-wise form
+
+          pdfDoc.text('Fuel Type:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.text(car.fuelType, column2X, pdfDoc.y);
+
+          pdfDoc.text('Price:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.text(car.price.toString() + ' AED', column2X, pdfDoc.y);
+
+          pdfDoc.text('Lease Type:', column1X, pdfDoc.y, { continued: true });
+          pdfDoc.text(leaseType, column2X, pdfDoc.y);
+
+          pdfDoc.text('Contract Length:', column1X, pdfDoc.y, {
+               continued: true,
+          });
+          pdfDoc.text(contractLengthInMonth + ' months', column2X, pdfDoc.y);
+
+          pdfDoc.text('Annual Mileage:', column1X, pdfDoc.y, {
+               continued: true,
+          });
+          pdfDoc.text(annualMileage.toString() + ' km', column2X, pdfDoc.y);
+
+          pdfDoc.text('Upfront Payment:', column1X, pdfDoc.y, {
+               continued: true,
+          });
+          pdfDoc.text(upfrontPayment.toString() + ' AED', column2X, pdfDoc.y);
+
+          pdfDoc.text('Include Maintenance:', column1X, pdfDoc.y, {
+               continued: true,
+          });
+          pdfDoc.text(includeMaintenance ? 'Yes' : 'No', column2X, pdfDoc.y);
+
+          pdfDoc.text('Monthly Lease Price:', column1X, pdfDoc.y, {
+               continued: true,
+          });
+          pdfDoc.text(
+               monthlyLeasePrice.toString() + ' AED',
+               column2X,
+               pdfDoc.y
+          );
+
+          // End and save the PDF document
+          pdfDoc.end();
+          pdfDoc.pipe(fs.createWriteStream('car_lease_summary.pdf'));
+
+          // Wait for the PDF document to be fully written
           const pdfBuffer = await new Promise((resolve, reject) => {
                const chunks = [];
                pdfDoc.on('data', (chunk) => {
@@ -258,7 +402,6 @@ const generatePdf = async (
                pdfDoc.on('end', () => {
                     resolve(Buffer.concat(chunks));
                });
-               pdfDoc.end();
           });
 
           const summaryDoc = {

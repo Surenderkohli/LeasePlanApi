@@ -77,12 +77,6 @@ router.post(
                          enquiryId,
                          data: enquiryData,
                     });
-                    // const pdfBuffer = generatePdf(
-                    //      { content: htmlTemplate },
-                    //      { format: 'A4' }
-                    // );
-                    // res.setHeader('Content-Type', 'application/pdf');
-                    // res.send(pdfBuffer);
                } catch (error) {
                     console.log(error);
                     res.status(500).send('Error sending enquiry email');

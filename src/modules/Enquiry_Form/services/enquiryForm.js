@@ -72,7 +72,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                     width: 200px;
                     height: auto;
                     margin-bottom: 32px;
-                    filter: invert(100%); /* invert the logo color to white for better contrast */
+                     /* invert the logo color to white for better contrast filter: invert(100%);*/
                   }
                   /* Add your custom styles for the main content */
                   .content {

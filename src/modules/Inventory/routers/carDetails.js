@@ -22,7 +22,7 @@ const carStorage = multer.diskStorage({
 });
 const carUpload = multer({
      storage: carStorage,
-     limits: { fileSize: 2 * 1024 * 1024 },
+     limits: { fileSize: 5 * 1024 * 1024 },
 
      fileFilter(req, file, cb) {
           if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
@@ -83,6 +83,59 @@ router.get(
      })
 );
 
+router.get('/fetch-single/:id/:pdf?', async (req, res) => {
+     try {
+          const { id } = req.params;
+
+          const {
+               leaseType,
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
+               monthlyLeasePrice,
+          } = req.query;
+
+          let result;
+
+          if (req.params.pdf) {
+               // If the user wants a PDF, generate the PDF
+               result = await CarServices.generatePdf(
+                    id,
+                    leaseType,
+                    contractLengthInMonth,
+                    annualMileage,
+                    upfrontPayment,
+                    includeMaintenance,
+                    monthlyLeasePrice
+               );
+
+               res.setHeader('Content-Type', 'application/pdf');
+               res.send(result);
+          } else {
+               // Otherwise, return the car details as JSON
+               result = await CarServices.getSingleCar(
+                    id,
+                    contractLengthInMonth,
+                    annualMileage,
+                    upfrontPayment,
+                    includeMaintenance
+               );
+
+               if (result) {
+                    res.status(200).json({ success: true, data: result });
+               } else {
+                    res.status(404).json({
+                         success: false,
+                         message: 'No car found with the specified id.',
+                    });
+               }
+          }
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
+
 router.post(
      '/add',
      carUpload.array('image', 6),
@@ -129,68 +182,6 @@ router.post(
           }
      })
 );
-
-router.get('/fetch-single/:id/pdf', async (req, res) => {
-     try {
-          const { id } = req.params;
-
-          const {
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               monthlyLeasePrice,
-          } = req.query;
-          const result = await CarServices.generatePdf(
-               id,
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               monthlyLeasePrice
-          );
-
-          res.setHeader('Content-Type', 'application/pdf');
-
-          res.send(result);
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
-
-router.get('/fetch-single/:id', async (req, res) => {
-     try {
-          const { id } = req.params;
-
-          const {
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-          } = req.query;
-
-          const result = await CarServices.getSingleCar(
-               id,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance
-          );
-
-          if (result) {
-               res.status(200).json({ success: true, data: result });
-          } else {
-               res.status(404).json({
-                    success: false,
-                    message: 'No car found with the specified id.',
-               });
-          }
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
 
 router.put(
      '/update/:id',

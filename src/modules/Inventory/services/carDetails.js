@@ -490,6 +490,12 @@ const deleteCar = async (id) => {
      return response;
 };
 
+const getCount = async (query) => {
+     const count = await carDetailModel.countDocuments(query);
+
+     return count;
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -497,4 +503,5 @@ export const CarServices = {
      updateCar,
      deleteCar,
      getSingleCar,
+     getCount,
 };

@@ -163,4 +163,18 @@ router.delete(
      })
 );
 
+router.get(
+     '/count',
+     httpHandler(async (req, res) => {
+          try {
+               const count = await bannerService.getCount({
+                    is_deactivated: false,
+               });
+               res.status(200).json({ success: true, count });
+          } catch (error) {
+               res.status(400).json({ success: false, error: error.message });
+          }
+     })
+);
+
 export default router;

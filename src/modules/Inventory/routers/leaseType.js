@@ -35,6 +35,20 @@ router.put('/update', async (req, res) => {
      res.send(result);
 });
 
+router.get(
+     '/count',
+     httpHandler(async (req, res) => {
+          try {
+               const count = await leaseTypeService.getCount({
+                    is_deactivated: false,
+               });
+               res.status(200).json({ success: true, count });
+          } catch (error) {
+               res.status(400).json({ success: false, error: error.message });
+          }
+     })
+);
+
 // // router.delete(
 // //     '/delete',
 // //     (async (req, res) => {

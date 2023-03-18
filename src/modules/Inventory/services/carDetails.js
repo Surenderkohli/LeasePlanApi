@@ -279,37 +279,32 @@ const getSingleCar = async (
           }
 
           // apply upfrontPayment factor
-          // switch (upfrontPayment) {
-          //      case 1:
-          //           perMonthPrice *= 1.1; // 10% markup for 1-month upfront payment
-          //           break;
-          //      case 3:
-          //           // no discount or markup for 3-month upfront payment
-          //           break;
-          //      case 9:
-          //           perMonthPrice *= 0.95; // 5% discount for 9-month upfront payment
-          //           break;
-          //      case 12:
-          //           perMonthPrice *= 0.9; // 10% discount for 12-month upfront payment
-          //           break;
-          // }
+          switch (upfrontPayment) {
+               case 1:
+                    perMonthPrice *= 1.1; // 10% markup for 1-month upfront payment
+                    break;
+               case 3:
+                    // no discount or markup for 3-month upfront payment
+                    break;
+               case 6:
+                    perMonthPrice *= 0.95; // 5% discount for 6-month upfront payment
+                    break;
+               case 9:
+                    perMonthPrice *= 0.9; // 10% discount for 9-month upfront payment
+                    break;
+               case 12:
+                    perMonthPrice *= 0.85; // 15% discount for 12-month upfront payment
+                    break;
+               default:
+                    throw new Error('Invalid upfront payment.');
+          }
 
-          /* 
-          In this updated code block, we first calculate the remainingLeaseMonths by subtracting the upfront payment months from the contractLengthInMonth.
-          We then check if there are any remaining lease months after subtracting the upfront payment months. If there are, we calculate the total remaining
-          lease price by multiplying the perMonthPrice by the remaining lease months. We then subtract the upfront payment discount from the remaining lease price
-          and divide the result by the remaining lease months to get the updated monthly lease price. This updated monthly lease price takes into account the upfront payment and the remaining lease term.
- */
-          // apply upfrontPayment factor
           if (upfrontPayment > 0) {
                let remainingLeaseMonths =
                     contractLengthInMonth - upfrontPayment;
                if (remainingLeaseMonths > 0) {
-                    let upfrontPaymentDiscount =
-                         upfrontPayment * (perMonthPrice / 2);
                     let remainingLeasePrice =
                          perMonthPrice * remainingLeaseMonths;
-                    remainingLeasePrice -= upfrontPaymentDiscount;
                     perMonthPrice = remainingLeasePrice / remainingLeaseMonths;
                }
           }

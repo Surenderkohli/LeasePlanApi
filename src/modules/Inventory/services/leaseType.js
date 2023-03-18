@@ -42,10 +42,17 @@ const deleteLeaseType = async (id) => {
      return response;
 };
 
+const getCount = async (query) => {
+     const count = await leaseTypeModel.countDocuments(query);
+
+     return count;
+};
+
 export const leaseTypeService = {
      getAllLeaseType,
      getSingleLeaseType,
      updateLeaseType,
      deleteLeaseType,
      addLeaseType,
+     getCount,
 };

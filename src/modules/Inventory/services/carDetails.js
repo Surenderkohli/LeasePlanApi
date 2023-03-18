@@ -152,9 +152,13 @@ const getAllCar = async (
 
 const addNewCar = async (data, carImage) => {
      try {
+          const images = carImage.map((image) => ({
+               imageUrl: image.imageUrl,
+               publicId: image.publicId,
+          }));
           const response = await carDetailModel.create({
                ...data,
-               image: carImage,
+               image: images,
           });
           return response;
      } catch (error) {
@@ -484,6 +488,12 @@ const deleteCar = async (id) => {
      return response;
 };
 
+const getCount = async (query) => {
+     const count = await carDetailModel.countDocuments(query);
+
+     return count;
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -491,4 +501,5 @@ export const CarServices = {
      updateCar,
      deleteCar,
      getSingleCar,
+     getCount,
 };

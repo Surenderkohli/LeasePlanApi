@@ -46,10 +46,17 @@ const deleteBanner = async (id) => {
      return response;
 };
 
+const getCount = async (query) => {
+     const count = await homeBannerModel.countDocuments(query);
+
+     return count;
+};
+
 export const bannerService = {
      addNewBanner,
      getAllBanner,
      getSingleBanner,
      updateBanner,
      deleteBanner,
+     getCount,
 };

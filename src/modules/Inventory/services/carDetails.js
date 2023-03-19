@@ -207,10 +207,10 @@ const addNewCar = async (data, carImage) => {
 
 const getSingleCar = async (
      id,
-     contractLengthInMonth,
-     annualMileage,
-     upfrontPayment,
-     includeMaintenance
+     contractLengthInMonthStr,
+     annualMileageStr,
+     upfrontPaymentStr,
+     includeMaintenanceStr
 ) => {
      try {
           // const leaseType = car.leaseType.leaseType; // Extracting the leaseType value from the car object
@@ -233,6 +233,38 @@ const getSingleCar = async (
           }
 
           const { leaseType: leaseTypeName } = leaseType;
+
+          let contractLengthInMonth = contractLengthInMonthStr
+               ? parseInt(contractLengthInMonthStr)
+               : null;
+
+          let annualMileage = annualMileageStr
+               ? parseInt(annualMileageStr)
+               : null;
+
+          let upfrontPayment = upfrontPaymentStr
+               ? parseInt(upfrontPaymentStr)
+               : null;
+
+          let includeMaintenance = includeMaintenanceStr
+               ? parseInt(includeMaintenanceStr)
+               : null;
+
+          if (leaseTypeName === 'flexi') {
+               contractLengthInMonth = contractLengthInMonth
+                    ? contractLengthInMonth
+                    : 12;
+               annualMileage = annualMileage ? annualMileage : 4000;
+               upfrontPayment = upfrontPayment ? upfrontPayment : 3;
+               includeMaintenance = includeMaintenance ? includeMaintenance : 0;
+          } else {
+               contractLengthInMonth = contractLengthInMonth
+                    ? contractLengthInMonth
+                    : 36;
+               annualMileage = annualMileage ? annualMileage : 8000;
+               upfrontPayment = upfrontPayment ? upfrontPayment : 6;
+               includeMaintenance = includeMaintenance ? includeMaintenance : 0;
+          }
 
           switch (leaseTypeName) {
                case 'flexi':

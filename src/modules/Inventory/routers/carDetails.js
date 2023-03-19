@@ -87,7 +87,7 @@ router.get('/fetch-single/:id/:pdf?', async (req, res) => {
      try {
           const { id } = req.params;
 
-          const {
+          let {
                contractLengthInMonth,
                annualMileage,
                upfrontPayment,
@@ -97,10 +97,10 @@ router.get('/fetch-single/:id/:pdf?', async (req, res) => {
 
           const result = await CarServices.getSingleCar(
                id,
-               parseInt(contractLengthInMonth),
-               parseInt(annualMileage),
-               parseInt(upfrontPayment),
-               parseInt(includeMaintenance),
+               contractLengthInMonth,
+               annualMileage,
+               upfrontPayment,
+               includeMaintenance,
                monthlyLeasePrice
           );
           if (!result) {

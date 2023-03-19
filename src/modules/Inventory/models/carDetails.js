@@ -56,7 +56,7 @@ const carDetailSchema = new mongoose.Schema(
           milesPerGallon: Number,
           annualMileage: {
                type: Number,
-               required: false,
+               enum: [4000, 6000, 8000, 10000, 12000],
           },
           acceleration: {
                type: String,

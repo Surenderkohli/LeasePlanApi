@@ -213,6 +213,7 @@ const getSingleCar = async (
      includeMaintenance
 ) => {
      try {
+          // const leaseType = car.leaseType.leaseType; // Extracting the leaseType value from the car object
           // // Find the car in the database using its ID
           const carDetails = await carDetailModel.findById({ _id: id });
 
@@ -222,16 +223,18 @@ const getSingleCar = async (
           let basePrice = price;
 
           // Retrieve lease type details using leaseTypeId from leasetypes collection
-          const leaseTypes = await leaseTypeModel.findById({
+          const leaseType = await leaseTypeModel.findOne({
                _id: leaseType_id,
+               isDeleted: false, // Assuming you have a isDeleted field to mark records as deleted
           });
 
-          if (!leaseTypes) {
+          if (!leaseType) {
                throw new Error('Lease type details not found');
           }
-          const { leaseType } = leaseTypes;
 
-          switch (leaseType) {
+          const { leaseType: leaseTypeName } = leaseType;
+
+          switch (leaseTypeName) {
                case 'flexi':
                     if (contractLengthInMonth === 6) {
                          basePrice *= 0.8;
@@ -241,6 +244,10 @@ const getSingleCar = async (
                          basePrice *= 0.6;
                     } else if (contractLengthInMonth === 36) {
                          basePrice *= 0.5;
+                    } else {
+                         throw new Error(
+                              'Invalid contract length for flexi lease'
+                         );
                     }
                     break;
                case 'longTerm':
@@ -252,29 +259,67 @@ const getSingleCar = async (
                          basePrice *= 0.4;
                     } else if (contractLengthInMonth === 48) {
                          basePrice *= 0.4;
+                    } else {
+                         throw new Error(
+                              'Invalid contract length for long term lease'
+                         );
                     }
                     break;
+               default:
+                    throw new Error('Invalid lease type');
           }
 
           // convert to monthly price
           let perMonthPrice = basePrice / contractLengthInMonth;
 
           // apply annualMileage factor
-          switch (annualMileage) {
-               case 4000:
-                    perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
+          switch (leaseTypeName) {
+               case 'flexi':
+                    switch (annualMileage) {
+                         case 4000:
+                              perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
+                              break;
+                         case 6000:
+                              // no discount or markup for 6,000 annual mileage
+                              break;
+                         case 8000:
+                              perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
+                              break;
+                         case 10000:
+                              perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
+                              break;
+                         case 12000:
+                              perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
+                              break;
+                         default:
+                              throw new Error(
+                                   'Invalid annual mileage for flexi lease.'
+                              );
+                    }
                     break;
-               case 6000:
-                    // no discount or markup for 6,000 annual mileage
-                    break;
-               case 8000:
-                    perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
-                    break;
-               case 10000:
-                    perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
-                    break;
-               case 12000:
-                    perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
+
+               case 'longTerm':
+                    switch (annualMileage) {
+                         case 4000:
+                              perMonthPrice *= 0.9; // 10% discount for 4,000 annual mileage
+                              break;
+                         case 6000:
+                              // no discount or markup for 6,000 annual mileage
+                              break;
+                         case 8000:
+                              perMonthPrice *= 1.05; // 5% markup for 8,000 annual mileage
+                              break;
+                         case 10000:
+                              perMonthPrice *= 1.1; // 10% markup for 10,000 annual mileage
+                              break;
+                         case 12000:
+                              perMonthPrice *= 1.2; // 20% markup for 12,000 annual mileage
+                              break;
+                         default:
+                              throw new Error(
+                                   'Invalid annual mileage for longTerm lease.'
+                              );
+                    }
                     break;
           }
 
@@ -319,7 +364,7 @@ const getSingleCar = async (
 
           return {
                carDetails: carDetails,
-               leaseType: leaseType,
+               leaseType: leaseTypeName,
                contractLengthInMonth: contractLengthInMonth,
                annualMileage: annualMileage,
                upfrontPayment: upfrontPayment,

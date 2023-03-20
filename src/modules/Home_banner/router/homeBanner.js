@@ -20,16 +20,6 @@ const bannerStorage = multer.diskStorage({
      },
 });
 
-//import { CloudinaryStorage } from 'multer-storage-cloudinary';
-// const bannerStorage = new CloudinaryStorage({
-//      cloudinary: cloudinary,
-//      params: {
-//           folder: 'public/images',
-//           format: async (req, file) => 'png', //set the format of the image
-//           public_id: (req, file) => Date.now() + file.originalname,
-//      },
-// });
-
 // Configure Multer upload middleware
 const upload = multer({
      storage: bannerStorage,

@@ -94,6 +94,18 @@ const carDetailSchema = new mongoose.Schema(
           priceMax: {
                type: Number,
           },
+          roadFundLicense: {
+               type: String,
+               default: 'Included',
+          },
+          roadSideAssist: {
+               type: String,
+               default: 'Included',
+          },
+          standardDelivery: {
+               type: String,
+               default: 'Included',
+          },
      },
      { timestamps: true }
 );

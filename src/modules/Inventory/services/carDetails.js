@@ -373,6 +373,9 @@ const getSingleCar = async (
                includeMaintenance: includeMaintenance,
                monthlyLeasePrice: monthlyLeasePrice,
                upfrontCost: upfrontCost,
+               roadFundLicense: carDetails.roadFundLicense,
+               roadSideAssist: carDetails.roadSideAssist,
+               standardDelivery: carDetails.standardDelivery,
           };
      } catch (error) {
           throw new Error(error.message);

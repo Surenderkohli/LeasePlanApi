@@ -237,4 +237,27 @@ router.get(
      })
 );
 
+router.get(
+     '/best-deals',
+     httpHandler(async (req, res) => {
+          try {
+               const { limit = 3, skip = 0 } = req.query;
+               const result = await CarServices.getBestDeals(
+                    parseInt(limit),
+                    parseInt(skip)
+               );
+               if (result) {
+                    res.status(200).json({ success: true, data: result });
+               } else {
+                    res.status(404).json({
+                         success: false,
+                         message: 'Not found any best deals',
+                    });
+               }
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
+     })
+);
+
 export default router;

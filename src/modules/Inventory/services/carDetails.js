@@ -449,6 +449,17 @@ const getCount = async (query) => {
      return count;
 };
 
+const getBestDeals = async (query) => {
+     const cars = await carDetailModel
+          .find({ query })
+          .populate('carBrand_id')
+          .populate('carSeries_id')
+          .sort({ price: -1 })
+          .limit(5);
+
+     return cars;
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -456,4 +467,5 @@ export const CarServices = {
      deleteCar,
      getSingleCar,
      getCount,
+     getBestDeals,
 };

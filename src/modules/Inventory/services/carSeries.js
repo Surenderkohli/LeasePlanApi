@@ -15,8 +15,19 @@ const getSingleCarSeries = async (id) => {
      return response;
 };
 
+const getAllCarSeriesByBrandId = async (carBrand_id) => {
+     try {
+          const response = await carSeriesModel
+               .find({ carBrand_id })
+               .populate('carBrand_id');
+          return response;
+     } catch (error) {
+          throw new Error('Unable to retrieve car Brand');
+     }
+};
 export const carSeriesService = {
      getSingleCarSeries,
      addCarSeries,
      getAllCarSeries,
+     getAllCarSeriesByBrandId,
 };

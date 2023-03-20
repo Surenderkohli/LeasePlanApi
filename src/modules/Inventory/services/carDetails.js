@@ -336,7 +336,7 @@ const getSingleCar = async (
           }
 
           if (upfrontPayment > 0) {
-               let remainingLeaseMonths =
+               var remainingLeaseMonths =
                     contractLengthInMonth - upfrontPayment;
                if (remainingLeaseMonths > 0) {
                     let remainingLeasePrice =
@@ -353,6 +353,8 @@ const getSingleCar = async (
           // return total price
           let monthlyLeasePrice = perMonthPrice.toFixed();
 
+          let upfrontCost = perMonthPrice.toFixed() * remainingLeaseMonths;
+
           return {
                carDetails: carDetails,
                leaseType: leaseTypeName,
@@ -361,6 +363,7 @@ const getSingleCar = async (
                upfrontPayment: upfrontPayment,
                includeMaintenance: includeMaintenance,
                monthlyLeasePrice: monthlyLeasePrice,
+               upfrontCost: upfrontCost,
           };
      } catch (error) {
           throw new Error(error.message);

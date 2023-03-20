@@ -11,7 +11,9 @@ const getAllCar = async (
      bodyType,
      annualMileage,
      companyName,
-     seriesName
+     seriesName,
+     limit,
+     skip
 ) => {
      try {
           const preFilter = {};
@@ -72,6 +74,13 @@ const getAllCar = async (
                },
                {
                     $unwind: '$leaseType',
+               },
+
+               {
+                    $skip: skip,
+               },
+               {
+                    $limit: limit,
                },
           ];
 

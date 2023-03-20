@@ -54,6 +54,8 @@ router.get(
                     annualMileage,
                     companyName,
                     seriesName,
+                    limit = 10,
+                    skip = 0,
                } = req.query;
 
                const result = await CarServices.getAllCar(
@@ -66,7 +68,9 @@ router.get(
                     bodyType,
                     annualMileage,
                     companyName,
-                    seriesName
+                    seriesName,
+                    parseInt(limit),
+                    parseInt(skip)
                );
 
                if (result.length) {

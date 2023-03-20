@@ -83,7 +83,7 @@ router.get(
      })
 );
 
-router.get('/fetch-single/:id/:pdf?', async (req, res) => {
+router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
 
@@ -108,25 +108,8 @@ router.get('/fetch-single/:id/:pdf?', async (req, res) => {
                     success: false,
                     message: 'No car found with the specified id.',
                });
-               return;
           }
-          if (!req.params.pdf) {
-               res.status(200).json({ success: true, data: result });
-               return;
-          }
-
-          // generate PDF
-          const pdf = await CarServices.generatePdf(
-               id,
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               result.monthlyLeasePrice
-          );
-          res.setHeader('Content-Type', 'application/pdf');
-          res.send(pdf);
+          res.send(result);
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
      }

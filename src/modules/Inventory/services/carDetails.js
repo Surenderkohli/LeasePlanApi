@@ -1,8 +1,5 @@
-import PDFDocument from 'pdfkit';
-import fs from 'fs';
 import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
-import mongoose from 'mongoose';
 
 const getAllCar = async (
      leaseType,
@@ -166,44 +163,6 @@ const addNewCar = async (data, carImage) => {
           res.send({ status: 400, success: false, msg: error.message });
      }
 };
-
-// const getSingleCar = async (id) => {
-//      const aggregateFilter = [
-//           {
-//                $match: {
-//                     _id: mongoose.Types.ObjectId(id), // convert the string id to an ObjectId
-//                },
-//           },
-//           {
-//                $lookup: {
-//                     from: 'carfeatures', // the name of the collection to join with
-//                     localField: 'carFeatures_id',
-//                     foreignField: '_id',
-//                     as: 'carFeature', // the name of the array to store the joined documents
-//                },
-//           },
-//           {
-//                $lookup: {
-//                     from: 'carbrands',
-//                     localField: 'carBrand_id',
-//                     foreignField: '_id',
-//                     as: 'carBrand',
-//                },
-//           },
-//           {
-//                $lookup: {
-//                     from: 'leasetypes',
-//                     localField: 'leaseType_id',
-//                     foreignField: '_id',
-//                     as: 'leaseType',
-//                },
-//           },
-//      ];
-
-//      const result = await carDetailModel.aggregate(aggregateFilter);
-
-//      return result;
-// };
 
 const getSingleCar = async (
      id,
@@ -408,117 +367,6 @@ const getSingleCar = async (
      }
 };
 
-const generatePdf = async (
-     id,
-     leaseType,
-     contractLengthInMonth,
-     annualMileage,
-     upfrontPayment,
-     includeMaintenance,
-     monthlyLeasePrice
-) => {
-     try {
-          // Find the car in the database using its ID
-          const car = await carDetailModel.findById({ _id: id });
-          const pdfDoc = new PDFDocument({ margin: 50 });
-
-          pdfDoc.image('public/LeasePlan_Logo.jpg', 50, 50, {
-               fit: [100, 100],
-          });
-
-          pdfDoc.fontSize(20).text('Lease Plan Emirates LLC', {
-               align: 'center',
-          });
-          pdfDoc.fontSize(12).text('Abu Dhabi - United Arab Emirates', {
-               align: 'center',
-          });
-          pdfDoc.moveDown();
-
-          pdfDoc
-               .fontSize(16)
-               .text('Car Lease Summary', { align: 'center' })
-               .fontSize(12)
-               .text(`Dated: ${new Date().toLocaleDateString()}`, {
-                    align: 'right',
-               });
-
-          pdfDoc.moveDown();
-
-          // Set the column styling
-          pdfDoc.lineWidth(0.5);
-          pdfDoc.fillColor('#000000');
-          pdfDoc.strokeColor('#000000');
-          pdfDoc.font('Helvetica-Bold');
-
-          const column1X = 50;
-          const column2X = 350;
-          const rowSpacing = 25;
-
-          // Add the data in a column-wise form
-          pdfDoc.text('Fuel Type:', column1X, pdfDoc.y);
-          pdfDoc.text(car.fuelType, column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Price:', column1X, pdfDoc.y);
-          pdfDoc.text(car.price + ' AED', column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Lease Type:', column1X, pdfDoc.y);
-          pdfDoc.text(leaseType, column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Contract Length:', column1X, pdfDoc.y);
-          pdfDoc.text(contractLengthInMonth + ' months', column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Annual Mileage:', column1X, pdfDoc.y);
-          pdfDoc.text(annualMileage + ' km', column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Upfront Payment:', column1X, pdfDoc.y);
-          pdfDoc.text(upfrontPayment + ' AED', column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Include Maintenance:', column1X, pdfDoc.y);
-          pdfDoc.text(includeMaintenance ? 'Yes' : 'No', column2X, pdfDoc.y);
-
-          pdfDoc.moveDown();
-          pdfDoc.text('Monthly Lease Price:', column1X, pdfDoc.y);
-          pdfDoc.text(monthlyLeasePrice + ' AED', column2X, pdfDoc.y);
-
-          // End and save the PDF document
-          pdfDoc.end();
-          pdfDoc.pipe(fs.createWriteStream('car_lease_summary.pdf'));
-
-          // Wait for the PDF document to be fully written
-          const pdfBuffer = await new Promise((resolve, reject) => {
-               const chunks = [];
-               pdfDoc.on('data', (chunk) => {
-                    chunks.push(chunk);
-               });
-               pdfDoc.on('end', () => {
-                    resolve(Buffer.concat(chunks));
-               });
-          });
-
-          const summaryDoc = {
-               id,
-               leaseType,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               monthlyLeasePrice,
-               summary: pdfBuffer,
-          };
-          await carDetailModel.create(summaryDoc);
-
-          return pdfBuffer;
-     } catch (error) {
-          throw new Error(error.message);
-     }
-};
-
 const updateCar = async (id, data) => {
      try {
           const carDetail = await carDetailModel.findById(id);
@@ -589,7 +437,6 @@ const getCount = async (query) => {
 export const CarServices = {
      getAllCar,
      addNewCar,
-     generatePdf,
      updateCar,
      deleteCar,
      getSingleCar,

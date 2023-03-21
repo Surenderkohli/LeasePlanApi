@@ -197,9 +197,16 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
      }
 };
 
+const getCount = async (query) => {
+     const count = await enquiryFormModel.countDocuments(query);
+
+     return count;
+};
+
 export const enquiryFormService = {
      addForm,
      getAllForm,
      getSingleForm,
      sendEnquiryEmail,
+     getCount,
 };

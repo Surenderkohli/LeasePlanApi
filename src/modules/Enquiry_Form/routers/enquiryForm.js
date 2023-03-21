@@ -114,6 +114,18 @@ router.get(
 );
 
 router.get(
+     '/forms/count',
+     httpHandler(async (req, res) => {
+          try {
+               const count = await enquiryFormService.getCount();
+               res.status(200).json({ success: true, count });
+          } catch (error) {
+               res.status(400).json({ success: false, error: error.message });
+          }
+     })
+);
+
+router.get(
      '/:id/download',
      httpHandler(async (req, res) => {
           try {

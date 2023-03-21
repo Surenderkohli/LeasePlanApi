@@ -6,6 +6,7 @@ import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
 import { isAdmin, protect, isAuthenticated } from '../middleware/auth.js';
 import { v2 as cloudinary } from 'cloudinary';
+import bcrypt from 'bcrypt';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -108,6 +109,10 @@ router.post(
 
                const user = await userService.login(email, password);
 
+               if (!user || !(await user.matchPassword(password))) {
+                    throw new Error('Invalid email or password');
+               }
+
                res.status(200).send({
                     success: true,
                     data: {
@@ -118,7 +123,7 @@ router.post(
                     },
                });
           } catch (error) {
-               res.send({ status: 500, success: false, msg: error.message });
+               res.status(400).send({ success: false, msg: error.message });
           }
      })
 );

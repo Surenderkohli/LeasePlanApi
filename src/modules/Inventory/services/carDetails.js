@@ -428,7 +428,7 @@ const updateCar = async (id, data) => {
 
 const deleteCar = async (id) => {
      try {
-          const response = await carDetailModel.remove(
+          const response = await carDetailModel.deleteOne(
                { _id: id },
                { isDeleted: true }
           );

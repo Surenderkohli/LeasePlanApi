@@ -443,10 +443,37 @@ const deleteCar = async (id) => {
      return response;
 };
 
-const getCount = async (query) => {
-     const count = await carDetailModel.countDocuments(query);
+const getCount = async () => {
+     const counts = await carDetailModel.aggregate([
+          {
+               $match: { isDeleted: false },
+          },
+          {
+               $lookup: {
+                    from: 'leasetypes',
+                    localField: 'leaseType_id',
+                    foreignField: '_id',
+                    as: 'leaseType',
+               },
+          },
+          {
+               $unwind: '$leaseType',
+          },
+          {
+               $group: {
+                    _id: '$leaseType.leaseType',
+                    count: { $sum: 1 },
+               },
+          },
+     ]);
 
-     return count;
+     const countObject = { flexiCount: 0, longTermCount: 0 };
+     counts.forEach((count) => {
+          if (count._id === 'flexi') countObject.flexiCount = count.count;
+          if (count._id === 'longTerm') countObject.longTermCount = count.count;
+     });
+
+     return countObject;
 };
 
 const getBestDeals = async (query) => {

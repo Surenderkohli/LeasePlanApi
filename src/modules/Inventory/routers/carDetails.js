@@ -227,10 +227,12 @@ router.get(
      '/count',
      httpHandler(async (req, res) => {
           try {
-               const count = await CarServices.getCount({
-                    is_deactivated: false,
+               const counts = await CarServices.getCount();
+               res.status(200).json({
+                    success: true,
+                    flexiCount: counts.flexiCount,
+                    longTermCount: counts.longTermCount,
                });
-               res.status(200).json({ success: true, count });
           } catch (error) {
                res.status(400).json({ success: false, error: error.message });
           }

@@ -54,9 +54,13 @@ router.get(
                     annualMileage,
                     companyName,
                     seriesName,
-                    limit = 10,
-                    skip = 0,
                } = req.query;
+
+               const limit = parseInt(req.query.limit) || 10;
+               const skip = parseInt(req.query.skip) || 0;
+
+               console.log('limit', limit);
+               console.log('skip', skip);
 
                const result = await CarServices.getAllCar(
                     leaseType,
@@ -69,8 +73,8 @@ router.get(
                     annualMileage,
                     companyName,
                     seriesName,
-                    parseInt(limit),
-                    parseInt(skip)
+                    limit,
+                    skip
                );
 
                if (result.length) {

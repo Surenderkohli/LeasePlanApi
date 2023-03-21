@@ -55,6 +55,10 @@ const carFeatureSchema = new mongoose.Schema({
           type: TechnicalSpecsSchema,
           required: false,
      },
+     isDeleted: {
+          type: Boolean,
+          default: false,
+     },
 });
 
 export default mongoose.model('carFeature', carFeatureSchema);

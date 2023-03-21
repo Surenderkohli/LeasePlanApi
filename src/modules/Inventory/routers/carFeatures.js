@@ -42,4 +42,17 @@ router.post(
      })
 );
 
+router.delete(
+     '/delete/:id',
+     httpHandler(async (req, res) => {
+          const data = req.body;
+          const { id } = req.params;
+          const result = await carFeatureService.deleteCarFeatures(
+               id,
+               req.body
+          );
+          res.send(result);
+     })
+);
+
 export default router;

@@ -20,9 +20,17 @@ router.get(
 router.get(
      '/:id',
      httpHandler(async (req, res) => {
-          const { id } = req.params;
-          const result = await carFeatureService.getSingleCarFeature(id);
-          res.send(result);
+          try {
+               const { id } = req.params;
+               const result = await carFeatureService.getSingleCarFeature(id);
+               res.status(200).json({
+                    success: true,
+                    data: result,
+               });
+          } catch (error) {
+               console.error(error);
+               res.status(400).json({ success: false, error: error.message });
+          }
      })
 );
 

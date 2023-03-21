@@ -17,7 +17,7 @@ const getSingleCarFeature = async (id) => {
 };
 const deleteCarFeatures = async (id) => {
      try {
-          const response = await carFeatureModel.remove(
+          const response = await carFeatureModel.deleteOne(
                { _id: id },
                { isDeleted: true }
           );

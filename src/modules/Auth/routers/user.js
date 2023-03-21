@@ -47,19 +47,38 @@ router.post(
      profileUpload.single('profile'),
      httpHandler(async (req, res) => {
           try {
-               let result = await cloudinary.uploader.upload(req.file.path); // Upload image to Cloudinary
-
-               const imageUrl = result.secure_url; // Get the URL of the uploaded image
-               const publicId = result.public_id; // Get the public ID of the uploaded image
-
                const { name, email, password, roles } = req.body;
+
+               const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+               if (!emailRegex.test(email)) {
+                    res.status(400).json({
+                         success: false,
+                         error: 'Invalid email',
+                    });
+                    return;
+               }
+
+               let imageUrl, publicId;
+
+               if (req.file && req.file.path) {
+                    const result = await cloudinary.uploader.upload(
+                         req.file.path
+                    );
+                    imageUrl = result.secure_url;
+                    publicId = result.public_id;
+               }
+
                const data = { name, email, password, roles };
 
                const userExists = await userModel.findOne({ email });
 
                if (userExists) {
-                    res.status(409); // Conflict status code for existing resource
-                    throw new Error('User already exists');
+                    res.status(409).json({
+                         success: false,
+                         error: 'User already exists',
+                    });
+                    return;
                }
 
                const profileData = { imageUrl, publicId };
@@ -72,7 +91,11 @@ router.post(
                     token: generateToken(user._id, user.roles),
                });
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               console.error(error);
+               res.status(500).json({
+                    success: false,
+                    error: 'Internal server error',
+               });
           }
      })
 );

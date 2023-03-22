@@ -4,6 +4,7 @@ const leaseTypeSchema = new mongoose.Schema(
      {
           leaseType: {
                type: String,
+               enum: ['flexi', 'longTerm'],
           },
 
           isDeleted: {

@@ -15,6 +15,16 @@ const getSingleCarFeature = async (id) => {
      const response = await carFeatureModel.findById(id);
      return response;
 };
+
+const updateCarFeatures = async (id, data) => {
+     const response = await carFeatureModel.findByIdAndUpdate(
+          { _id: id },
+          { $set: data },
+          { new: true }
+     );
+     return response;
+};
+
 const deleteCarFeatures = async (id) => {
      try {
           const response = await carFeatureModel.deleteOne(
@@ -32,4 +42,5 @@ export const carFeatureService = {
      addCarFeature,
      getSingleCarFeature,
      deleteCarFeatures,
+     updateCarFeatures,
 };

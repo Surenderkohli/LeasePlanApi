@@ -50,6 +50,25 @@ router.post(
      })
 );
 
+router.put(
+     '/update/:id',
+     httpHandler(async (req, res) => {
+          try {
+               const data = req.body;
+               const { id } = req.params;
+
+               const result = await carFeatureService.updateCarFeatures(
+                    id,
+                    data
+               );
+               res.status(200).json({ success: true, data: result });
+          } catch {
+               console.log(error);
+               res.status(500).send('Server error');
+          }
+     })
+);
+
 router.delete(
      '/delete/:id',
      httpHandler(async (req, res) => {

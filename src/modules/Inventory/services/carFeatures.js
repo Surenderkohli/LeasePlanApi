@@ -23,13 +23,8 @@ const deleteCarFeatures = async (id) => {
           );
           return response;
      } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
+          console.log(error);
      }
-     const response = await carDetailModel.remove(
-          { _id: id },
-          { isDeleted: true }
-     );
-     return response;
 };
 
 export const carFeatureService = {

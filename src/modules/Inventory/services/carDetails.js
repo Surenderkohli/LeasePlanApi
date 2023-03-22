@@ -487,6 +487,20 @@ const getBestDeals = async (query) => {
      return cars;
 };
 
+const getSingleCars = async (id) => {
+     try {
+          const car = await carDetailModel
+               .find({ _id: id })
+               .populate('carBrand_id')
+               .populate('carSeries_id')
+               .populate('leaseType_id');
+
+          return car;
+     } catch (error) {
+          console.log(error);
+     }
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -495,4 +509,5 @@ export const CarServices = {
      getSingleCar,
      getCount,
      getBestDeals,
+     getSingleCars,
 };

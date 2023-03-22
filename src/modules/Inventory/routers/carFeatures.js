@@ -9,9 +9,10 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const carFeatures = await carFeatureService.getAllCarFeature();
-               res.status(200).json(carFeatures);
+
+               res.status(200).json({ success: true, data: carFeatures });
           } catch (error) {
-               console.error(error);
+               console.log(error);
                res.status(500).send('Server error');
           }
      })
@@ -42,7 +43,7 @@ router.post(
                const carFeature = await carFeatureService.addCarFeature(
                     carFeatureData
                );
-               res.status(201).json(carFeature);
+               res.status(201).json({ success: true, data: carFeature });
           } catch (error) {
                console.error(error);
                res.status(500).send('Server error');

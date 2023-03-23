@@ -201,4 +201,39 @@ router.put(
      })
 );
 
+router.post('/change_password', async (req, res) => {
+     try {
+          const { email, oldPassword, newPassword } = req.body;
+          const response = await userService.changePassword(
+               email,
+               oldPassword,
+               newPassword
+          );
+          res.send(response);
+     } catch (err) {
+          console.log(err);
+          if (err.message === 'User not found') {
+               res.status(400).send({
+                    success: false,
+                    msg: 'User not found',
+               });
+          } else if (err.message === 'Old password is incorrect') {
+               res.status(400).send({
+                    success: false,
+                    msg: 'Old password is incorrect',
+               });
+          } else if (
+               err.message ===
+               'New password must be different from old password'
+          ) {
+               res.status(400).send({
+                    success: false,
+                    msg: 'New password must be different from old password',
+               });
+          } else {
+               res.status(500).send('Internal server error');
+          }
+     }
+});
+
 export default router;

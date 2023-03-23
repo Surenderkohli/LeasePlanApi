@@ -1,4 +1,5 @@
 import userModel from '../models/user.js';
+import bcrypt from 'bcrypt';
 
 const getAllUsers = async (query) => {
      try {
@@ -56,10 +57,32 @@ const updateUser = async (id, data) => {
      }
 };
 
+const changePassword = async (email, oldPassword, newPassword) => {
+     const user = await userModel.findOne({ email });
+     if (!user) {
+          throw new Error('User not found');
+     }
+     const isMatch = await user.matchPassword(oldPassword);
+     if (!isMatch) {
+          throw new Error('Old password is incorrect');
+     }
+
+     if (oldPassword === newPassword) {
+          throw new Error('New password must be different from old password');
+     }
+
+     // Update password
+     user.password = newPassword;
+     await user.save();
+
+     return { message: 'Password changed successfully' };
+};
+
 export const userService = {
      register,
      login,
      updateUser,
      getAllUsers,
      getSingleUser,
+     changePassword,
 };

@@ -213,12 +213,12 @@ router.post('/change_password', async (req, res) => {
      } catch (err) {
           console.log(err);
           if (err.message === 'User not found') {
-               res.status(400).send({
+               res.status(404).send({
                     success: false,
                     msg: 'User not found',
                });
           } else if (err.message === 'Old password is incorrect') {
-               res.status(400).send({
+               res.status(401).send({
                     success: false,
                     msg: 'Old password is incorrect',
                });
@@ -231,7 +231,7 @@ router.post('/change_password', async (req, res) => {
                     msg: 'New password must be different from old password',
                });
           } else {
-               res.status(500).send('Internal server error');
+               res.status(500).send('An unexpected error occurred');
           }
      }
 });

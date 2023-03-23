@@ -116,8 +116,7 @@ const verifyOTP = async (email, OTP) => {
 };
 
 const resetPassword = async (user, newPassword) => {
-     const salt = await bcrypt.genSalt(10);
-     user.password = await bcrypt.hash(newPassword, salt);
+     user.password = newPassword;
      user.otp = null;
      await user.save();
 };

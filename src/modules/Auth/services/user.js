@@ -86,7 +86,7 @@ const forgotPassword = async (email) => {
      const OTP = Math.floor(100000 + Math.random() * 900000);
 
      //Save the OTP in the user's document
-     const user = await userModel.findOneAndUpdate({ email }, { OTP });
+     const user = await userModel.findOneAndUpdate({ email }, { otp: OTP });
 
      if (!user) {
           throw new Error('User not found');
@@ -105,6 +105,23 @@ const forgotPassword = async (email) => {
      return response;
 };
 
+const verifyOTP = async (email, OTP) => {
+     const user = await userModel.findOne({ email });
+
+     if (!user || user.otp !== parseInt(OTP)) {
+          return null;
+     }
+
+     return user;
+};
+
+const resetPassword = async (user, newPassword) => {
+     const salt = await bcrypt.genSalt(10);
+     user.password = await bcrypt.hash(newPassword, salt);
+     user.otp = null;
+     await user.save();
+};
+
 export const userService = {
      register,
      login,
@@ -113,4 +130,6 @@ export const userService = {
      getSingleUser,
      changePassword,
      forgotPassword,
+     verifyOTP,
+     resetPassword,
 };

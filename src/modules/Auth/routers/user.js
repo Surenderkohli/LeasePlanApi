@@ -260,4 +260,38 @@ router.post('/forgot_password', profileUpload.none(), async (req, res) => {
      }
 });
 
+router.post('/reset_password', profileUpload.none(), async (req, res) => {
+     try {
+          const { email, otp, newPassword } = req.body;
+
+          // const result = await userService.verifyOTP(email, otp);
+
+          const user = await userService.verifyOTP(email, otp);
+
+          if (!user) {
+               return res.status(400).send({
+                    success: false,
+                    msg: 'Invalid OTP',
+               });
+          }
+
+          await userService.resetPassword(user, newPassword);
+
+          res.status(200).send({
+               success: true,
+               msg: 'Password reset successful',
+          });
+     } catch (error) {
+          if (error.message === 'User not found') {
+               res.status(404).send({
+                    success: false,
+                    msg: 'User not found',
+               });
+          } else {
+               console.log(error);
+               res.status(500).send('An unexpected error occurred');
+          }
+     }
+});
+
 export default router;

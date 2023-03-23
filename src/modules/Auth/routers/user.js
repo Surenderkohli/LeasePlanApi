@@ -6,7 +6,6 @@ import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
 import { isAdmin, protect, isAuthenticated } from '../middleware/auth.js';
 import { v2 as cloudinary } from 'cloudinary';
-import bcrypt from 'bcrypt';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -201,14 +200,16 @@ router.put(
      })
 );
 
-router.post('/change_password', async (req, res) => {
+router.post('/change_password', profileUpload.none(), async (req, res) => {
      try {
           const { email, oldPassword, newPassword } = req.body;
+
           const response = await userService.changePassword(
                email,
                oldPassword,
                newPassword
           );
+
           res.send(response);
      } catch (err) {
           console.log(err);

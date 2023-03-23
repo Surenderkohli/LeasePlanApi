@@ -1,5 +1,8 @@
 import userModel from '../models/user.js';
 import bcrypt from 'bcrypt';
+import sgMail from '@sendgrid/mail';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const getAllUsers = async (query) => {
      try {
@@ -78,6 +81,30 @@ const changePassword = async (email, oldPassword, newPassword) => {
      return { message: 'Password changed successfully' };
 };
 
+const forgotPassword = async (email) => {
+     //Generate a 6 digit OTP
+     const OTP = Math.floor(100000 + Math.random() * 900000);
+
+     //Save the OTP in the user's document
+     const user = await userModel.findOneAndUpdate({ email }, { OTP });
+
+     if (!user) {
+          throw new Error('User not found');
+     }
+
+     //Send email with OTP using SendGrid
+     const msg = {
+          to: 'plaxonic1234@gmail.com',
+          from: 'dhananjay@plaxonic.com', // Change to your verified sender
+          subject: 'Password Reset Request',
+          text: `Your OTP is ${OTP}`,
+          html: `Your OTP is <strong>${OTP}</strong>`,
+     };
+
+     const response = await sgMail.send(msg);
+     return response;
+};
+
 export const userService = {
      register,
      login,
@@ -85,4 +112,5 @@ export const userService = {
      getAllUsers,
      getSingleUser,
      changePassword,
+     forgotPassword,
 };

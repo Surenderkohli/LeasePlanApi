@@ -12,6 +12,7 @@
   "author": "plaxonic2023",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",

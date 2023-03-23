@@ -211,20 +211,20 @@ router.post('/change_password', profileUpload.none(), async (req, res) => {
           );
 
           res.send(response);
-     } catch (err) {
-          console.log(err);
-          if (err.message === 'User not found') {
+     } catch (error) {
+          console.log(error);
+          if (error.message === 'User not found') {
                res.status(404).send({
                     success: false,
                     msg: 'User not found',
                });
-          } else if (err.message === 'Old password is incorrect') {
+          } else if (error.message === 'Old password is incorrect') {
                res.status(401).send({
                     success: false,
                     msg: 'Old password is incorrect',
                });
           } else if (
-               err.message ===
+               error.message ===
                'New password must be different from old password'
           ) {
                res.status(400).send({
@@ -232,6 +232,29 @@ router.post('/change_password', profileUpload.none(), async (req, res) => {
                     msg: 'New password must be different from old password',
                });
           } else {
+               res.status(500).send('An unexpected error occurred');
+          }
+     }
+});
+
+router.post('/forgot_password', profileUpload.none(), async (req, res) => {
+     try {
+          const { email } = req.body;
+
+          await userService.forgotPassword(email);
+
+          res.status(200).send({
+               success: true,
+               msg: 'An email with the OTP has been sent to your email address',
+          });
+     } catch (error) {
+          if (error.message === 'User not found') {
+               res.status(404).send({
+                    success: false,
+                    msg: 'User not found',
+               });
+          } else {
+               console.log(error);
                res.status(500).send('An unexpected error occurred');
           }
      }

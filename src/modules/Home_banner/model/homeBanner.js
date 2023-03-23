@@ -29,15 +29,14 @@ const homebannerSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
-          is_deactivated: {
-               type: Boolean,
-               default: false,
+          link: {
+               type: String,
+               required: false,
           },
-          from: {
-               type: Number,
-          },
-          to: {
-               type: Number,
+          status: {
+               type: String,
+               enum: ['active', 'inactive'],
+               default: 'inactive',
           },
      },
      { timestamps: true }

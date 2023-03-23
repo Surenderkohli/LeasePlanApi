@@ -52,6 +52,18 @@ const getCount = async (query) => {
      return count;
 };
 
+const getBanner = async (id) => {
+     try {
+          const banner = await homeBannerModel.findOne({
+               _id: id,
+               status: 'active',
+          });
+          return banner;
+     } catch (error) {
+          throw new Error(error.message);
+     }
+};
+
 export const bannerService = {
      addNewBanner,
      getAllBanner,
@@ -59,4 +71,5 @@ export const bannerService = {
      updateBanner,
      deleteBanner,
      getCount,
+     getBanner,
 };

@@ -158,7 +158,7 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const count = await bannerService.getCount({
-                    is_deactivated: false,
+                    status: 'active',
                });
                res.status(200).json({ success: true, count });
           } catch (error) {
@@ -166,5 +166,32 @@ router.get(
           }
      })
 );
+
+router.get('/status/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+
+          const banner = await bannerService.getBanner(id);
+
+          if (banner) {
+               // If the banner is active, return the banner
+               res.json({
+                    status: 'success',
+                    banner: banner,
+               });
+          } else {
+               // If the banner is inactive or not found, disable the banner
+               res.json({
+                    status: 'success',
+                    banner: null,
+               });
+          }
+     } catch (error) {
+          res.status(500).json({
+               status: 'error',
+               message: error.message,
+          });
+     }
+});
 
 export default router;

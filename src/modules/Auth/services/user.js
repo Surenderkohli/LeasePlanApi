@@ -94,7 +94,7 @@ const forgotPassword = async (email) => {
 
      //Send email with OTP using SendGrid
      const msg = {
-          to: 'plaxonic1234@gmail.com',
+          to: [email],
           from: 'dhananjay@plaxonic.com', // Change to your verified sender
           subject: 'Password Reset Request',
           text: `Your OTP is ${OTP}`,

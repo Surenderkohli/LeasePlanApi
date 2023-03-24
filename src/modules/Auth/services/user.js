@@ -121,6 +121,13 @@ const resetPassword = async (user, newPassword) => {
      await user.save();
 };
 
+const deleteUser = async (id) => {
+     const response = await userModel.findOneAndDelete({
+          _id: id,
+     });
+     return response;
+};
+
 export const userService = {
      register,
      login,
@@ -131,4 +138,5 @@ export const userService = {
      forgotPassword,
      verifyOTP,
      resetPassword,
+     deleteUser,
 };

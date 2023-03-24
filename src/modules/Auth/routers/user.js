@@ -294,4 +294,21 @@ router.post('/reset_password', profileUpload.none(), async (req, res) => {
      }
 });
 
+router.delete('/delete/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          const user = await userService.deleteUser(id);
+
+          res.status(200).send({
+               success: true,
+               msg: 'User deleted successfully',
+          });
+     } catch (error) {
+          res.status(400).send({
+               success: false,
+               error: error.message,
+          });
+     }
+});
+
 export default router;

@@ -116,8 +116,8 @@ const forgotPassword = async (email) => {
      return response;
 };
 
-const verifyOTP = async (email, OTP) => {
-     const user = await userModel.findOne({ email });
+const verifyOTP = async (OTP) => {
+     const user = await userModel.findOne({ otp: OTP });
 
      if (!user || user.otp !== parseInt(OTP)) {
           return null;

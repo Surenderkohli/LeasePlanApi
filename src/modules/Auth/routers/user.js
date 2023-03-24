@@ -276,11 +276,9 @@ router.post('/forgot_password', profileUpload.none(), async (req, res) => {
 
 router.post('/reset_password', profileUpload.none(), async (req, res) => {
      try {
-          const { email, otp, newPassword } = req.body;
+          const { otp, newPassword } = req.body;
 
-          // const result = await userService.verifyOTP(email, otp);
-
-          const user = await userService.verifyOTP(email, otp);
+          const user = await userService.verifyOTP(otp);
 
           if (!user) {
                return res.status(400).send({

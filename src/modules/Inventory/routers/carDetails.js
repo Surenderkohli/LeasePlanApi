@@ -52,8 +52,7 @@ router.get(
                     priceMax,
                     bodyType,
                     annualMileage,
-                    companyName,
-                    seriesName,
+                    querySrch,
                } = req.query;
 
                const limit = parseInt(req.query.limit) || 10;
@@ -68,8 +67,7 @@ router.get(
                     priceMax,
                     bodyType,
                     annualMileage,
-                    companyName,
-                    seriesName,
+                    querySrch,
                     limit,
                     skip
                );
@@ -277,5 +275,3 @@ router.get('/fetch-singles/:id', async (req, res) => {
 });
 
 export default router;
-
-//Query and carDetails

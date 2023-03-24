@@ -268,7 +268,7 @@ router.get('/fetch-singles/:id', async (req, res) => {
 
           const result = await CarServices.getSingleCars(id);
 
-          res.status(200).json({ success: true, data: result });
+          res.status(200).json({ success: true, data: result[0] });
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
      }

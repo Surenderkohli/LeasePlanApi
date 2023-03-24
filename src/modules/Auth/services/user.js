@@ -60,8 +60,14 @@ const updateUser = async (id, data) => {
      }
 };
 
-const changePassword = async (email, oldPassword, newPassword) => {
-     const user = await userModel.findOne({ email });
+const changePassword = async (
+     userId,
+     oldPassword,
+     newPassword,
+     confirmPassword
+) => {
+     const user = await userModel.findById({ _id: userId });
+
      if (!user) {
           throw new Error('User not found');
      }
@@ -72,6 +78,11 @@ const changePassword = async (email, oldPassword, newPassword) => {
 
      if (oldPassword === newPassword) {
           throw new Error('New password must be different from old password');
+     }
+
+     // Check if new password and confirm password match
+     if (newPassword !== confirmPassword) {
+          throw new Error('New password and confirm password do not match');
      }
 
      // Update password

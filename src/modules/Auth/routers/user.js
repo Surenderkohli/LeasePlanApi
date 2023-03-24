@@ -200,42 +200,56 @@ router.put(
      })
 );
 
-router.post('/change_password', profileUpload.none(), async (req, res) => {
-     try {
-          const { email, oldPassword, newPassword } = req.body;
+router.post(
+     '/change_password',
+     profileUpload.none(),
+     protect,
+     async (req, res) => {
+          try {
+               const { oldPassword, newPassword, confirmPassword } = req.body;
 
-          const response = await userService.changePassword(
-               email,
-               oldPassword,
-               newPassword
-          );
+               const response = await userService.changePassword(
+                    req.user.id,
+                    oldPassword,
+                    newPassword,
+                    confirmPassword
+               );
 
-          res.send(response);
-     } catch (error) {
-          console.log(error);
-          if (error.message === 'User not found') {
-               res.status(404).send({
-                    success: false,
-                    msg: 'User not found',
-               });
-          } else if (error.message === 'Old password is incorrect') {
-               res.status(401).send({
-                    success: false,
-                    msg: 'Old password is incorrect',
-               });
-          } else if (
-               error.message ===
-               'New password must be different from old password'
-          ) {
-               res.status(400).send({
-                    success: false,
-                    msg: 'New password must be different from old password',
-               });
-          } else {
-               res.status(500).send('An unexpected error occurred');
+               res.send(response);
+          } catch (error) {
+               console.log(error);
+               if (error.message === 'User not found') {
+                    res.status(404).send({
+                         success: false,
+                         msg: 'User not found',
+                    });
+               } else if (error.message === 'Old password is incorrect') {
+                    res.status(401).send({
+                         success: false,
+                         msg: 'Old password is incorrect',
+                    });
+               } else if (
+                    error.message ===
+                    'New password must be different from old password'
+               ) {
+                    res.status(400).send({
+                         success: false,
+                         msg: 'New password must be different from old password',
+                    });
+               } else if (
+                    error.message ===
+                    'New password and confirm password do not match'
+               ) {
+                    res.status(400).send({
+                         success: false,
+                         msg: 'New password and confirm password do not match',
+                    });
+               } else {
+                    res.status(500).send('An unexpected error occurred');
+               }
           }
      }
-});
+);
 
 router.post('/forgot_password', profileUpload.none(), async (req, res) => {
      try {

@@ -59,9 +59,6 @@ router.get(
                const limit = parseInt(req.query.limit) || 10;
                const skip = parseInt(req.query.skip) || 0;
 
-               console.log('limit', limit);
-               console.log('skip', skip);
-
                const result = await CarServices.getAllCar(
                     leaseType,
                     carBrand,
@@ -80,9 +77,10 @@ router.get(
                if (result.length) {
                     res.status(200).json({ success: true, data: result });
                } else {
-                    res.status(404).json({
+                    res.status(200).json({
                          success: false,
                          message: 'No cars found with the given filters.',
+                         data: [],
                     });
                }
           } catch (error) {
@@ -279,3 +277,5 @@ router.get('/fetch-singles/:id', async (req, res) => {
 });
 
 export default router;
+
+//Query and carDetails

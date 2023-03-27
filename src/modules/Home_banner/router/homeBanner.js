@@ -62,16 +62,29 @@ router.post(
                const imageUrl = result.secure_url; // Get the URL of the uploaded image
                const publicId = result.public_id; // Get the public ID of the uploaded image
 
+               //Check whether the status value is valid
+               const { status } = req.body;
+               if (status && !['active', 'inactive'].includes(status)) {
+                    throw new Error('Invalid status value');
+               }
+
                // Save Cloudinary image URL and public ID in the database
                const data = req.body;
-               const bannerData = { imageUrl, publicId };
+               const bannerData = { imageUrl, publicId, status };
 
-               result = await bannerService.addNewBanner(data, bannerData);
+               result = await bannerService.addNewBanner(
+                    data,
+                    bannerData,
+                    status
+               );
                res.send(result);
           } catch (error) {
                let statusCode = 500; // Default status code
                let message = 'Internal server error'; // Default error message
-               if (error.message === 'Image not provided or invalid') {
+               if (
+                    error.message === 'Image not provided or invalid' ||
+                    error.message === 'Invalid status value'
+               ) {
                     statusCode = 400; // Bad Request status code
                     message = error.message;
                }

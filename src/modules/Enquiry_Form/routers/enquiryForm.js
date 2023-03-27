@@ -134,7 +134,11 @@ router.get(
 
                const browser = await puppeteer.launch();
                const page = await browser.newPage();
+
+               // Add the CSS styles to the page
                await page.setContent(result[0].htmlTemplate);
+               await page.addStyleTag({ content: result[0].htmlTemplate });
+
                const pdfBuffer = await page.pdf({ format: 'A4' });
                await browser.close();
 

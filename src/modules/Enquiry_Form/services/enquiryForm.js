@@ -2,6 +2,10 @@ import enquiryFormModel from '../models/enquiryForm.js';
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
 
+import sgMail from '@sendgrid/mail';
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
 const addForm = async (data) => {
      const response = await enquiryFormModel.create(data);
      return response;
@@ -37,14 +41,14 @@ const getSingleForm = async (id) => {
 const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
      try {
           // Create a transporter object for sending emails
-          let transporter = nodemailer.createTransport({
-               host: 'smtp.ethereal.email',
-               port: 587,
-               auth: {
-                    user: 'cecelia.kemmer82@ethereal.email',
-                    pass: 'ec2PXdMBXBPAuDHyhq',
-               },
-          });
+          // let transporter = nodemailer.createTransport({
+          //      host: 'smtp.ethereal.email',
+          //      port: 587,
+          //      auth: {
+          //           user: 'cecelia.kemmer82@ethereal.email',
+          //           pass: 'ec2PXdMBXBPAuDHyhq',
+          //      },
+          // });
 
           const message = `
           <html>
@@ -119,7 +123,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                   .message {
                     color: #FFF; /* change text color to white for better contrast */
                   }
-               </style>
+       
                </style>
           </head>
           <body>
@@ -176,15 +180,22 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
      
         `;
           // Construct the email message with the car details
+          // let mailOptions = {
+          //      from: 'cecelia.kemmer82@ethereal.email',
+          //      to: 'dhananjay@plaxonic.com',
+          //      subject: 'Enquiry Form Submission',
+          //      html: message,
+          // };
+
           let mailOptions = {
-               from: 'cecelia.kemmer82@ethereal.email',
-               to: 'dhananjay@plaxonic.com',
+               from: 'dhananjay@plaxonic.com',
+               to: 'dhananjaysingh11060@gmail.com',
                subject: 'Enquiry Form Submission',
                html: message,
           };
 
           // Send the email using the transporter object
-          await transporter.sendMail(mailOptions);
+          await sgMail.send(mailOptions);
 
           //Save the enquiry data to MongoDB
           enquireFormData.htmlTemplate = message;

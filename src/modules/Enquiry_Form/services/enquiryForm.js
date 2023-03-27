@@ -40,16 +40,6 @@ const getSingleForm = async (id) => {
 
 const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
      try {
-          // Create a transporter object for sending emails
-          // let transporter = nodemailer.createTransport({
-          //      host: 'smtp.ethereal.email',
-          //      port: 587,
-          //      auth: {
-          //           user: 'cecelia.kemmer82@ethereal.email',
-          //           pass: 'ec2PXdMBXBPAuDHyhq',
-          //      },
-          // });
-
           const message = `
           <html>
           <head>
@@ -179,17 +169,10 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           </body>
      
         `;
-          // Construct the email message with the car details
-          // let mailOptions = {
-          //      from: 'cecelia.kemmer82@ethereal.email',
-          //      to: 'dhananjay@plaxonic.com',
-          //      subject: 'Enquiry Form Submission',
-          //      html: message,
-          // };
 
           let mailOptions = {
                from: 'dhananjay@plaxonic.com',
-               to: 'dhananjaysingh11060@gmail.com',
+               to: [enquireFormData.emailAddress],
                subject: 'Enquiry Form Submission',
                html: message,
           };

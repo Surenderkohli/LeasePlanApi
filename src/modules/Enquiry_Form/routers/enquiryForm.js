@@ -4,7 +4,7 @@ import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
 import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
-import { generatePdf } from 'html-pdf-node';
+import puppeteer from 'puppeteer';
 
 const router = new Router();
 
@@ -132,10 +132,12 @@ router.get(
                const { id } = req.params;
                const result = await enquiryFormService.getSingleForm(id);
 
-               const pdfBuffer = await generatePdf(
-                    { content: result[0].htmlTemplate },
-                    { format: 'A4' }
-               );
+               const browser = await puppeteer.launch();
+               const page = await browser.newPage();
+               await page.setContent(result[0].htmlTemplate);
+               const pdfBuffer = await page.pdf({ format: 'A4' });
+               await browser.close();
+
                res.setHeader('Content-Type', 'application/pdf');
                res.send(pdfBuffer);
           } catch (error) {

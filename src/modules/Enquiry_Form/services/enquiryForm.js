@@ -31,6 +31,9 @@ const getSingleForm = async (id) => {
                     as: 'carDetails',
                },
           },
+          {
+               $unwind: '$carDetails',
+          },
      ];
 
      const result = await enquiryFormModel.aggregate(aggregateFilter);

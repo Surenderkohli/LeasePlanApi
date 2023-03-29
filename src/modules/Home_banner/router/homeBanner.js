@@ -116,6 +116,12 @@ router.put(
           try {
                const { id } = req.params;
 
+               //Check whether the status value is valid
+               const { status } = req.body;
+               if (status && !['active', 'inactive'].includes(status)) {
+                    throw new Error('Invalid status value');
+               }
+
                // retrieve the data to be updated
                const data = req.body;
 

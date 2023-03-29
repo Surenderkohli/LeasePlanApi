@@ -155,7 +155,7 @@ const getAllCar = async (
      }
 };
 
-const addNewCar = async (data, carImage, deals) => {
+const addNewCar = async (data, carImage) => {
      try {
           const images = carImage.map((image) => ({
                imageUrl: image.imageUrl,
@@ -164,7 +164,6 @@ const addNewCar = async (data, carImage, deals) => {
           const response = await carDetailModel.create({
                ...data,
                image: images,
-               deals,
           });
           return response;
      } catch (error) {

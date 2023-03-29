@@ -162,11 +162,7 @@ router.post(
                     }
                }
 
-               const result = await CarServices.addNewCar(
-                    data,
-                    carImage,
-                    deals
-               );
+               const result = await CarServices.addNewCar(data, carImage);
                res.send(result);
           } catch (error) {
                console.error('Error in adding new carDetails:', error);

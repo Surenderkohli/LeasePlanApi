@@ -106,7 +106,13 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                default: 'Included',
           },
+          deals: {
+               type: String,
+               enum: ['active', 'inactive'],
+               default: 'inactive',
+          },
      },
+
      { timestamps: true }
 );
 

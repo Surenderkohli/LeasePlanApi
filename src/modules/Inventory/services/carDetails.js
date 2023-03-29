@@ -155,7 +155,7 @@ const getAllCar = async (
      }
 };
 
-const addNewCar = async (data, carImage) => {
+const addNewCar = async (data, carImage, deals) => {
      try {
           const images = carImage.map((image) => ({
                imageUrl: image.imageUrl,
@@ -164,6 +164,7 @@ const addNewCar = async (data, carImage) => {
           const response = await carDetailModel.create({
                ...data,
                image: images,
+               deals,
           });
           return response;
      } catch (error) {
@@ -475,15 +476,27 @@ const getCount = async () => {
      return countObject;
 };
 
-const getBestDeals = async (query) => {
-     const cars = await carDetailModel
-          .find({ query })
-          .populate('carBrand_id')
-          .populate('carSeries_id')
-          .sort({ price: -1 })
-          .limit(5);
+// const getBestDeals = async (query) => {
+//      const cars = await carDetailModel
+//           .find({ query })
+//           .populate('carBrand_id')
+//           .populate('carSeries_id')
+//           .sort({ price: -1 })
+//           .limit(5);
 
-     return cars;
+//      return cars;
+// };
+
+const getDeals = async (query) => {
+     try {
+          const carDetails = await carDetailModel.find({
+               deals: 'active',
+               ...query, // any other filters specified in the query parameter
+          });
+          return carDetails;
+     } catch (error) {
+          throw new Error(error.message);
+     }
 };
 
 const getSingleCars = async (id) => {
@@ -507,6 +520,6 @@ export const CarServices = {
      deleteCar,
      getSingleCar,
      getCount,
-     getBestDeals,
      getSingleCars,
+     getDeals,
 };

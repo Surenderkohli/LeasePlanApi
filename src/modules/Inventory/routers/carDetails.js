@@ -124,6 +124,11 @@ router.post(
      carUpload.array('image', 6),
      httpHandler(async (req, res) => {
           try {
+               const { deals } = req.body;
+               if (deals && !['active', 'inactive'].includes(deals)) {
+                    throw new Error('Invalid deals status');
+               }
+
                const data = req.body;
                const files = req.files; // Get the image files from the request
 
@@ -157,7 +162,11 @@ router.post(
                     }
                }
 
-               const result = await CarServices.addNewCar(data, carImage);
+               const result = await CarServices.addNewCar(
+                    data,
+                    carImage,
+                    deals
+               );
                res.send(result);
           } catch (error) {
                console.error('Error in adding new carDetails:', error);
@@ -173,6 +182,12 @@ router.put(
           try {
                // check if there are new files uploaded
                const { id } = req.params;
+
+               const { deals } = req.body;
+               if (deals && !['active', 'inactive'].includes(deals)) {
+                    throw new Error('Invalid deals status');
+               }
+
                const data = req.body;
                const images = [];
 
@@ -239,28 +254,50 @@ router.get(
      })
 );
 
-router.get(
-     '/best-deals',
-     httpHandler(async (req, res) => {
-          try {
-               const { limit = 3, skip = 0 } = req.query;
-               const result = await CarServices.getBestDeals(
-                    parseInt(limit),
-                    parseInt(skip)
-               );
-               if (result) {
-                    res.status(200).json({ success: true, data: result });
-               } else {
-                    res.status(404).json({
-                         success: false,
-                         message: 'Not found any best deals',
-                    });
-               }
-          } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+// router.get(
+//      '/best-deals',
+//      httpHandler(async (req, res) => {
+//           try {
+//                const { limit = 3, skip = 0 } = req.query;
+//                const result = await CarServices.getBestDeals(
+//                     parseInt(limit),
+//                     parseInt(skip)
+//                );
+//                if (result) {
+//                     res.status(200).json({ success: true, data: result });
+//                } else {
+//                     res.status(404).json({
+//                          success: false,
+//                          message: 'Not found any best deals',
+//                     });
+//                }
+//           } catch (error) {
+//                res.send({ status: 400, success: false, msg: error.message });
+//           }
+//      })
+// );
+
+router.get('/best-deals', async (req, res) => {
+     try {
+          const { limit = 5, skip = 0 } = req.query;
+          const result = await CarServices.getDeals(
+               parseInt(limit),
+               parseInt(skip)
+          );
+
+          if (result.length) {
+               res.status(200).json({ success: true, data: result });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'Not found any best deals',
+                    data: [],
+               });
           }
-     })
-);
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
 
 router.get('/fetch-singles/:id', async (req, res) => {
      try {

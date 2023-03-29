@@ -23,9 +23,22 @@ const deleteCarBrand = async (id) => {
      return response;
 };
 
+const getAllCarBrandByLeaseType = async (leaseType_id) => {
+     try {
+          const carBrands = await carBrandModel
+               .find({ leaseType_id })
+               .populate('leaseType_id');
+
+          return carBrands;
+     } catch (error) {
+          throw new Error('Unable to retrieve car brands by lease type');
+     }
+};
+
 export const carBrandService = {
      getAllCarBrand,
      addCarBrand,
      getSingleCarBrand,
      deleteCarBrand,
+     getAllCarBrandByLeaseType,
 };

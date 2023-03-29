@@ -82,4 +82,28 @@ router.delete(
      })
 );
 
+router.get(
+     '/leaseType_id/:leaseType_id',
+     httpHandler(async (req, res) => {
+          try {
+               const { leaseType_id } = req.params;
+
+               const result = await carBrandService.getAllCarBrandByLeaseType(
+                    leaseType_id
+               );
+
+               res.status(200).json({
+                    success: true,
+                    data: result,
+               });
+          } catch (error) {
+               console.log(error);
+               res.status(500).json({
+                    success: false,
+                    message: 'Server Error',
+               });
+          }
+     })
+);
+
 export default router;

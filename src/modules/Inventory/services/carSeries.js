@@ -25,9 +25,19 @@ const getAllCarSeriesByBrandId = async (carBrand_id) => {
           throw new Error('Unable to retrieve car Brand');
      }
 };
+
+const deleteCarSeries = async (id) => {
+     const response = await carSeriesModel.findOneAndDelete(
+          { _id: id },
+          { is_deleted: true }
+     );
+     return response;
+};
+
 export const carSeriesService = {
      getSingleCarSeries,
      addCarSeries,
      getAllCarSeries,
      getAllCarSeriesByBrandId,
+     deleteCarSeries,
 };

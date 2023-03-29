@@ -87,4 +87,21 @@ router.get(
      })
 );
 
+router.delete(
+     '/delete/:id',
+     httpHandler(async (req, res) => {
+          try {
+               const data = req.body;
+               const { id } = req.params;
+               const result = await carSeriesService.deleteCarSeries(id, data);
+               res.status(200).json({
+                    success: true,
+                    msg: 'carSeries deleted successfully',
+               });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
+     })
+);
+
 export default router;

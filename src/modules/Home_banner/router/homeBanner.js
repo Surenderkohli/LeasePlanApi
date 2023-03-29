@@ -72,11 +72,7 @@ router.post(
                const data = req.body;
                const bannerData = { imageUrl, publicId, status };
 
-               result = await bannerService.addNewBanner(
-                    data,
-                    bannerData,
-                    status
-               );
+               result = await bannerService.addNewBanner(data, bannerData);
                res.send(result);
           } catch (error) {
                let statusCode = 500; // Default status code

@@ -49,12 +49,14 @@ router.get(
      })
 );
 
-// // router.delete(
-// //     '/delete',
-// //     (async (req, res) => {
-// //         const result = await leasetypeService.deleteleasetype(req.body);
-// //         res.send(result)
-// //     })
-// // );
+router.delete('/delete/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          const result = await leaseTypeService.deleteLeaseType(id);
+          res.send(result);
+     } catch (error) {
+          res.status(400).json({ success: false, error: error.message });
+     }
+});
 
 export default router;

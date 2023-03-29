@@ -34,18 +34,18 @@ const updateLeaseType = async (id, data) => {
      return response;
 };
 
-const deleteLeaseType = async (id) => {
-     const response = await leaseTypeModel.remove(
-          { _id: id },
-          { isDeleted: true }
-     );
-     return response;
-};
-
 const getCount = async (query) => {
      const count = await leaseTypeModel.countDocuments(query);
 
      return count;
+};
+
+const deleteLeaseType = async (id) => {
+     const response = await leaseTypeModel.deleteOne(
+          { _id: id },
+          { isDeleted: true }
+     );
+     return response;
 };
 
 export const leaseTypeService = {

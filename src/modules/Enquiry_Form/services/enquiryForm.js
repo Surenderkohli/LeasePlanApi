@@ -1,7 +1,5 @@
 import enquiryFormModel from '../models/enquiryForm.js';
 import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
-
 import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

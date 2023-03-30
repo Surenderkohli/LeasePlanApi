@@ -4,7 +4,7 @@ import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
 import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
-import puppeteer from 'puppeteer';
+import html_to_pdf from 'html-pdf-node';
 
 const router = new Router();
 
@@ -125,6 +125,7 @@ router.get(
      })
 );
 
+//https://www.npmjs.com/package/html-pdf-node
 router.get(
      '/:id/download',
      httpHandler(async (req, res) => {
@@ -132,22 +133,18 @@ router.get(
                const { id } = req.params;
                const result = await enquiryFormService.getSingleForm(id);
 
-               const browser = await puppeteer.launch();
-               const page = await browser.newPage();
+               const options = { format: 'A4', printBackground: true };
+               let htmlContent = { content: result[0].htmlTemplate };
 
-               // Add the HTML code to the page
-               await page.setContent(result[0].htmlTemplate);
-
-               const pdfBuffer = await page.pdf({
-                    format: 'A4',
-                    printBackground: true,
-               });
-               await browser.close();
+               const pdfBuffer = await html_to_pdf.generatePdf(
+                    htmlContent,
+                    options
+               );
 
                res.setHeader('Content-Type', 'application/pdf');
                res.send(pdfBuffer);
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               res.status(400).send({ success: false, msg: error.message });
           }
      })
 );

@@ -126,6 +126,7 @@ router.get(
 );
 
 //https://www.npmjs.com/package/puppeteer
+
 router.get(
      '/:id/download',
      httpHandler(async (req, res) => {
@@ -133,8 +134,21 @@ router.get(
                const { id } = req.params;
                const result = await enquiryFormService.getSingleForm(id);
 
-               const browser = await puppeteer.launch();
+               const browser = await puppeteer.launch({
+                    args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add these arguments to prevent errors in production
+                    executablePath:
+                         '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                    headless: true, // Run Puppeteer in headless mode on the server
+               });
+
                const page = await browser.newPage();
+
+               // Set the viewport size to ensure that the content fits on the page
+               await page.setViewport({
+                    width: 1920,
+                    height: 1080,
+                    deviceScaleFactor: 1,
+               });
 
                // Add the HTML code to the page
                await page.setContent(result[0].htmlTemplate);
@@ -143,9 +157,15 @@ router.get(
                     format: 'A4',
                     printBackground: true,
                });
+
                await browser.close();
 
                res.setHeader('Content-Type', 'application/pdf');
+               res.setHeader(
+                    'Content-Disposition',
+                    'attachment; filename=download.pdf'
+               );
+               res.setHeader('Content-Length', pdfBuffer.length);
 
                res.send(pdfBuffer);
           } catch (error) {

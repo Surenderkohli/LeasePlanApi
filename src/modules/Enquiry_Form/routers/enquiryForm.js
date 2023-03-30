@@ -4,7 +4,7 @@ import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
 import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
-import html_to_pdf from 'html-pdf-node';
+import puppeteer from 'puppeteer';
 
 const router = new Router();
 
@@ -133,15 +133,20 @@ router.get(
                const { id } = req.params;
                const result = await enquiryFormService.getSingleForm(id);
 
-               const options = { format: 'A4', printBackground: true };
-               let htmlContent = { content: result[0].htmlTemplate };
+               const browser = await puppeteer.launch();
+               const page = await browser.newPage();
 
-               const pdfBuffer = await html_to_pdf.generatePdf(
-                    htmlContent,
-                    options
-               );
+               // Add the HTML code to the page
+               await page.setContent(result[0].htmlTemplate);
+
+               const pdfBuffer = await page.pdf({
+                    format: 'A4',
+                    printBackground: true,
+               });
+               await browser.close();
 
                res.setHeader('Content-Type', 'application/pdf');
+
                res.send(pdfBuffer);
           } catch (error) {
                res.status(400).send({ success: false, msg: error.message });

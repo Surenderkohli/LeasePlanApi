@@ -125,7 +125,7 @@ router.get(
      })
 );
 
-//https://www.npmjs.com/package/html-pdf-node
+//https://www.npmjs.com/package/puppeteer
 router.get(
      '/:id/download',
      httpHandler(async (req, res) => {

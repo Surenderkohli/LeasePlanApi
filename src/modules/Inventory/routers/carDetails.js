@@ -272,7 +272,6 @@ router.get(
 //           }
 //      })
 // );
-//
 
 router.get('/best-deals', async (req, res) => {
      try {

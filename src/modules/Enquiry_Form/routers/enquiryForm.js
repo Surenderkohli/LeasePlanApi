@@ -125,7 +125,7 @@ router.get(
      })
 );
 
-//https://www.npmjs.com/package/puppeteer
+//https://www.npmjs.com/package/puppeteer[ https://pptr.dev/troubleshooting ]
 
 router.get(
      '/:id/download',
@@ -136,8 +136,6 @@ router.get(
 
                const browser = await puppeteer.launch({
                     args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add these arguments to prevent errors in production
-                    executablePath:
-                         '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
                     headless: true, // Run Puppeteer in headless mode on the server
                });
 

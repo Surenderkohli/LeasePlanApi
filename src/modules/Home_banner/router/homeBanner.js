@@ -189,7 +189,7 @@ router.get('/status/:id', async (req, res) => {
           const banner = await bannerService.getBanner(id);
 
           if (banner) {
-               // If the banner is active, return the banner list
+               // If the banner is active, return the banner
                res.json({
                     status: 'success',
                     banner: banner,

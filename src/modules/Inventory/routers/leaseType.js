@@ -8,7 +8,6 @@ const router = Router();
 router.get(
      '/',
      httpHandler(async (req, res) => {
-          // const {id} = req.params
           const result = await leaseTypeService.getAllLeaseType();
           res.send(result);
      })
@@ -24,7 +23,6 @@ router.post(
 
 router.get('/fetch-single/:id', async (req, res) => {
      const { id } = req.params;
-     // const data = req.body;
      const result = await leaseTypeService.getSingleLeaseType(id);
      res.send(result);
 });

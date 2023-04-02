@@ -530,7 +530,7 @@ const getSingleCars = async (id) => {
 const createCarDetail = async (carDetailData) => {
      try {
           let leaseType;
-          let carBrand;
+          let companyName;
           let carSeries;
 
           // Query the database for matching records based on the names provided
@@ -540,22 +540,57 @@ const createCarDetail = async (carDetailData) => {
                });
           }
 
-          if (carDetailData.carBrand) {
-               carBrand = await carBrandModel.findOne({
-                    companyName: carDetailData.carBrand,
+          if (carDetailData.companyName) {
+               companyName = await carBrandModel.findOne({
+                    companyName: carDetailData.companyName,
                });
+
+               // if carBrand does not exist, create a new document in the carBrandModel collection
+               if (!companyName) {
+                    companyName = new carBrandModel({
+                         leaseType_id: leaseType._id,
+                         companyName: carDetailData.companyName,
+                    });
+
+                    companyName = await companyName.save();
+               }
           }
+
+          // if (carDetailData.carBrand && leaseType) {
+          //      carBrand = await carBrandModel.findOne({
+          //           companyName: carDetailData.carBrand,
+          //      });
+
+          //      // if carBrand does not exist, create a new document in the carBrandModel collection
+          //      if (!carBrand) {
+          //           carBrand = new carBrandModel({
+          //                leaseType_id: leaseType._id,
+          //                companyName: carDetailData.carBrand,
+          //           });
+
+          //           carBrand = await carBrand.save();
+          //      }
+          // }
 
           if (carDetailData.carSeries) {
                carSeries = await carSeriesModel.findOne({
                     seriesName: carDetailData.carSeries,
                });
+
+               // if carSeries does not exist, create a new document in the carSeriesModel collection
+               if (!carSeries) {
+                    carSeries = new carSeriesModel({
+                         seriesName: carDetailData.carSeries,
+                    });
+
+                    carSeries = await carSeries.save();
+               }
           }
 
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
                leaseType_id: leaseType ? leaseType._id : null,
-               carBrand_id: carBrand ? carBrand._id : null,
+               carBrand_id: companyName ? companyName._id : null,
                carSeries_id: carSeries ? carSeries._id : null,
                monthlyCost: carDetailData.monthlyCost,
                yearModel: carDetailData.yearModel,
@@ -564,9 +599,9 @@ const createCarDetail = async (carDetailData) => {
                     : [],
           });
 
-          const savedCarDetail = await newCarDetail.save(); // save the newCarDetail object to the database and store it in a variable
+          const savedCarDetail = await newCarDetail.save();
 
-          return savedCarDetail; // return the savedCarDetail object instead of the string
+          return savedCarDetail;
      } catch (error) {
           console.log(error);
           throw new Error('Car details upload failed');

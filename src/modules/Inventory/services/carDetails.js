@@ -1,5 +1,8 @@
 import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
+import carBrandModel from '../models/carBrand.js';
+import carSeriesModel from '../models/carSeries.js';
+import csvtojson from 'csvtojson';
 
 const getAllCar = async (
      leaseType,
@@ -524,6 +527,51 @@ const getSingleCars = async (id) => {
           console.log(error);
      }
 };
+const createCarDetail = async (carDetailData) => {
+     try {
+          let leaseType;
+          let carBrand;
+          let carSeries;
+
+          // Query the database for matching records based on the names provided
+          if (carDetailData.leaseType) {
+               leaseType = await leaseTypeModel.findOne({
+                    leaseType: carDetailData.leaseType,
+               });
+          }
+
+          if (carDetailData.carBrand) {
+               carBrand = await carBrandModel.findOne({
+                    companyName: carDetailData.carBrand,
+               });
+          }
+
+          if (carDetailData.carSeries) {
+               carSeries = await carSeriesModel.findOne({
+                    seriesName: carDetailData.carSeries,
+               });
+          }
+
+          // Create the new car detail entry using the retrieved IDs
+          const newCarDetail = new carDetailModel({
+               leaseType_id: leaseType ? leaseType._id : null,
+               carBrand_id: carBrand ? carBrand._id : null,
+               carSeries_id: carSeries ? carSeries._id : null,
+               monthlyCost: carDetailData.monthlyCost,
+               yearModel: carDetailData.yearModel,
+               imageUrls: carDetailData.imageUrls
+                    ? carDetailData.imageUrls
+                    : [],
+          });
+
+          const savedCarDetail = await newCarDetail.save(); // save the newCarDetail object to the database and store it in a variable
+
+          return savedCarDetail; // return the savedCarDetail object instead of the string
+     } catch (error) {
+          console.log(error);
+          throw new Error('Car details upload failed');
+     }
+};
 
 export const CarServices = {
      getAllCar,
@@ -534,4 +582,5 @@ export const CarServices = {
      getCount,
      getSingleCars,
      getDeals,
+     createCarDetail,
 };

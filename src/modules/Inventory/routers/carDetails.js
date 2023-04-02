@@ -4,8 +4,10 @@ import { CarServices } from '../services/carDetails.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
-
+import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
+import path from 'path';
+
 dotenv.config();
 
 cloudinary.config({
@@ -24,17 +26,17 @@ const carUpload = multer({
      storage: carStorage,
      limits: { fileSize: 5 * 1024 * 1024 },
 
-     fileFilter(req, file, cb) {
-          if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-               cb(
-                    new Error(
-                         'Please upload an image file with .png, .jpg, or .jpeg extension.'
-                    )
-               );
-          }
+     // fileFilter(req, file, cb) {
+     //      if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+     //           cb(
+     //                new Error(
+     //                     'Please upload an image file with .png, .jpg, or .jpeg extension.'
+     //                )
+     //           );
+     //      }
 
-          cb(undefined, true);
-     },
+     //      cb(undefined, true);
+     // },
 });
 
 const router = Router();
@@ -304,6 +306,46 @@ router.get('/fetch-singles/:id', async (req, res) => {
           res.status(200).json({ success: true, data: result[0] });
      } catch (error) {
           res.send({ status: 400, success: false, msg: error.message });
+     }
+});
+
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage });
+
+router.post('/car-details', upload.single('file'), async (req, res) => {
+     try {
+          let carDetails = [];
+
+          if (req.file && req.file.mimetype === 'text/csv') {
+               // CSV upload
+               const csvString = req.file.buffer.toString('utf8');
+               const carDetailData = await csvtojson().fromString(csvString);
+
+               for (let i = 0; i < carDetailData.length; i++) {
+                    const carDetail = await CarServices.createCarDetail(
+                         carDetailData[i]
+                    );
+                    carDetails.push(carDetail);
+               }
+          } else if (req.body) {
+               // Manual upload
+               const carDetailData = req.body;
+               const carDetail = await CarServices.createCarDetail(
+                    carDetailData
+               );
+               carDetails.push(carDetail);
+          } else {
+               throw new Error('No file or data provided');
+          }
+
+          res.status(201).json({
+               message: 'Car details added successfully',
+               data: carDetails,
+          });
+     } catch (error) {
+          console.log(error);
+          res.status(400).json({ message: error.message });
      }
 });
 

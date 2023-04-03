@@ -8,6 +8,10 @@ const carBrandSchema = new mongoose.Schema(
                required: true,
           },
           companyName: String,
+          makeCode: {
+               type: Number,
+               required: false,
+          },
           isDeleted: {
                type: Boolean,
                default: false,

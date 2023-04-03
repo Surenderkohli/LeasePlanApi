@@ -531,6 +531,8 @@ const createCarDetail = async (carDetailData) => {
           let leaseType;
           let companyName;
           let seriesName;
+          let makeCode;
+          let modelCode;
 
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {
@@ -539,25 +541,52 @@ const createCarDetail = async (carDetailData) => {
                });
           }
 
+          // if (carDetailData.companyName) {
+          //      companyName = await carBrandModel.findOne({
+          //           companyName: carDetailData.companyName,
+          //      });
+
+          //      // if carBrand does not exist, create a new document in the carBrandModel collection
+          //      if (!companyName) {
+          //           companyName = new carBrandModel({
+          //                leaseType_id: leaseType._id,
+          //                companyName: carDetailData.companyName,
+          //           });
+
+          //           companyName = await companyName.save();
+          //      }
+
+          // }
+
           if (carDetailData.companyName) {
+               // Check if a company name document already exists for the given lease type
                companyName = await carBrandModel.findOne({
-                    companyName: carDetailData.companyName,
+                    $or: [
+                         { leaseType_id: leaseType ? leaseType._id : null },
+                         { companyName: carDetailData.companyName },
+                    ],
                });
 
-               // if carBrand does not exist, create a new document in the carBrandModel collection
+               // If a company name document already exists, use that instead of creating a new one
                if (!companyName) {
+                    // If no company name document exists for the given lease type, create a new one
                     companyName = new carBrandModel({
                          leaseType_id: leaseType._id,
                          companyName: carDetailData.companyName,
+                         makeCode: carDetailData.makeCode,
                     });
 
                     companyName = await companyName.save();
+                    // makeCode = await makeCode.save();
                }
           }
 
           if (carDetailData.seriesName) {
                seriesName = await carSeriesModel.findOne({
                     seriesName: carDetailData.seriesName,
+                    carBrand_id: leaseType
+                         ? { $ne: leaseType._id }
+                         : { $exists: true },
                });
 
                // if carSeries does not exist, create a new document in the carSeriesModel collection
@@ -565,9 +594,11 @@ const createCarDetail = async (carDetailData) => {
                     seriesName = new carSeriesModel({
                          carBrand_id: companyName._id,
                          seriesName: carDetailData.seriesName,
+                         modelCode: carDetailData.modelCode,
                     });
 
                     seriesName = await seriesName.save();
+                    //modelCode = await modelCode.save();
                }
           }
 
@@ -577,6 +608,8 @@ const createCarDetail = async (carDetailData) => {
                carBrand_id: companyName ? companyName._id : null,
                carSeries_id: seriesName ? seriesName._id : null,
                monthlyCost: carDetailData.monthlyCost,
+               makeCode: carDetailData.makeCode,
+               modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
                imageUrls: carDetailData.imageUrls
                     ? carDetailData.imageUrls

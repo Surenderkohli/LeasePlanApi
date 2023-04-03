@@ -526,6 +526,7 @@ const getSingleCars = async (id) => {
           console.log(error);
      }
 };
+
 const createCarDetail = async (carDetailData) => {
      try {
           let leaseType;
@@ -548,11 +549,18 @@ const createCarDetail = async (carDetailData) => {
                     ],
                });
 
-               // If a company name document already exists, use that instead of creating a new one
-               if (!companyName) {
+               // If a company name document already exists, add the leaseType_id to it
+               if (companyName) {
+                    // Add the new leaseType_id to the existing document
+                    companyName = await carBrandModel.findOneAndUpdate(
+                         { _id: companyName._id },
+                         { $addToSet: { leaseType_id: leaseType._id } },
+                         { new: true }
+                    );
+               } else {
                     // If no company name document exists for the given lease type, create a new one
                     companyName = new carBrandModel({
-                         leaseType_id: leaseType._id,
+                         leaseType_id: [leaseType._id],
                          companyName: carDetailData.companyName,
                          makeCode: carDetailData.makeCode,
                     });
@@ -565,8 +573,8 @@ const createCarDetail = async (carDetailData) => {
           if (carDetailData.seriesName) {
                seriesName = await carSeriesModel.findOne({
                     seriesName: carDetailData.seriesName,
-                    carBrand_id: leaseType
-                         ? { $ne: leaseType._id }
+                    carBrand_id: companyName
+                         ? { $in: companyName.leaseType_id }
                          : { $exists: true },
                });
 

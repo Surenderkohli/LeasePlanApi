@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 
 const carBrandSchema = new mongoose.Schema(
      {
-          leaseType_id: {
-               type: mongoose.Schema.ObjectId,
-               ref: 'leaseType',
-               required: true,
-          },
+          leaseType_id: [
+               {
+                    type: mongoose.Schema.ObjectId,
+                    ref: 'leaseType',
+                    required: true,
+               },
+          ],
           companyName: String,
           makeCode: {
                type: Number,

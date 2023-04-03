@@ -531,8 +531,6 @@ const createCarDetail = async (carDetailData) => {
           let leaseType;
           let companyName;
           let seriesName;
-          let makeCode;
-          let modelCode;
 
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {
@@ -540,23 +538,6 @@ const createCarDetail = async (carDetailData) => {
                     leaseType: carDetailData.leaseType,
                });
           }
-
-          // if (carDetailData.companyName) {
-          //      companyName = await carBrandModel.findOne({
-          //           companyName: carDetailData.companyName,
-          //      });
-
-          //      // if carBrand does not exist, create a new document in the carBrandModel collection
-          //      if (!companyName) {
-          //           companyName = new carBrandModel({
-          //                leaseType_id: leaseType._id,
-          //                companyName: carDetailData.companyName,
-          //           });
-
-          //           companyName = await companyName.save();
-          //      }
-
-          // }
 
           if (carDetailData.companyName) {
                // Check if a company name document already exists for the given lease type

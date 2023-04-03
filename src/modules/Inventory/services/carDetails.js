@@ -2,7 +2,6 @@ import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import csvtojson from 'csvtojson';
 
 const getAllCar = async (
      leaseType,
@@ -531,7 +530,7 @@ const createCarDetail = async (carDetailData) => {
      try {
           let leaseType;
           let companyName;
-          let carSeries;
+          let seriesName;
 
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {
@@ -556,34 +555,19 @@ const createCarDetail = async (carDetailData) => {
                }
           }
 
-          // if (carDetailData.carBrand && leaseType) {
-          //      carBrand = await carBrandModel.findOne({
-          //           companyName: carDetailData.carBrand,
-          //      });
-
-          //      // if carBrand does not exist, create a new document in the carBrandModel collection
-          //      if (!carBrand) {
-          //           carBrand = new carBrandModel({
-          //                leaseType_id: leaseType._id,
-          //                companyName: carDetailData.carBrand,
-          //           });
-
-          //           carBrand = await carBrand.save();
-          //      }
-          // }
-
-          if (carDetailData.carSeries) {
-               carSeries = await carSeriesModel.findOne({
-                    seriesName: carDetailData.carSeries,
+          if (carDetailData.seriesName) {
+               seriesName = await carSeriesModel.findOne({
+                    seriesName: carDetailData.seriesName,
                });
 
                // if carSeries does not exist, create a new document in the carSeriesModel collection
-               if (!carSeries) {
-                    carSeries = new carSeriesModel({
-                         seriesName: carDetailData.carSeries,
+               if (!seriesName) {
+                    seriesName = new carSeriesModel({
+                         carBrand_id: companyName._id,
+                         seriesName: carDetailData.seriesName,
                     });
 
-                    carSeries = await carSeries.save();
+                    seriesName = await seriesName.save();
                }
           }
 
@@ -591,7 +575,7 @@ const createCarDetail = async (carDetailData) => {
           const newCarDetail = new carDetailModel({
                leaseType_id: leaseType ? leaseType._id : null,
                carBrand_id: companyName ? companyName._id : null,
-               carSeries_id: carSeries ? carSeries._id : null,
+               carSeries_id: seriesName ? seriesName._id : null,
                monthlyCost: carDetailData.monthlyCost,
                yearModel: carDetailData.yearModel,
                imageUrls: carDetailData.imageUrls

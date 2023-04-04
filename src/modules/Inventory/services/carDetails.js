@@ -548,93 +548,46 @@ const createCarDetail = async (carDetailData) => {
                     leaseType: carDetailData.leaseType,
                });
           }
-
           if (carDetailData.companyName) {
-               // Check if a company name document already exists for the given lease type
-               companyName = await carBrandModel.findOne({
-                    $or: [
-                         { leaseType_id: leaseType ? leaseType._id : null },
-                         { companyName: carDetailData.companyName },
-                    ],
-               });
-
-               // If a company name document already exists, add the leaseType_id to it
-               if (companyName) {
-                    // Add the new leaseType_id to the existing document
+               if (leaseType) {
                     companyName = await carBrandModel.findOneAndUpdate(
-                         { _id: companyName._id },
-                         { $addToSet: { leaseType_id: leaseType._id } },
-                         { new: true }
+                         {
+                              companyName: carDetailData.companyName,
+                              leaseType_id: leaseType._id,
+                         },
+                         { $setOnInsert: { leaseType_id: leaseType._id } },
+                         { upsert: true, new: true }
                     );
                } else {
-                    // If no company name document exists for the given lease type, create a new one
-                    companyName = new carBrandModel({
-                         leaseType_id: [leaseType._id],
-                         companyName: carDetailData.companyName,
-                         makeCode: carDetailData.makeCode,
-                    });
-
-                    companyName = await companyName.save();
-                    // makeCode = await makeCode.save();
-               }
-          }
-
-          // if (carDetailData.seriesName) {
-          //      seriesName = await carSeriesModel.findOne({
-          //           seriesName: carDetailData.seriesName,
-          //      });
-
-          //      // if carSeries does not exist, create a new document in the carSeriesModel collection
-          //      if (!seriesName) {
-          //           seriesName = new carSeriesModel({
-          //                carBrand_id: companyName._id,
-          //                seriesName: carDetailData.seriesName,
-          //                modelCode: carDetailData.modelCode,
-          //           });
-
-          //           seriesName = await seriesName.save();
-          //           //modelCode = await modelCode.save();
-          //      }
-          // }
-          if (carDetailData.seriesName) {
-               let query = { seriesName: carDetailData.seriesName };
-
-               if (companyName) {
-                    // Use the companyName _id to find the corresponding carBrand_id
-                    query.carBrand_id = companyName._id;
-               }
-
-               // Find the seriesName that matches the query
-               seriesName = await carSeriesModel.findOne(query);
-
-               // If no matching seriesName is found, create a new document in the carSeriesModel collection
-               if (!seriesName) {
-                    const newCarSeries = new carSeriesModel({
-                         carBrand_id: query.carBrand_id,
-                         seriesName: carDetailData.seriesName,
-                         modelCode: carDetailData.modelCode,
-                    });
-
-                    seriesName = await newCarSeries.save();
-               } else if (
-                    (companyName &&
-                         seriesName.carBrand_id !== companyName._id) ||
-                    (carDetailData.makeCode &&
-                         seriesName.makeCode !== carDetailData.makeCode)
-               ) {
-                    // If a matching seriesName document is found, but its carBrand_id does not match the companyName or makeCode doesn't match,
-                    // update the document
-                    seriesName = await carSeriesModel.findByIdAndUpdate(
-                         seriesName._id,
+                    companyName = await carBrandModel.findOneAndUpdate(
                          {
-                              carBrand_id: companyName._id,
-                              makeCode: carDetailData.makeCode,
+                              companyName: carDetailData.companyName,
+                              leaseType_id: null,
                          },
-                         { new: true }
+                         { $setOnInsert: { leaseType_id: null } },
+                         { upsert: true, new: true }
                     );
                }
           }
 
+          if (carDetailData.seriesName) {
+               const query = {
+                    seriesName: carDetailData.seriesName,
+                    carBrand_id: companyName ? companyName._id : null,
+               };
+
+               seriesName = await carSeriesModel.findOneAndUpdate(
+                    query,
+                    {
+                         $setOnInsert: {
+                              carBrand_id: companyName ? companyName._id : null,
+                              makeCode: carDetailData.makeCode,
+                              modelCode: carDetailData.modelCode,
+                         },
+                    },
+                    { upsert: true, new: true }
+               );
+          }
           // Save the image URLs into an array of objects
 
           for (let i = 1; i <= 6; i++) {

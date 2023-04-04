@@ -54,6 +54,7 @@ router.get(
                     priceMax,
                     bodyType,
                     annualMileage,
+                    yearModel,
                     querySrch,
                } = req.query;
 
@@ -69,6 +70,7 @@ router.get(
                     priceMax,
                     bodyType,
                     annualMileage,
+                    yearModel,
                     querySrch,
                     limit,
                     skip

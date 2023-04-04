@@ -21,41 +21,48 @@ const carDetailSchema = new mongoose.Schema(
                ref: 'carFeature',
           },
           description: String,
-          imageUrls: [
-               {
-                    type: String,
-                    required: false,
-               },
-          ],
+          image: {
+               type: [],
+               data: Buffer,
+               required: false,
+          },
+          imageUrl: {
+               type: String,
+               required: false,
+          },
+          publicId: {
+               type: String,
+               required: false,
+          },
           price: Number,
-          // bodyType: {
-          //      type: String,
-          //      enum: [
-          //           'city-car',
-          //           'coupe',
-          //           'estate',
-          //           'sedan',
-          //           'hatchback',
-          //           'mpv',
-          //           'saloon',
-          //           'sports',
-          //      ],
-          // },
+          bodyType: {
+               type: String,
+               enum: [
+                    'city-car',
+                    'coupe',
+                    'estate',
+                    'sedan',
+                    'hatchback',
+                    'mpv',
+                    'saloon',
+                    'sports',
+               ],
+          },
           yearModel: {
                type: Number,
                required: false,
           },
-          // door: Number,
-          // seat: Number,
-          // gears: {
-          //      type: String,
-          //      required: false,
-          //      default: '6 SPEED',
-          // },
-          // milesPerGallon: Number,
+          door: Number,
+          seat: Number,
+          gears: {
+               type: String,
+               required: false,
+               default: '6 SPEED',
+          },
+          milesPerGallon: Number,
           annualMileage: {
                type: Number,
-               enum: [4000, 6000, 8000, 10000, 12000],
+               enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
           },
           acceleration: {
                type: String,
@@ -67,10 +74,10 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                enum: ['petrol', 'diesel', 'hybrid', 'electric'],
           },
-          // transmission: {
-          //      type: String,
-          //      enum: ['automatic', 'manual'],
-          // },
+          transmission: {
+               type: String,
+               enum: ['automatic', 'manual'],
+          },
           contractLengthInMonth: {
                type: Number,
                enum: [6, 12, 24, 36, 48, 60],
@@ -87,11 +94,11 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          // deals: {
-          //      type: String,
-          //      enum: ['active', 'inactive'],
-          //      default: 'inactive',
-          // },
+          deals: {
+               type: String,
+               enum: ['active', 'inactive'],
+               default: 'inactive',
+          },
           monthlyCost: {
                type: Number,
                required: false,

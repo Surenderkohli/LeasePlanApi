@@ -12,6 +12,7 @@ const getAllCar = async (
      priceMax,
      bodyType,
      annualMileage,
+     yearModel,
      querySrch,
      limit,
      skip
@@ -140,11 +141,18 @@ const getAllCar = async (
                     },
                });
           }
-
           if (annualMileage) {
                aggregateFilter.push({
                     $match: {
                          annualMileage: parseInt(annualMileage),
+                    },
+               });
+          }
+
+          if (yearModel) {
+               aggregateFilter.push({
+                    $match: {
+                         yearModel: parseInt(yearModel),
                     },
                });
           }
@@ -236,7 +244,7 @@ const getSingleCar = async (
           }
 
           switch (leaseTypeName) {
-               case 'flexi':
+               case 'Private Lease':
                     if (contractLengthInMonth === 6) {
                          basePrice *= 0.8;
                     } else if (contractLengthInMonth === 12) {
@@ -251,7 +259,7 @@ const getSingleCar = async (
                          );
                     }
                     break;
-               case 'longTerm':
+               case 'FlexiPlan':
                     if (contractLengthInMonth === 12) {
                          basePrice *= 0.6;
                     } else if (contractLengthInMonth === 24) {
@@ -532,6 +540,18 @@ const createCarDetail = async (carDetailData) => {
           let leaseType;
           let companyName;
           let seriesName;
+          var images = [];
+
+          if (carDetailData.image && Array.isArray(carDetailData.image)) {
+               // If the image property is an array, remove the empty strings
+               carDetailData.image = carDetailData.image.filter(
+                    (image) => image !== ''
+               );
+
+               carDetailData.image = carDetailData.image.map((image) => {
+                    return { imageUrl: image };
+               });
+          }
 
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {
@@ -573,9 +593,6 @@ const createCarDetail = async (carDetailData) => {
           if (carDetailData.seriesName) {
                seriesName = await carSeriesModel.findOne({
                     seriesName: carDetailData.seriesName,
-                    carBrand_id: companyName
-                         ? { $in: companyName.leaseType_id }
-                         : { $exists: true },
                });
 
                // if carSeries does not exist, create a new document in the carSeriesModel collection
@@ -591,18 +608,37 @@ const createCarDetail = async (carDetailData) => {
                }
           }
 
+          // Save the image URLs into an array of objects
+
+          for (let i = 1; i <= 6; i++) {
+               if (carDetailData[`image_${i}_url`]) {
+                    images.push({
+                         imageUrl: carDetailData[`image_${i}_url`],
+                    });
+               }
+          }
+
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
                leaseType_id: leaseType ? leaseType._id : null,
                carBrand_id: companyName ? companyName._id : null,
                carSeries_id: seriesName ? seriesName._id : null,
-               monthlyCost: carDetailData.monthlyCost,
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
-               imageUrls: carDetailData.imageUrls
-                    ? carDetailData.imageUrls
-                    : [],
+               contractLengthInMonth: carDetailData.contractLengthInMonth,
+               annualMileage: carDetailData.annualMileage,
+               monthlyCost: carDetailData.monthlyCost,
+               image: images ? images : [],
+               acceleration: carDetailData.acceleration,
+               fuelType: carDetailData.fuelType,
+               seat: carDetailData.seat,
+               milesPerGallon: carDetailData.milesPerGallon,
+               door: carDetailData.door,
+               bodyType: carDetailData.bodyType,
+               transmission: carDetailData.transmission,
+               gears: carDetailData.gears,
+               deals: carDetailData.deals,
           });
 
           const savedCarDetail = await newCarDetail.save();

@@ -542,16 +542,16 @@ const createCarDetail = async (carDetailData) => {
           let seriesName;
           var images = [];
 
-          if (carDetailData.image && Array.isArray(carDetailData.image)) {
-               // If the image property is an array, remove the empty strings
-               carDetailData.image = carDetailData.image.filter(
-                    (image) => image !== ''
-               );
+          // if (carDetailData.image && Array.isArray(carDetailData.image)) {
+          //      // If the image property is an array, remove the empty strings
+          //      carDetailData.image = carDetailData.image.filter(
+          //           (image) => image !== ''
+          //      );
 
-               carDetailData.image = carDetailData.image.map((image) => {
-                    return { imageUrl: image };
-               });
-          }
+          //      carDetailData.image = carDetailData.image.map((image) => {
+          //           return { imageUrl: image };
+          //      });
+          // }
 
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {

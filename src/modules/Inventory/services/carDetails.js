@@ -542,17 +542,6 @@ const createCarDetail = async (carDetailData) => {
           let seriesName;
           var images = [];
 
-          // if (carDetailData.image && Array.isArray(carDetailData.image)) {
-          //      // If the image property is an array, remove the empty strings
-          //      carDetailData.image = carDetailData.image.filter(
-          //           (image) => image !== ''
-          //      );
-
-          //      carDetailData.image = carDetailData.image.map((image) => {
-          //           return { imageUrl: image };
-          //      });
-          // }
-
           // Query the database for matching records based on the names provided
           if (carDetailData.leaseType) {
                leaseType = await leaseTypeModel.findOne({
@@ -590,21 +579,59 @@ const createCarDetail = async (carDetailData) => {
                }
           }
 
-          if (carDetailData.seriesName) {
-               seriesName = await carSeriesModel.findOne({
-                    seriesName: carDetailData.seriesName,
-               });
+          // if (carDetailData.seriesName) {
+          //      seriesName = await carSeriesModel.findOne({
+          //           seriesName: carDetailData.seriesName,
+          //      });
 
-               // if carSeries does not exist, create a new document in the carSeriesModel collection
+          //      // if carSeries does not exist, create a new document in the carSeriesModel collection
+          //      if (!seriesName) {
+          //           seriesName = new carSeriesModel({
+          //                carBrand_id: companyName._id,
+          //                seriesName: carDetailData.seriesName,
+          //                modelCode: carDetailData.modelCode,
+          //           });
+
+          //           seriesName = await seriesName.save();
+          //           //modelCode = await modelCode.save();
+          //      }
+          // }
+          if (carDetailData.seriesName) {
+               let query = { seriesName: carDetailData.seriesName };
+
+               if (companyName) {
+                    // Use the companyName _id to find the corresponding carBrand_id
+                    query.carBrand_id = companyName._id;
+               }
+
+               // Find the seriesName that matches the query
+               seriesName = await carSeriesModel.findOne(query);
+
+               // If no matching seriesName is found, create a new document in the carSeriesModel collection
                if (!seriesName) {
-                    seriesName = new carSeriesModel({
-                         carBrand_id: companyName._id,
+                    const newCarSeries = new carSeriesModel({
+                         carBrand_id: query.carBrand_id,
                          seriesName: carDetailData.seriesName,
                          modelCode: carDetailData.modelCode,
                     });
 
-                    seriesName = await seriesName.save();
-                    //modelCode = await modelCode.save();
+                    seriesName = await newCarSeries.save();
+               } else if (
+                    (companyName &&
+                         seriesName.carBrand_id !== companyName._id) ||
+                    (carDetailData.makeCode &&
+                         seriesName.makeCode !== carDetailData.makeCode)
+               ) {
+                    // If a matching seriesName document is found, but its carBrand_id does not match the companyName or makeCode doesn't match,
+                    // update the document
+                    seriesName = await carSeriesModel.findByIdAndUpdate(
+                         seriesName._id,
+                         {
+                              carBrand_id: companyName._id,
+                              makeCode: carDetailData.makeCode,
+                         },
+                         { new: true }
+                    );
                }
           }
 

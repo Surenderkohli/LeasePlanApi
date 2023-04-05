@@ -2,6 +2,8 @@ import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
+import carBrand from '../models/carBrand.js';
+import carSeries from '../models/carSeries.js';
 
 const getAllCar = async (
      leaseType,
@@ -556,8 +558,8 @@ const getSingleCars = async (id) => {
 const createCarDetail = async (carDetailData) => {
      try {
           let leaseType;
-          let companyName;
-          let seriesName;
+          let carBrand;
+          let carSeries;
           var images = [];
 
           // Query the database for matching records based on the names provided
@@ -566,46 +568,85 @@ const createCarDetail = async (carDetailData) => {
                     leaseType: carDetailData.leaseType,
                });
           }
-          if (carDetailData.companyName) {
-               if (leaseType) {
-                    companyName = await carBrandModel.findOneAndUpdate(
-                         {
-                              companyName: carDetailData.companyName,
-                              leaseType_id: leaseType._id,
-                         },
-                         { $setOnInsert: { leaseType_id: leaseType._id } },
-                         { upsert: true, new: true }
-                    );
+          // if (carDetailData.companyName) {
+          //      if (leaseType) {
+          //           companyName = await carBrandModel.findOneAndUpdate(
+          //                {
+          //                     companyName: carDetailData.companyName,
+          //                     leaseType_id: leaseType._id,
+          //                },
+          //                { $setOnInsert: { leaseType_id: leaseType._id } },
+          //                { upsert: true, new: true }
+          //           );
+          //      } else {
+          //           companyName = await carBrandModel.findOneAndUpdate(
+          //                {
+          //                     companyName: carDetailData.companyName,
+          //                     leaseType_id: null,
+          //                },
+          //                { $setOnInsert: { leaseType_id: null } },
+          //                { upsert: true, new: true }
+          //           );
+          //      }
+          // }
+
+          // if (carDetailData.seriesName) {
+          //      const query = {
+          //           seriesName: carDetailData.seriesName,
+          //           carBrand_id: companyName ? companyName._id : null,
+          //      };
+
+          //      seriesName = await carSeriesModel.findOneAndUpdate(
+          //           query,
+          //           {
+          //                $setOnInsert: {
+          //                     carBrand_id: companyName ? companyName._id : null,
+          //                     makeCode: carDetailData.makeCode,
+          //                     modelCode: carDetailData.modelCode,
+          //                },
+          //           },
+          //           { upsert: true, new: true }
+          //      );
+          // }
+
+          if (carDetailData.makeCode) {
+               carBrand = await carBrandModel.findOne({
+                    makeCode: carDetailData.makeCode,
+               });
+          }
+
+          if (carDetailData.modelCode) {
+               carSeries = await carSeriesModel.findOne({
+                    modelCode: carDetailData.modelCode,
+               });
+          }
+
+          // If carBrand doesn't exist, create a new entry in carbrands collection
+          if (!carBrand) {
+               if (carDetailData.companyName) {
+                    carBrand = await carBrandModel.create({
+                         companyName: carDetailData.companyName,
+                         makeCode: carDetailData.makeCode,
+                         leaseType_id: leaseType ? leaseType._id : null,
+                    });
                } else {
-                    companyName = await carBrandModel.findOneAndUpdate(
-                         {
-                              companyName: carDetailData.companyName,
-                              leaseType_id: null,
-                         },
-                         { $setOnInsert: { leaseType_id: null } },
-                         { upsert: true, new: true }
-                    );
+                    throw new Error('Missing companyName');
                }
           }
 
-          if (carDetailData.seriesName) {
-               const query = {
-                    seriesName: carDetailData.seriesName,
-                    carBrand_id: companyName ? companyName._id : null,
-               };
-
-               seriesName = await carSeriesModel.findOneAndUpdate(
-                    query,
-                    {
-                         $setOnInsert: {
-                              carBrand_id: companyName ? companyName._id : null,
-                              makeCode: carDetailData.makeCode,
-                              modelCode: carDetailData.modelCode,
-                         },
-                    },
-                    { upsert: true, new: true }
-               );
+          // If carSeries doesn't exist, create a new entry in carseries collection
+          if (!carSeries) {
+               if (carDetailData.seriesName) {
+                    carSeries = await carSeriesModel.create({
+                         seriesName: carDetailData.seriesName,
+                         modelCode: carDetailData.modelCode,
+                         carBrand_id: carBrand._id,
+                    });
+               } else {
+                    throw new Error('Missing seriesName');
+               }
           }
+
           // Save the image URLs into an array of objects
 
           for (let i = 1; i <= 6; i++) {
@@ -619,8 +660,8 @@ const createCarDetail = async (carDetailData) => {
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
                leaseType_id: leaseType ? leaseType._id : null,
-               carBrand_id: companyName ? companyName._id : null,
-               carSeries_id: seriesName ? seriesName._id : null,
+               carBrand_id: carBrand ? carBrand._id : null,
+               carSeries_id: carSeries ? carSeries._id : null,
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,

@@ -34,7 +34,7 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                required: false,
           },
-          price: Number,
+          // price: Number,
           bodyType: {
                type: String,
                enum: [
@@ -48,10 +48,10 @@ const carDetailSchema = new mongoose.Schema(
                     'sports',
                ],
           },
-          yearModel: {
-               type: Number,
-               required: false,
-          },
+          // yearModel: {
+          //      type: Number,
+          //      required: false,
+          // },
           door: Number,
           seat: Number,
           gears: {
@@ -60,16 +60,17 @@ const carDetailSchema = new mongoose.Schema(
                default: '6 SPEED',
           },
           milesPerGallon: Number,
-          annualMileage: {
-               type: Number,
-               enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
-          },
+          annualMileage: Number,
+          // annualMileage: {
+          //      type: Number,
+          //      enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
+          // },
           acceleration: {
                type: String,
                required: false,
                default: '0-62 mph 9.4 seconds',
           },
-          co2: Number,
+          co2: String,
           fuelType: {
                type: String,
                enum: ['petrol', 'diesel', 'hybrid', 'electric'],
@@ -78,10 +79,11 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                enum: ['automatic', 'manual'],
           },
-          contractLengthInMonth: {
-               type: Number,
-               enum: [6, 12, 24, 36, 48, 60],
-          },
+          tankCapacity: String,
+          // contractLengthInMonth: {
+          //      type: Number,
+          //      enum: [6, 12, 24, 36, 48, 60],
+          // },
           isDeleted: {
                type: Boolean,
                default: false,
@@ -99,16 +101,6 @@ const carDetailSchema = new mongoose.Schema(
                enum: ['active', 'inactive'],
                default: 'inactive',
           },
-          monthlyCost: {
-               type: Number,
-               required: false,
-          },
-
-          exteriorFeatures: [String],
-          interiorFeatures: [String],
-          safetySecurityFeatures: [String],
-          comfortConvenienceFeatures: [String],
-          audioEntertainmentFeatures: [String],
      },
 
      { timestamps: true }

@@ -6,7 +6,6 @@ import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
-import path from 'path';
 
 dotenv.config();
 

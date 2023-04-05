@@ -555,98 +555,205 @@ const getSingleCars = async (id) => {
      }
 };
 
+// const createCarDetail = async (carDetailData) => {
+//      try {
+//           let leaseType;
+//           let carBrand;
+//           let carSeries;
+//           var images = [];
+
+//           // Query the database for matching records based on the names provided
+//           if (carDetailData.leaseType) {
+//                leaseType = await leaseTypeModel.findOne({
+//                     leaseType: carDetailData.leaseType,
+//                });
+//           }
+//           // if (carDetailData.companyName) {
+//           //      if (leaseType) {
+//           //           companyName = await carBrandModel.findOneAndUpdate(
+//           //                {
+//           //                     companyName: carDetailData.companyName,
+//           //                     leaseType_id: leaseType._id,
+//           //                },
+//           //                { $setOnInsert: { leaseType_id: leaseType._id } },
+//           //                { upsert: true, new: true }
+//           //           );
+//           //      } else {
+//           //           companyName = await carBrandModel.findOneAndUpdate(
+//           //                {
+//           //                     companyName: carDetailData.companyName,
+//           //                     leaseType_id: null,
+//           //                },
+//           //                { $setOnInsert: { leaseType_id: null } },
+//           //                { upsert: true, new: true }
+//           //           );
+//           //      }
+//           // }
+
+//           // if (carDetailData.seriesName) {
+//           //      const query = {
+//           //           seriesName: carDetailData.seriesName,
+//           //           carBrand_id: companyName ? companyName._id : null,
+//           //      };
+
+//           //      seriesName = await carSeriesModel.findOneAndUpdate(
+//           //           query,
+//           //           {
+//           //                $setOnInsert: {
+//           //                     carBrand_id: companyName ? companyName._id : null,
+//           //                     makeCode: carDetailData.makeCode,
+//           //                     modelCode: carDetailData.modelCode,
+//           //                },
+//           //           },
+//           //           { upsert: true, new: true }
+//           //      );
+//           // }
+
+//           if (carDetailData.makeCode) {
+//                carBrand = await carBrandModel.findOne({
+//                     makeCode: carDetailData.makeCode,
+//                });
+//           }
+
+//           if (carDetailData.modelCode) {
+//                carSeries = await carSeriesModel.findOne({
+//                     modelCode: carDetailData.modelCode,
+//                });
+//           }
+
+//           // If carBrand doesn't exist, create a new entry in carbrands collection
+//           if (!carBrand) {
+//                if (carDetailData.companyName) {
+//                     carBrand = await carBrandModel.create({
+//                          companyName: carDetailData.companyName,
+//                          makeCode: carDetailData.makeCode,
+//                          leaseType_id: leaseType ? leaseType._id : null,
+//                     });
+//                } else {
+//                     throw new Error('Missing companyName');
+//                }
+//           }
+
+//           // If carSeries doesn't exist, create a new entry in carseries collection
+//           if (!carSeries) {
+//                if (carDetailData.seriesName) {
+//                     carSeries = await carSeriesModel.create({
+//                          seriesName: carDetailData.seriesName,
+//                          modelCode: carDetailData.modelCode,
+//                          carBrand_id: carBrand._id,
+//                     });
+//                } else {
+//                     throw new Error('Missing seriesName');
+//                }
+//           }
+
+//           // Save the image URLs into an array of objects
+
+//           for (let i = 1; i <= 6; i++) {
+//                if (carDetailData[`image_${i}_url`]) {
+//                     images.push({
+//                          imageUrl: carDetailData[`image_${i}_url`],
+//                     });
+//                }
+//           }
+
+//           // Create the new car detail entry using the retrieved IDs
+//           const newCarDetail = new carDetailModel({
+//                leaseType_id: leaseType ? leaseType._id : null,
+//                carBrand_id: carBrand ? carBrand._id : null,
+//                carSeries_id: carSeries ? carSeries._id : null,
+//                makeCode: carDetailData.makeCode,
+//                modelCode: carDetailData.modelCode,
+//                yearModel: carDetailData.yearModel,
+//                image: images ? images : [],
+//                acceleration: carDetailData.acceleration,
+//                fuelType: carDetailData.fuelType,
+//                seat: carDetailData.seat,
+//                door: carDetailData.door,
+//                bodyType: carDetailData.bodyType,
+//                transmission: carDetailData.transmission,
+//                gears: carDetailData.gears,
+//                tankCapacity: carDetailData.tankCapacity,
+//                c02: carDetailData.co2,
+//           });
+
+//           const savedCarDetail = await newCarDetail.save();
+
+//           return savedCarDetail;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Car details upload failed');
+//      }
+// };
+
 const createCarDetail = async (carDetailData) => {
      try {
-          let leaseType;
+          let leaseTypes = [];
           let carBrand;
           let carSeries;
           var images = [];
 
-          // Query the database for matching records based on the names provided
+          // Query the database for matching records based on the makeCode and modelCode provided
           if (carDetailData.leaseType) {
-               leaseType = await leaseTypeModel.findOne({
+               leaseTypes = await leaseTypeModel.find({
                     leaseType: carDetailData.leaseType,
-               });
-          }
-          // if (carDetailData.companyName) {
-          //      if (leaseType) {
-          //           companyName = await carBrandModel.findOneAndUpdate(
-          //                {
-          //                     companyName: carDetailData.companyName,
-          //                     leaseType_id: leaseType._id,
-          //                },
-          //                { $setOnInsert: { leaseType_id: leaseType._id } },
-          //                { upsert: true, new: true }
-          //           );
-          //      } else {
-          //           companyName = await carBrandModel.findOneAndUpdate(
-          //                {
-          //                     companyName: carDetailData.companyName,
-          //                     leaseType_id: null,
-          //                },
-          //                { $setOnInsert: { leaseType_id: null } },
-          //                { upsert: true, new: true }
-          //           );
-          //      }
-          // }
-
-          // if (carDetailData.seriesName) {
-          //      const query = {
-          //           seriesName: carDetailData.seriesName,
-          //           carBrand_id: companyName ? companyName._id : null,
-          //      };
-
-          //      seriesName = await carSeriesModel.findOneAndUpdate(
-          //           query,
-          //           {
-          //                $setOnInsert: {
-          //                     carBrand_id: companyName ? companyName._id : null,
-          //                     makeCode: carDetailData.makeCode,
-          //                     modelCode: carDetailData.modelCode,
-          //                },
-          //           },
-          //           { upsert: true, new: true }
-          //      );
-          // }
-
-          if (carDetailData.makeCode) {
-               carBrand = await carBrandModel.findOne({
-                    makeCode: carDetailData.makeCode,
-               });
-          }
-
-          if (carDetailData.modelCode) {
-               carSeries = await carSeriesModel.findOne({
-                    modelCode: carDetailData.modelCode,
                });
           }
 
           // If carBrand doesn't exist, create a new entry in carbrands collection
-          if (!carBrand) {
-               if (carDetailData.companyName) {
-                    carBrand = await carBrandModel.create({
-                         companyName: carDetailData.companyName,
-                         makeCode: carDetailData.makeCode,
-                         leaseType_id: leaseType ? leaseType._id : null,
-                    });
-               } else {
-                    throw new Error('Missing companyName');
-               }
+          if (!carDetailData.companyName) {
+               throw new Error('Missing companyName');
           }
+
+          // Check if the companyName exists in multiple lease types in carbrands collection
+          const existingCarBrands = await carBrandModel.find({
+               companyName: carDetailData.companyName,
+               makeCode: carDetailData.makeCode,
+          });
+
+          // Set the leaseTypes based on the existing carBrand records
+          if (existingCarBrands.length > 0) {
+               existingCarBrands.forEach((brand) => {
+                    if (brand.leaseType_id) {
+                         leaseTypes.push(brand.leaseType_id);
+                    }
+               });
+          }
+
+          // If carBrand doesn't exist for any of the given leaseTypes, create a new entry in carbrands collection
+          if (
+               !existingCarBrands.some((brand) =>
+                    leaseTypes.includes(brand.leaseType_id)
+               )
+          ) {
+               carBrand = await carBrandModel.create({
+                    companyName: carDetailData.companyName,
+                    makeCode: carDetailData.makeCode,
+                    leaseType_id: leaseTypes,
+               });
+          } else {
+               carBrand = existingCarBrands.find((brand) =>
+                    leaseTypes.includes(brand.leaseType_id)
+               );
+          }
+
+          // Check if the modelCode exists in carseries collection for the given carBrand
+          carSeries = await carSeriesModel.findOne({
+               modelCode: carDetailData.modelCode,
+               carBrand_id: carBrand._id,
+          });
 
           // If carSeries doesn't exist, create a new entry in carseries collection
           if (!carSeries) {
-               if (carDetailData.seriesName) {
-                    carSeries = await carSeriesModel.create({
-                         seriesName: carDetailData.seriesName,
-                         modelCode: carDetailData.modelCode,
-                         carBrand_id: carBrand._id,
-                    });
-               } else {
+               if (!carDetailData.seriesName) {
                     throw new Error('Missing seriesName');
                }
+               carSeries = await carSeriesModel.create({
+                    seriesName: carDetailData.seriesName,
+                    modelCode: carDetailData.modelCode,
+                    carBrand_id: carBrand._id,
+               });
           }
-
           // Save the image URLs into an array of objects
 
           for (let i = 1; i <= 6; i++) {
@@ -659,9 +766,9 @@ const createCarDetail = async (carDetailData) => {
 
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
-               leaseType_id: leaseType ? leaseType._id : null,
-               carBrand_id: carBrand ? carBrand._id : null,
-               carSeries_id: carSeries ? carSeries._id : null,
+               leaseType_id: leaseTypes,
+               carBrand_id: carBrand._id,
+               carSeries_id: carSeries._id,
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,

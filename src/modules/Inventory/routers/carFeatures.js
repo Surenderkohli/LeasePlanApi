@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { carFeatureService } from '../services/carFeatures.js';
+import multer from 'multer';
+import csvtojson from 'csvtojson';
 
 const router = Router();
 
@@ -82,5 +84,36 @@ router.delete(
           res.send(result);
      })
 );
+
+const storage = multer.memoryStorage();
+
+const upload = multer({ storage });
+
+router.post('/car-features', upload.single('file'), async (req, res) => {
+     try {
+          let carFeatures = [];
+
+          if (req.file && req.file.mimetype === 'text/csv') {
+               // CSV upload
+               const csvString = req.file.buffer.toString('utf8');
+               const carFeatureData = await csvtojson().fromString(csvString);
+
+               for (let i = 0; i < carFeatureData.length; i++) {
+                    const carDetail = await carFeatureService.createCarFeautre(
+                         carFeatureData[i]
+                    );
+                    carFeatures.push(carDetail);
+               }
+          }
+
+          res.status(201).json({
+               message: 'Car features added successfully',
+               data: carFeatures,
+          });
+     } catch (error) {
+          console.log(error);
+          res.status(400).json({ message: error.message });
+     }
+});
 
 export default router;

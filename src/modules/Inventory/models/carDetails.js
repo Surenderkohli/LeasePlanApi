@@ -10,10 +10,12 @@ const carDetailSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'carBrand',
           },
-          leaseType_id: {
-               type: mongoose.Schema.ObjectId,
-               ref: 'leaseType',
-          },
+          leaseType_id: [
+               {
+                    type: mongoose.Schema.ObjectId,
+                    ref: 'leaseType',
+               },
+          ],
           carFeatures_id: {
                type: mongoose.Schema.ObjectId,
                ref: 'carFeature',
@@ -32,7 +34,7 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                required: false,
           },
-          price: Number,
+          // price: Number,
           bodyType: {
                type: String,
                enum: [
@@ -46,6 +48,10 @@ const carDetailSchema = new mongoose.Schema(
                     'sports',
                ],
           },
+          // yearModel: {
+          //      type: Number,
+          //      required: false,
+          // },
           door: Number,
           seat: Number,
           gears: {
@@ -53,17 +59,18 @@ const carDetailSchema = new mongoose.Schema(
                required: false,
                default: '6 SPEED',
           },
-          milesPerGallon: Number,
-          annualMileage: {
-               type: Number,
-               enum: [4000, 6000, 8000, 10000, 12000],
-          },
+          // milesPerGallon: Number,
+          //annualMileage: Number,
+          // annualMileage: {
+          //      type: Number,
+          //      enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
+          // },
           acceleration: {
                type: String,
                required: false,
                default: '0-62 mph 9.4 seconds',
           },
-          co2: Number,
+          co2: String,
           fuelType: {
                type: String,
                enum: ['petrol', 'diesel', 'hybrid', 'electric'],
@@ -72,45 +79,28 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                enum: ['automatic', 'manual'],
           },
-          upfrontPayment: {
-               type: Number,
-               enum: [1, 3, 6, 9, 12],
-          },
-          includeMaintenance: {
-               type: Boolean,
-               default: false,
-          },
-          contractLengthInMonth: {
-               type: Number,
-               enum: [6, 12, 24, 36, 48, 60],
-          },
+          tankCapacity: String,
+          // contractLengthInMonth: {
+          //      type: Number,
+          //      enum: [6, 12, 24, 36, 48, 60],
+          // },
           isDeleted: {
                type: Boolean,
                default: false,
           },
           priceMin: {
                type: Number,
+               required: false,
           },
           priceMax: {
                type: Number,
+               required: false,
           },
-          roadFundLicense: {
-               type: String,
-               default: 'Included',
-          },
-          roadSideAssist: {
-               type: String,
-               default: 'Included',
-          },
-          standardDelivery: {
-               type: String,
-               default: 'Included',
-          },
-          deals: {
-               type: String,
-               enum: ['active', 'inactive'],
-               default: 'inactive',
-          },
+          // deals: {
+          //      type: String,
+          //      enum: ['active', 'inactive'],
+          //      default: 'inactive',
+          // },
      },
 
      { timestamps: true }

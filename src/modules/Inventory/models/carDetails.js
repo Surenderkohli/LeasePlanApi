@@ -59,8 +59,8 @@ const carDetailSchema = new mongoose.Schema(
                required: false,
                default: '6 SPEED',
           },
-          milesPerGallon: Number,
-          annualMileage: Number,
+          // milesPerGallon: Number,
+          //annualMileage: Number,
           // annualMileage: {
           //      type: Number,
           //      enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
@@ -96,11 +96,11 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          deals: {
-               type: String,
-               enum: ['active', 'inactive'],
-               default: 'inactive',
-          },
+          // deals: {
+          //      type: String,
+          //      enum: ['active', 'inactive'],
+          //      default: 'inactive',
+          // },
      },
 
      { timestamps: true }

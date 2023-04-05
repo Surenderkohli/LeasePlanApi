@@ -628,11 +628,12 @@ const createCarDetail = async (carDetailData) => {
                acceleration: carDetailData.acceleration,
                fuelType: carDetailData.fuelType,
                seat: carDetailData.seat,
-               milesPerGallon: carDetailData.milesPerGallon,
                door: carDetailData.door,
                bodyType: carDetailData.bodyType,
                transmission: carDetailData.transmission,
                gears: carDetailData.gears,
+               tankCapacity: carDetailData.tankCapacity,
+               c02: carDetailData.co2,
           });
 
           const savedCarDetail = await newCarDetail.save();

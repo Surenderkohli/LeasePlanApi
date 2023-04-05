@@ -103,6 +103,12 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
+
+          exteriorFeatures: [String],
+          interiorFeatures: [String],
+          safetySecurityFeatures: [String],
+          comfortConvenienceFeatures: [String],
+          audioEntertainmentFeatures: [String],
      },
 
      { timestamps: true }

@@ -157,6 +157,24 @@ const getAllCar = async (
                });
           }
 
+          // if (Array.isArray(yearModels) && yearModels.length > 0) {
+          //      // Use the $in operator to filter by multiple yearModel values
+          //      aggregateFilter.push({
+          //           $match: {
+          //                yearModel: {
+          //                     $in: yearModels.map(yearModel),
+          //                },
+          //           },
+          //      });
+          // } else if (yearModel) {
+          //      // Use the $eq operator to filter by a single yearModel value
+          //      aggregateFilter.push({
+          //           $match: {
+          //                yearModel: parseInt(yearModel),
+          //           },
+          //      });
+          // }
+
           const response = await carDetailModel.aggregate(aggregateFilter);
 
           return response;
@@ -540,6 +558,12 @@ const createCarDetail = async (carDetailData) => {
           let leaseType;
           let companyName;
           let seriesName;
+          // Extract the exterior and interior features from the row
+          const exteriorFeatures = [];
+          const interiorFeatures = [];
+          const safetySecurityFeatures = [];
+          const comfortConvenienceFeatures = [];
+          const audioEntertainmentFeatures = [];
           var images = [];
 
           // Query the database for matching records based on the names provided
@@ -598,6 +622,20 @@ const createCarDetail = async (carDetailData) => {
                }
           }
 
+          Object.keys(carDetailData).forEach((key) => {
+               if (key.startsWith('exterior_')) {
+                    exteriorFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('interior_')) {
+                    interiorFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('safety_security_')) {
+                    safetySecurityFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('comfort_convenience_')) {
+                    comfortConvenienceFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('audio_entertainment_')) {
+                    audioEntertainmentFeatures.push(carDetailData[key]);
+               }
+          });
+
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
                leaseType_id: leaseType ? leaseType._id : null,
@@ -619,6 +657,17 @@ const createCarDetail = async (carDetailData) => {
                transmission: carDetailData.transmission,
                gears: carDetailData.gears,
                deals: carDetailData.deals,
+               exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
+               interiorFeatures: interiorFeatures ? interiorFeatures : [],
+               safetySecurityFeatures: safetySecurityFeatures
+                    ? safetySecurityFeatures
+                    : [],
+               comfortConvenienceFeatures: comfortConvenienceFeatures
+                    ? comfortConvenienceFeatures
+                    : [],
+               audioEntertainmentFeatures: audioEntertainmentFeatures
+                    ? audioEntertainmentFeatures
+                    : [],
           });
 
           const savedCarDetail = await newCarDetail.save();

@@ -574,10 +574,10 @@ const getSingleCars = async (id) => {
                leaseType_id: car.leaseType_id,
                yearModel: car.yearModel,
           });
-          console.log(carOffers);
-          // if (!carOffers) {
-          //      throw new Error('Car offers not found');
-          // }
+
+          if (!carOffers) {
+               throw new Error('Car offers not found');
+          }
 
           const result = {
                car,

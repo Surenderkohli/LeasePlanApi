@@ -83,42 +83,6 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          // yearModel: {
-          //      type: Number,
-          //      required: false,
-          // },
-          // annualMileage: {
-          //      type: Number,
-          //      required: false,
-          // },
-          // duration: {
-          //      type: Number,
-          //      enum: [6, 12, 24, 36, 48, 60],
-          //      required: false,
-          // },
-          // monthlyCost: {
-          //      type: Number,
-          //      required: false,
-          // },
-          // deals: {
-          //      type: String,
-          //      enum: ['active', 'inactive'],
-          //      default: 'inactive',
-          // },
-
-          // monthlyCost: {
-          //      type: Number,
-          //      get: function () {
-          //           // Calculate the monthly cost based on the values of yearModel, annualMileage, and duration
-          //           const yearModel = this.yearModel || 0;
-          //           const annualMileage = this.annualMileage || 0;
-          //           const duration = this.duration || 0;
-          //           const basePrice = 1000; // Replace with your own calculation
-          //           const monthlyCost =
-          //                basePrice + yearModel + annualMileage + duration;
-          //           return monthlyCost;
-          //      },
-          // },
      },
 
      { timestamps: true }

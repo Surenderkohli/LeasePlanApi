@@ -791,6 +791,16 @@ const createCarDetail = async (carDetailData) => {
      }
 };
 
+const bulkUpdateCarDetails = async (bulkOps) => {
+     try {
+          const result = await carDetailModel.bulkWrite(bulkOps);
+          return result;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Bulk update failed');
+     }
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -801,4 +811,5 @@ export const CarServices = {
      getSingleCars,
      getDeals,
      createCarDetail,
+     bulkUpdateCarDetails,
 };

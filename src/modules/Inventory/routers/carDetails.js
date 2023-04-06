@@ -350,4 +350,65 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
      }
 });
 
+router.post('/bulk-update', upload.single('file'), async (req, res) => {
+     try {
+          if (!req.file || req.file.mimetype !== 'text/csv') {
+               throw new Error('No file or data provided');
+          }
+          // Convert the CSV file into an array of objects
+          const csvString = req.file.buffer.toString('utf8');
+          const carDetailData = await csvtojson().fromString(csvString);
+
+          const bulkOps = [];
+
+          // Loop through each row in the CSV file
+          for (let i = 0; i < carDetailData.length; i++) {
+               const {
+                    makeCode,
+                    modelCode,
+                    yearModel,
+                    duration,
+                    annualMileage,
+               } = carDetailData[i];
+
+               // Check if the required fields are present in the CSV data
+               // if (
+               //      !makeCode ||
+               //      !modelCode ||
+               //      !yearModel ||
+               //      !duration ||
+               //      !annualMileage
+               // ) {
+               //      throw new Error('Missing required fields in CSV data');
+               // }
+
+               // Create the update operation for the current row in the CSV file
+               const updateOp = {
+                    updateOne: {
+                         filter: { makeCode, modelCode },
+                         update: {
+                              $set: {
+                                   yearModel: Number(yearModel),
+                                   duration: Number(duration),
+                                   annualMileage: Number(annualMileage),
+                              },
+                         },
+                    },
+               };
+
+               bulkOps.push(updateOp);
+          }
+
+          // Execute the bulk update operation
+          const result = await CarServices.bulkUpdateCarDetails(bulkOps);
+
+          res.status(200).json({
+               message: `${result.modifiedCount} car details updated successfully`,
+          });
+     } catch (error) {
+          console.log(error);
+          res.status(400).json({ message: error.message });
+     }
+});
+
 export default router;

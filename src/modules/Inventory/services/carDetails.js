@@ -839,6 +839,105 @@ const createCarDetail = async (carDetailData) => {
 //      }
 // };
 
+async function getCarsByBrandAndSeries(companyName, seriesName) {
+     try {
+          const cars = await carDetailModel
+               .find({
+                    'carBrand_id.companyName': companyName,
+                    'carSeries_id.seriesName': seriesName,
+               })
+               .select('yearModel carSeries_id carBrand_id')
+               .populate('carSeries_id', 'seriesName')
+               .populate('carBrand_id', 'companyName');
+
+          const filteredCars = [];
+          const uniqueYears = new Set();
+
+          cars.forEach((car) => {
+               if (!uniqueYears.has(car.yearModel)) {
+                    uniqueYears.add(car.yearModel);
+                    filteredCars.push({
+                         yearModel: car.yearModel,
+                         carSeries: car.carSeries_id,
+                         carBrand: car.carBrand_id,
+                    });
+               }
+          });
+
+          return filteredCars;
+     } catch (err) {
+          console.error(err);
+          throw new Error('Error fetching cars');
+     }
+}
+
+async function getCarsWithOffers(companyName, seriesName, yearModels) {
+     try {
+          const carDetails = await CarDetail.find({
+               companyName: companyName,
+               seriesName: seriesName,
+               yearModel: { $in: yearModels },
+          })
+               .populate('carBrand_id', 'companyName')
+               .populate('carSeries_id', 'seriesName');
+
+          const carDetailIds = carDetails.map((carDetail) => carDetail._id);
+
+          const carOffers = await CarOffer.aggregate([
+               { $match: { carDetail_id: { $in: carDetailIds } } },
+               { $unwind: '$leaseType_id' },
+               {
+                    $lookup: {
+                         from: 'leasetypes',
+                         localField: 'leaseType_id',
+                         foreignField: '_id',
+                         as: 'leaseType',
+                    },
+               },
+               { $unwind: '$leaseType' },
+               {
+                    $group: {
+                         _id: '$carDetail_id',
+                         offers: {
+                              $push: {
+                                   leaseType: '$leaseType.leaseType',
+                                   annualMileage: '$annualMileage',
+                                   duration: '$duration',
+                                   monthlyCost: '$monthlyCost',
+                                   deals: '$deals',
+                              },
+                         },
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'cardetails',
+                         localField: '_id',
+                         foreignField: '_id',
+                         as: 'carDetails',
+                    },
+               },
+               { $unwind: '$carDetails' },
+               {
+                    $project: {
+                         _id: '$carDetails._id',
+                         makeCode: '$carDetails.makeCode',
+                         modelCode: '$carDetails.modelCode',
+                         companyName: '$carDetails.carBrand_id.companyName',
+                         seriesName: '$carDetails.carSeries_id.seriesName',
+                         yearModel: '$carDetails.yearModel',
+                         offers: 1,
+                    },
+               },
+          ]);
+
+          return carOffers;
+     } catch (err) {
+          console.error(err);
+          throw err;
+     }
+}
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -849,4 +948,6 @@ export const CarServices = {
      getSingleCars,
      getDeals,
      createCarDetail,
+     getCarsByBrandAndSeries,
+     getCarsWithOffers,
 };

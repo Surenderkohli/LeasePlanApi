@@ -7,63 +7,42 @@ import carOfferModel from '../models/carOffer.js';
 
 const createCarOffer = async (carDetailData) => {
      try {
-          let leaseType;
-          let companyName;
-          let seriesName;
+          // Find the car brand using the makeCode
+          const companyName = await carBrandModel.findOne({
+               makeCode: carDetailData.makeCode,
+          });
+          if (!companyName) {
+               throw new Error(
+                    `Car brand with makeCode ${carDetailData.makeCode} not found`
+               );
+          }
 
-          // Query the database for matching records based on the names provided
-          // if (carDetailData.leaseType) {
-          //      leaseType = await leaseTypeModel.findOne({
-          //           leaseType: carDetailData.leaseType,
-          //      });
-          // }
+          // Find the car series using the modelCode and the car brand ID
+          const seriesName = await carSeriesModel.findOne({
+               modelCode: carDetailData.modelCode,
+               carBrand_id: companyName._id,
+          });
+          if (!seriesName) {
+               throw new Error(
+                    `Car series with modelCode ${carDetailData.modelCode} not found`
+               );
+          }
 
-          // if (carDetailData.companyName) {
-          //      if (leaseType) {
-          //           companyName = await carBrandModel.findOneAndUpdate(
-          //                {
-          //                     companyName: carDetailData.companyName,
-          //                     leaseType_id: leaseType._id,
-          //                },
-          //                { $setOnInsert: { leaseType_id: leaseType._id } },
-          //                { upsert: true, new: true }
-          //           );
-          //      } else {
-          //           companyName = await carBrandModel.findOneAndUpdate(
-          //                {
-          //                     companyName: carDetailData.companyName,
-          //                     leaseType_id: null,
-          //                },
-          //                { $setOnInsert: { leaseType_id: null } },
-          //                { upsert: true, new: true }
-          //           );
-          //      }
-          // }
-
-          // if (carDetailData.seriesName) {
-          //      const query = {
-          //           seriesName: carDetailData.seriesName,
-          //           carBrand_id: companyName ? companyName._id : null,
-          //      };
-
-          //      seriesName = await carSeriesModel.findOneAndUpdate(
-          //           query,
-          //           {
-          //                $setOnInsert: {
-          //                     carBrand_id: companyName ? companyName._id : null,
-          //                     makeCode: carDetailData.makeCode,
-          //                     modelCode: carDetailData.modelCode,
-          //                },
-          //           },
-          //           { upsert: true, new: true }
-          //      );
-          // }
+          // Find the lease type using the leaseTypeName
+          const leaseType = await leaseTypeModel.findOne({
+               name: carDetailData.leaseTypeName,
+          });
+          if (!leaseType) {
+               throw new Error(
+                    `Lease type with name ${carDetailData.leaseTypeName} not found`
+               );
+          }
 
           // Create the new car detail entry using the retrieved IDs
           const newCarOffer = new carOfferModel({
-               leaseType_id: leaseType ? leaseType._id : null,
-               carBrand_id: companyName ? companyName._id : null,
-               carSeries_id: seriesName ? seriesName._id : null,
+               leaseType_id: leaseType._id,
+               carBrand_id: companyName._id,
+               carSeries_id: seriesName._id,
                yearModel: carDetailData.yearModel,
                duration: carDetailData.duration,
                annualMileage: carDetailData.annualMileage,

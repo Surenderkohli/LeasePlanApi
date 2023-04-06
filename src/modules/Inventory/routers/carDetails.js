@@ -470,4 +470,35 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
 //      }
 // });
 
+router.get('/cars/:companyName/:seriesName', async (req, res) => {
+     try {
+          const { companyName, seriesName } = req.params;
+          const cars = await CarServices.getCarsByBrandAndSeries(
+               companyName,
+               seriesName
+          );
+          res.status(200).json(cars);
+     } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Server error' });
+     }
+});
+
+router.get('/cars-with-offers', async (req, res) => {
+     const { companyName, seriesName, yearModels } = req.query;
+
+     try {
+          const carOffers = await CarServices.getCarsWithOffers(
+               companyName,
+               seriesName,
+               yearModels
+          );
+
+          res.json(carOffers);
+     } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Server error' });
+     }
+});
+
 export default router;

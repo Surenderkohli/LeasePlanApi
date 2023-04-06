@@ -9,12 +9,6 @@ const carFeatureSchema = new mongoose.Schema({
           type: mongoose.Schema.ObjectId,
           ref: 'carBrand',
      },
-     leaseType_id: [
-          {
-               type: mongoose.Schema.ObjectId,
-               ref: 'leaseType',
-          },
-     ],
      exteriorFeatures: [String],
      interiorFeatures: [String],
      safetySecurityFeatures: [String],

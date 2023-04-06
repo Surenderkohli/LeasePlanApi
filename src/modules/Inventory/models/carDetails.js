@@ -48,10 +48,6 @@ const carDetailSchema = new mongoose.Schema(
                     'sports',
                ],
           },
-          // yearModel: {
-          //      type: Number,
-          //      required: false,
-          // },
           door: Number,
           seat: Number,
           gears: {
@@ -60,11 +56,6 @@ const carDetailSchema = new mongoose.Schema(
                default: '6 SPEED',
           },
           // milesPerGallon: Number,
-          //annualMileage: Number,
-          // annualMileage: {
-          //      type: Number,
-          //      enum: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000],
-          // },
           acceleration: {
                type: String,
                required: false,
@@ -80,10 +71,6 @@ const carDetailSchema = new mongoose.Schema(
                enum: ['automatic', 'manual'],
           },
           tankCapacity: String,
-          // contractLengthInMonth: {
-          //      type: Number,
-          //      enum: [6, 12, 24, 36, 48, 60],
-          // },
           isDeleted: {
                type: Boolean,
                default: false,
@@ -96,11 +83,28 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          // deals: {
-          //      type: String,
-          //      enum: ['active', 'inactive'],
-          //      default: 'inactive',
-          // },
+          yearModel: {
+               type: Number,
+               required: false,
+          },
+          annualMileage: {
+               type: Number,
+               required: false,
+          },
+          duration: {
+               type: Number,
+               enum: [6, 12, 24, 36, 48, 60],
+               required: false,
+          },
+          monthlyCost: {
+               type: Number,
+               required: false,
+          },
+          deals: {
+               type: String,
+               enum: ['active', 'inactive'],
+               default: 'inactive',
+          },
      },
 
      { timestamps: true }

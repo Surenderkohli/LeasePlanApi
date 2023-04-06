@@ -349,69 +349,125 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
           res.status(400).json({ message: error.message });
      }
 });
+// // Loop through each row in the CSV file
+// for (let i = 0; i < carDetailData.length; i++) {
+//      const {
+//           makeCode,
+//           modelCode,
+//           yearModel,
+//           duration,
+//           annualMileage,
+//           monthlyCost,
+//      } = carDetailData[i];
 
-router.post('/bulk-update', upload.single('file'), async (req, res) => {
-     try {
-          if (!req.file || req.file.mimetype !== 'text/csv') {
-               throw new Error('No file or data provided');
-          }
-          // Convert the CSV file into an array of objects
-          const csvString = req.file.buffer.toString('utf8');
-          const carDetailData = await csvtojson().fromString(csvString);
+//      // Check if the required fields are present in the CSV data
+//      if (
+//           !makeCode ||
+//           !modelCode ||
+//           !yearModel ||
+//           !duration ||
+//           !annualMileage ||
+//           !monthlyCost
+//      ) {
+//           throw new Error('Missing required fields in CSV data');
+//      }
 
-          const bulkOps = [];
+//      // Calculate the new values for the dynamic fields
+//      let newAnnualMileage = annualMileage;
+//      let newDuration = duration;
+//      let newMonthlyCost = monthlyCost;
 
-          // Loop through each row in the CSV file
-          for (let i = 0; i < carDetailData.length; i++) {
-               const {
-                    makeCode,
-                    modelCode,
-                    yearModel,
-                    duration,
-                    annualMileage,
-                    monthlyCost,
-               } = carDetailData[i];
+//      if (yearModel == 2021) {
+//           newAnnualMileage = 15000;
+//           newDuration = 12;
+//           newMonthlyCost = monthlyCost * 1.1;
+//      } else if (annualMileage == 12000) {
+//           newDuration = 24;
+//           newMonthlyCost = monthlyCost * 0.9;
+//      } else if (duration == 36) {
+//           newMonthlyCost = monthlyCost * 0.8;
+//      }
 
-               //   Check if the required fields are present in the CSV data
-               if (
-                    !makeCode ||
-                    !modelCode ||
-                    !yearModel ||
-                    !duration ||
-                    !annualMileage ||
-                    !monthlyCost
-               ) {
-                    throw new Error('Missing required fields in CSV data');
-               }
+//      // Create the update operation for the current row in the CSV file
+//      const updateOp = {
+//           updateMany: {
+//                filter: { makeCode, modelCode },
+//                update: {
+//                     $set: {
+//                          yearModel: Number(yearModel),
+//                          duration: Number(newDuration),
+//                          annualMileage: Number(newAnnualMileage),
+//                          monthlyCost: Number(newMonthlyCost),
+//                     },
+//                },
+//           },
+//      };
 
-               // Create the update operation for the current row in the CSV file
-               const updateOp = {
-                    updateMany: {
-                         filter: { makeCode, modelCode },
-                         update: {
-                              $set: {
-                                   yearModel: Number(yearModel),
-                                   duration: Number(duration),
-                                   annualMileage: Number(annualMileage),
-                                   monthlyCost: Number(monthlyCost),
-                              },
-                         },
-                    },
-               };
+//      bulkOps.push(updateOp);
+// }
 
-               bulkOps.push(updateOp);
-          }
+// router.post('/bulk-update', upload.single('file'), async (req, res) => {
+//      try {
+//           if (!req.file || req.file.mimetype !== 'text/csv') {
+//                throw new Error('No file or data provided');
+//           }
+//           // Convert the CSV file into an array of objects
+//           const csvString = req.file.buffer.toString('utf8');
+//           const carDetailData = await csvtojson().fromString(csvString);
 
-          // Execute the bulk update operation
-          const result = await CarServices.bulkUpdateCarDetails(bulkOps);
+//           const bulkOps = [];
 
-          res.status(200).json({
-               message: `${result.modifiedCount} car details updated successfully`,
-          });
-     } catch (error) {
-          console.log(error);
-          res.status(400).json({ message: error.message });
-     }
-});
+//           // Loop through each row in the CSV file
+//           for (let i = 0; i < carDetailData.length; i++) {
+//                const {
+//                     makeCode,
+//                     modelCode,
+//                     yearModel,
+//                     duration,
+//                     annualMileage,
+//                     monthlyCost,
+//                } = carDetailData[i];
+
+//                //   Check if the required fields are present in the CSV data
+//                if (
+//                     !makeCode ||
+//                     !modelCode ||
+//                     !yearModel ||
+//                     !duration ||
+//                     !annualMileage ||
+//                     !monthlyCost
+//                ) {
+//                     throw new Error('Missing required fields in CSV data');
+//                }
+
+//                // Create the update operation for the current row in the CSV file
+//                const updateOp = {
+//                     updateMany: {
+//                          filter: { makeCode, modelCode },
+//                          update: {
+//                               $set: {
+//                                    yearModel: Number(yearModel),
+//                                    duration: Number(duration),
+//                                    annualMileage: Number(annualMileage),
+//                                    monthlyCost: Number(monthlyCost),
+//                               },
+//                          },
+//                     },
+//                };
+
+//                bulkOps.push(updateOp);
+//           }
+
+//           // Execute the bulk update operation
+//           const result = await CarServices.bulkUpdateCarDetails(bulkOps);
+
+//           res.status(200).json({
+//                message: `${result.modifiedCount} car details updated successfully`,
+//           });
+//      } catch (error) {
+//           console.log(error);
+//           res.status(400).json({ message: error.message });
+//      }
+// });
 
 export default router;

@@ -3,6 +3,7 @@ import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carFeatureModel from '../models/carFeatures.js';
+import carOfferModel from '../models/carOffer.js';
 
 const getAllCar = async (
      leaseType,
@@ -567,13 +568,21 @@ const getSingleCars = async (id) => {
                yearModel: car.yearModel,
           });
 
-          if (!carFeatures) {
-               throw new Error('Car features not found');
-          }
+          const carOffers = await carOfferModel.findOne({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               leaseType_id: car.leaseType_id,
+               yearModel: car.yearModel,
+          });
+          console.log(carOffers);
+          // if (!carOffers) {
+          //      throw new Error('Car offers not found');
+          // }
 
           const result = {
                car,
-               carFeatures,
+               features: carFeatures,
+               offers: carOffers,
           };
 
           return result;
@@ -820,15 +829,15 @@ const createCarDetail = async (carDetailData) => {
      }
 };
 
-const bulkUpdateCarDetails = async (bulkOps) => {
-     try {
-          const result = await carDetailModel.bulkWrite(bulkOps);
-          return result;
-     } catch (error) {
-          console.log(error);
-          throw new Error('Bulk update failed');
-     }
-};
+// const bulkUpdateCarDetails = async (bulkOps) => {
+//      try {
+//           const result = await carDetailModel.bulkWrite(bulkOps);
+//           return result;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Bulk update failed');
+//      }
+// };
 
 export const CarServices = {
      getAllCar,
@@ -840,5 +849,4 @@ export const CarServices = {
      getSingleCars,
      getDeals,
      createCarDetail,
-     bulkUpdateCarDetails,
 };

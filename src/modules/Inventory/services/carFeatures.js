@@ -61,47 +61,6 @@ const createCarFeautre = async (carDetailData) => {
                });
           }
 
-          if (carDetailData.companyName) {
-               if (leaseType) {
-                    companyName = await carBrandModel.findOneAndUpdate(
-                         {
-                              companyName: carDetailData.companyName,
-                              leaseType_id: leaseType._id,
-                         },
-                         { $setOnInsert: { leaseType_id: leaseType._id } },
-                         { upsert: true, new: true }
-                    );
-               } else {
-                    companyName = await carBrandModel.findOneAndUpdate(
-                         {
-                              companyName: carDetailData.companyName,
-                              leaseType_id: null,
-                         },
-                         { $setOnInsert: { leaseType_id: null } },
-                         { upsert: true, new: true }
-                    );
-               }
-          }
-
-          if (carDetailData.seriesName) {
-               const query = {
-                    seriesName: carDetailData.seriesName,
-                    carBrand_id: companyName ? companyName._id : null,
-               };
-
-               seriesName = await carSeriesModel.findOneAndUpdate(
-                    query,
-                    {
-                         $setOnInsert: {
-                              carBrand_id: companyName ? companyName._id : null,
-                              makeCode: carDetailData.makeCode,
-                              modelCode: carDetailData.modelCode,
-                         },
-                    },
-                    { upsert: true, new: true }
-               );
-          }
-
           Object.keys(carDetailData).forEach((key) => {
                if (key.startsWith('exterior_')) {
                     exteriorFeatures.push(carDetailData[key]);

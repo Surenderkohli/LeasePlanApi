@@ -369,6 +369,7 @@ router.post('/bulk-update', upload.single('file'), async (req, res) => {
                     yearModel,
                     duration,
                     annualMileage,
+                    monthlyCost,
                } = carDetailData[i];
 
                //   Check if the required fields are present in the CSV data
@@ -377,7 +378,8 @@ router.post('/bulk-update', upload.single('file'), async (req, res) => {
                     !modelCode ||
                     !yearModel ||
                     !duration ||
-                    !annualMileage
+                    !annualMileage ||
+                    !monthlyCost
                ) {
                     throw new Error('Missing required fields in CSV data');
                }
@@ -391,6 +393,7 @@ router.post('/bulk-update', upload.single('file'), async (req, res) => {
                                    yearModel: Number(yearModel),
                                    duration: Number(duration),
                                    annualMileage: Number(annualMileage),
+                                   monthlyCost: Number(monthlyCost),
                               },
                          },
                     },

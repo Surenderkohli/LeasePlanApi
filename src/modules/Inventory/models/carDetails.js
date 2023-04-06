@@ -105,6 +105,10 @@ const carDetailSchema = new mongoose.Schema(
                enum: ['active', 'inactive'],
                default: 'inactive',
           },
+          // features: {
+          //      type: Object,
+          //      required: false,
+          // },
      },
 
      { timestamps: true }

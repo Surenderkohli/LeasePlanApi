@@ -9,6 +9,8 @@ const carFeatureSchema = new mongoose.Schema({
           type: mongoose.Schema.ObjectId,
           ref: 'carBrand',
      },
+     modelCode: String,
+     makeCode: String,
      exteriorFeatures: [String],
      interiorFeatures: [String],
      safetySecurityFeatures: [String],

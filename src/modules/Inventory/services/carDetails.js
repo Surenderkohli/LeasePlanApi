@@ -2,6 +2,7 @@ import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
+import carFeatureModel from '../models/carFeatures.js';
 
 const getAllCar = async (
      leaseType,
@@ -539,17 +540,46 @@ const getDeals = async (query) => {
      }
 };
 
+// const getSingleCars = async (id) => {
+//      try {
+//           const car = await carDetailModel
+//                .find({ _id: id })
+//                .populate('carBrand_id')
+//                .populate('carSeries_id')
+//                .populate('leaseType_id');
+
+//           return car;
+//      } catch (error) {
+//           console.log(error);
+//      }
+// };
 const getSingleCars = async (id) => {
      try {
-          const car = await carDetailModel
-               .find({ _id: id })
-               .populate('carBrand_id')
-               .populate('carSeries_id')
-               .populate('leaseType_id');
+          const car = await carDetailModel.findOne({ _id: id });
 
-          return car;
+          if (!car) {
+               throw new Error('Car not found');
+          }
+
+          const carFeatures = await carFeatureModel.findOne({
+               carBrand_id: car.makeCode,
+               carSeries_id: car.modelCode,
+               yearModel: car.yearModel,
+          });
+
+          if (!carFeatures) {
+               throw new Error('Car features not found');
+          }
+
+          const result = {
+               car,
+               carFeatures,
+          };
+
+          return result;
      } catch (error) {
           console.log(error);
+          throw error;
      }
 };
 

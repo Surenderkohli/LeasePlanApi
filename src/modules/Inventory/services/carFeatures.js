@@ -43,7 +43,6 @@ const deleteCarFeatures = async (id) => {
 
 const createCarFeautre = async (carDetailData) => {
      try {
-          let leaseType;
           let companyName;
           let seriesName;
 
@@ -55,11 +54,6 @@ const createCarFeautre = async (carDetailData) => {
           const audioEntertainmentFeatures = [];
 
           // Query the database for matching records based on the names provided
-          if (carDetailData.leaseType) {
-               leaseType = await leaseTypeModel.findOne({
-                    leaseType: carDetailData.leaseType,
-               });
-          }
 
           Object.keys(carDetailData).forEach((key) => {
                if (key.startsWith('exterior_')) {
@@ -77,7 +71,6 @@ const createCarFeautre = async (carDetailData) => {
 
           // Create the new car detail entry using the retrieved IDs
           const newCarFeature = new carFeatureModel({
-               leaseType_id: leaseType ? leaseType._id : null,
                carBrand_id: companyName ? companyName._id : null,
                carSeries_id: seriesName ? seriesName._id : null,
                makeCode: carDetailData.makeCode,

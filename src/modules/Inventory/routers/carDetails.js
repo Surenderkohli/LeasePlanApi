@@ -371,20 +371,20 @@ router.post('/bulk-update', upload.single('file'), async (req, res) => {
                     annualMileage,
                } = carDetailData[i];
 
-               // Check if the required fields are present in the CSV data
-               // if (
-               //      !makeCode ||
-               //      !modelCode ||
-               //      !yearModel ||
-               //      !duration ||
-               //      !annualMileage
-               // ) {
-               //      throw new Error('Missing required fields in CSV data');
-               // }
+               //   Check if the required fields are present in the CSV data
+               if (
+                    !makeCode ||
+                    !modelCode ||
+                    !yearModel ||
+                    !duration ||
+                    !annualMileage
+               ) {
+                    throw new Error('Missing required fields in CSV data');
+               }
 
                // Create the update operation for the current row in the CSV file
                const updateOp = {
-                    updateOne: {
+                    updateMany: {
                          filter: { makeCode, modelCode },
                          update: {
                               $set: {

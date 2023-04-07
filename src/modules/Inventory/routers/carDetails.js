@@ -25,17 +25,17 @@ const carUpload = multer({
      storage: carStorage,
      limits: { fileSize: 5 * 1024 * 1024 },
 
-     // fileFilter(req, file, cb) {
-     //      if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-     //           cb(
-     //                new Error(
-     //                     'Please upload an image file with .png, .jpg, or .jpeg extension.'
-     //                )
-     //           );
-     //      }
+     fileFilter(req, file, cb) {
+          if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+               cb(
+                    new Error(
+                         'Please upload an image file with .png, .jpg, or .jpeg extension.'
+                    )
+               );
+          }
 
-     //      cb(undefined, true);
-     // },
+          cb(undefined, true);
+     },
 });
 
 const router = Router();
@@ -89,38 +89,6 @@ router.get(
           }
      })
 );
-
-router.get('/fetch-single/:id', async (req, res) => {
-     try {
-          const { id } = req.params;
-
-          let {
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               monthlyLeasePrice,
-          } = req.query;
-
-          const result = await CarServices.getSingleCar(
-               id,
-               contractLengthInMonth,
-               annualMileage,
-               upfrontPayment,
-               includeMaintenance,
-               monthlyLeasePrice
-          );
-          if (!result) {
-               res.status(404).json({
-                    success: false,
-                    message: 'No car found with the specified id.',
-               });
-          }
-          res.send(result);
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
 
 router.post(
      '/add',
@@ -227,16 +195,6 @@ router.put(
      })
 );
 
-router.delete(
-     '/delete/:id',
-     httpHandler(async (req, res) => {
-          const data = req.body;
-          const { id } = req.params;
-          const result = await CarServices.deleteCar(id, req.body);
-          res.send(result);
-     })
-);
-
 router.get(
      '/count',
      httpHandler(async (req, res) => {
@@ -252,6 +210,101 @@ router.get(
           }
      })
 );
+
+router.get('/best-deals', async (req, res) => {
+     try {
+          const { limit = 5, skip = 0 } = req.query;
+          const result = await CarServices.getDeals(
+               parseInt(limit),
+               parseInt(skip)
+          );
+
+          if (result.length) {
+               res.status(200).json({ success: true, data: result });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'Not found any best deals',
+                    data: [],
+               });
+          }
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
+
+router.delete(
+     '/delete/:id',
+     httpHandler(async (req, res) => {
+          const data = req.body;
+          const { id } = req.params;
+          const result = await CarServices.deleteCar(id, req.body);
+          res.send(result);
+     })
+);
+
+// router.get('/fetch-single/:id', async (req, res) => {
+//      try {
+//           const { id } = req.params;
+
+//           let {
+//                contractLengthInMonth,
+//                annualMileage,
+//                upfrontPayment,
+//                includeMaintenance,
+//                monthlyLeasePrice,
+//           } = req.query;
+
+//           const result = await CarServices.getSingleCar(
+//                id,
+//                contractLengthInMonth,
+//                annualMileage,
+//                upfrontPayment,
+//                includeMaintenance,
+//                monthlyLeasePrice
+//           );
+//           if (!result) {
+//                res.status(404).json({
+//                     success: false,
+//                     message: 'No car found with the specified id.',
+//                });
+//           }
+//           res.send(result);
+//      } catch (error) {
+//           res.send({ status: 400, success: false, msg: error.message });
+//      }
+// });
+
+// router.get('/cars/:companyName/:seriesName', async (req, res) => {
+//      try {
+//           const { companyName, seriesName } = req.params;
+//           const cars = await CarServices.getCarsByBrandAndSeries(
+//                companyName,
+//                seriesName
+//           );
+//           res.status(200).json(cars);
+//      } catch (err) {
+//           console.error(err);
+//           res.status(500).json({ message: 'Server error' });
+//      }
+// });
+
+// router.get('/cars-with-offers', async (req, res) => {
+//      const { companyName, seriesName, yearModels } = req.query;
+
+//      try {
+//           const carOffers = await CarServices.getCarsWithOffers(
+//                companyName,
+//                seriesName,
+//                yearModels
+//           );
+
+//           res.json(carOffers);
+//      } catch (error) {
+//           console.error(error);
+//           res.status(500).json({ error: 'Server error' });
+//      }
+// });
 
 // router.get(
 //      '/best-deals',
@@ -276,39 +329,7 @@ router.get(
 //      })
 // );
 
-router.get('/best-deals', async (req, res) => {
-     try {
-          const { limit = 5, skip = 0 } = req.query;
-          const result = await CarServices.getDeals(
-               parseInt(limit),
-               parseInt(skip)
-          );
-
-          if (result.length) {
-               res.status(200).json({ success: true, data: result });
-          } else {
-               res.status(200).json({
-                    success: false,
-                    message: 'Not found any best deals',
-                    data: [],
-               });
-          }
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
-
-router.get('/fetch-singles/:id', async (req, res) => {
-     try {
-          const { id } = req.params;
-
-          const result = await CarServices.getSingleCars(id);
-
-          res.status(200).json({ success: true, data: result });
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
+// <----------------------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------------------------------------------------------->
 
 const storage = multer.memoryStorage();
 
@@ -350,34 +371,15 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
      }
 });
 
-router.get('/cars/:companyName/:seriesName', async (req, res) => {
+router.get('/fetch-singles/:id', async (req, res) => {
      try {
-          const { companyName, seriesName } = req.params;
-          const cars = await CarServices.getCarsByBrandAndSeries(
-               companyName,
-               seriesName
-          );
-          res.status(200).json(cars);
-     } catch (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Server error' });
-     }
-});
+          const { id } = req.params;
 
-router.get('/cars-with-offers', async (req, res) => {
-     const { companyName, seriesName, yearModels } = req.query;
+          const result = await CarServices.getSingleCars(id);
 
-     try {
-          const carOffers = await CarServices.getCarsWithOffers(
-               companyName,
-               seriesName,
-               yearModels
-          );
-
-          res.json(carOffers);
+          res.status(200).json({ success: true, data: result });
      } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Server error' });
+          res.send({ status: 400, success: false, msg: error.message });
      }
 });
 

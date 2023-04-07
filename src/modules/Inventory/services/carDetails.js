@@ -733,6 +733,7 @@ const createCarDetail = async (carDetailData) => {
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
+               description: carDetailData.description,
                image: images ? images : [],
                acceleration: carDetailData.acceleration,
                fuelType: carDetailData.fuelType,
@@ -787,6 +788,41 @@ const getSingleCars = async (id) => {
      }
 };
 
+const getCarsByBrandSeriesLeaseType = async (
+     carBrand_id,
+     carSeries_id,
+     leaseType_id
+) => {
+     try {
+          const cars = await carDetailModel
+               .find({
+                    carBrand_id,
+                    carSeries_id,
+                    leaseType_id,
+               })
+               .sort({ yearModel: 1 });
+          const uniqueYears = Array.from(
+               new Set(cars.map((car) => car.yearModel))
+          );
+          const result = uniqueYears.map((year) => {
+               const carsWithSameYear = cars.filter(
+                    (car) => car.yearModel === year
+               );
+               return {
+                    companyName: carsWithSameYear[0].carBrand_id.companyName,
+                    seriesName: carsWithSameYear[0].carSeries_id.seriesName,
+                    yearModel: year,
+                    cars: carsWithSameYear,
+               };
+          });
+          return result;
+     } catch (err) {
+          console.error(err);
+          throw new Error(
+               'Error getting cars by brand, series, and lease type'
+          );
+     }
+};
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -796,4 +832,5 @@ export const CarServices = {
      getSingleCars,
      getDeals,
      createCarDetail,
+     getCarsByBrandSeriesLeaseType,
 };

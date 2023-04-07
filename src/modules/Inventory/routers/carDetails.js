@@ -383,4 +383,20 @@ router.get('/fetch-singles/:id', async (req, res) => {
      }
 });
 
+//get all cars by brand, series and lease type but different yearModel
+router.get('/list', async (req, res) => {
+     const { carBrand_id, carSeries_id, leaseType_id } = req.query;
+     try {
+          const cars = await CarServices.getCarsByBrandSeriesLeaseType(
+               carBrand_id,
+               carSeries_id,
+               leaseType_id
+          );
+          res.json(cars);
+     } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+     }
+});
+
 export default router;

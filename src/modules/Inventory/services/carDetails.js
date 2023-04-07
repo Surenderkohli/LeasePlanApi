@@ -554,6 +554,7 @@ const getDeals = async (query) => {
 //           console.log(error);
 //      }
 // };
+
 const getSingleCars = async (id) => {
      try {
           const car = await carDetailModel.findOne({ _id: id });
@@ -563,26 +564,21 @@ const getSingleCars = async (id) => {
           }
 
           const carFeatures = await carFeatureModel.findOne({
-               carBrand_id: car.makeCode,
-               carSeries_id: car.modelCode,
-               yearModel: car.yearModel,
-          });
-
-          const carOffers = await carOfferModel.findOne({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               leaseType_id: car.leaseType_id,
                yearModel: car.yearModel,
           });
 
-          if (!carOffers) {
-               throw new Error('Car offers not found');
-          }
+          const carOffers = await carOfferModel.find({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               yearModel: car.yearModel,
+          });
 
           const result = {
                car,
-               features: carFeatures,
-               offers: carOffers,
+               features: carFeatures || [],
+               offers: carOffers || [],
           };
 
           return result;
@@ -638,7 +634,6 @@ const createCarDetail = async (carDetailData) => {
                },
           });
 
-          // Check if the modelCode exists in carseries collection for the given carBrand
           let carSeries = await carSeriesModel.findOne({
                modelCode: carDetailData.modelCode,
                carBrand_id: {

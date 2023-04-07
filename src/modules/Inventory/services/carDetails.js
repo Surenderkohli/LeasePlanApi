@@ -239,10 +239,18 @@ const getCount = async () => {
           },
      ]);
 
-     const countObject = { flexiCount: 0, longTermCount: 0 };
+     const countObject = {
+          privateLeaseCount: 0,
+          flexiPlanCount: 0,
+          businessLeaseCount: 0,
+     };
      counts.forEach((count) => {
-          if (count._id === 'flexi') countObject.flexiCount = count.count;
-          if (count._id === 'longTerm') countObject.longTermCount = count.count;
+          if (count._id === 'Private Lease')
+               countObject.privateLeaseCount = count.count;
+          if (count._id === 'FlexiPlan')
+               countObject.flexiPlanCount = count.count;
+          if (count._id === 'Business Lease')
+               countObject.businessLeaseCount = count.count;
      });
 
      return countObject;
@@ -733,7 +741,6 @@ const createCarDetail = async (carDetailData) => {
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
-               description: carDetailData.description,
                image: images ? images : [],
                acceleration: carDetailData.acceleration,
                fuelType: carDetailData.fuelType,
@@ -794,13 +801,12 @@ const getCarsByBrandSeriesLeaseType = async (
      leaseType_id
 ) => {
      try {
-          const cars = await carDetailModel
-               .find({
-                    carBrand_id,
-                    carSeries_id,
-                    leaseType_id,
-               })
-               .sort({ yearModel: 1 });
+          const cars = await carD;
+          g.find({
+               carBrand_id,
+               carSeries_id,
+               leaseType_id,
+          }).sort({ yearModel: 1 });
           const uniqueYears = Array.from(
                new Set(cars.map((car) => car.yearModel))
           );

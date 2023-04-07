@@ -202,8 +202,9 @@ router.get(
                const counts = await CarServices.getCount();
                res.status(200).json({
                     success: true,
-                    flexiCount: counts.flexiCount,
-                    longTermCount: counts.longTermCount,
+                    privateLeaseCount: counts.privateLeaseCount,
+                    flexiPlanCount: counts.flexiPlanCount,
+                    businessLeaseCount: counts.businessLeaseCount,
                });
           } catch (error) {
                res.status(400).json({ success: false, error: error.message });

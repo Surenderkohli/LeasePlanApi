@@ -138,6 +138,12 @@ const createCarOffer = async (carOfferData) => {
      }
 };
 
+const getAllOffer = async () => {
+     const response = await carOfferModel.find();
+     return response;
+};
+
 export const carOfferService = {
      createCarOffer,
+     getAllOffer,
 };

@@ -22,10 +22,7 @@ const carOfferSchema = new mongoose.Schema(
           },
           offers: [
                {
-                    duration: {
-                         type: String,
-                         enum: ['6', '12', '24', '36', '48', '60'],
-                    },
+                    duration: Number,
                     annualMileage: Number,
                     monthlyCost: Number,
                },

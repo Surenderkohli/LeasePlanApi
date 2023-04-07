@@ -592,192 +592,58 @@ const getSingleCars = async (id) => {
      }
 };
 
-// const createCarDetail = async (carDetailData) => {
-//      try {
-//           let leaseType;
-//           let carBrand;
-//           let carSeries;
-//           var images = [];
-
-//           // Query the database for matching records based on the names provided
-//           if (carDetailData.leaseType) {
-//                leaseType = await leaseTypeModel.findOne({
-//                     leaseType: carDetailData.leaseType,
-//                });
-//           }
-//           // if (carDetailData.companyName) {
-//           //      if (leaseType) {
-//           //           companyName = await carBrandModel.findOneAndUpdate(
-//           //                {
-//           //                     companyName: carDetailData.companyName,
-//           //                     leaseType_id: leaseType._id,
-//           //                },
-//           //                { $setOnInsert: { leaseType_id: leaseType._id } },
-//           //                { upsert: true, new: true }
-//           //           );
-//           //      } else {
-//           //           companyName = await carBrandModel.findOneAndUpdate(
-//           //                {
-//           //                     companyName: carDetailData.companyName,
-//           //                     leaseType_id: null,
-//           //                },
-//           //                { $setOnInsert: { leaseType_id: null } },
-//           //                { upsert: true, new: true }
-//           //           );
-//           //      }
-//           // }
-
-//           // if (carDetailData.seriesName) {
-//           //      const query = {
-//           //           seriesName: carDetailData.seriesName,
-//           //           carBrand_id: companyName ? companyName._id : null,
-//           //      };
-
-//           //      seriesName = await carSeriesModel.findOneAndUpdate(
-//           //           query,
-//           //           {
-//           //                $setOnInsert: {
-//           //                     carBrand_id: companyName ? companyName._id : null,
-//           //                     makeCode: carDetailData.makeCode,
-//           //                     modelCode: carDetailData.modelCode,
-//           //                },
-//           //           },
-//           //           { upsert: true, new: true }
-//           //      );
-//           // }
-
-//           if (carDetailData.makeCode) {
-//                carBrand = await carBrandModel.findOne({
-//                     makeCode: carDetailData.makeCode,
-//                });
-//           }
-
-//           if (carDetailData.modelCode) {
-//                carSeries = await carSeriesModel.findOne({
-//                     modelCode: carDetailData.modelCode,
-//                });
-//           }
-
-//           // If carBrand doesn't exist, create a new entry in carbrands collection
-//           if (!carBrand) {
-//                if (carDetailData.companyName) {
-//                     carBrand = await carBrandModel.create({
-//                          companyName: carDetailData.companyName,
-//                          makeCode: carDetailData.makeCode,
-//                          leaseType_id: leaseType ? leaseType._id : null,
-//                     });
-//                } else {
-//                     throw new Error('Missing companyName');
-//                }
-//           }
-
-//           // If carSeries doesn't exist, create a new entry in carseries collection
-//           if (!carSeries) {
-//                if (carDetailData.seriesName) {
-//                     carSeries = await carSeriesModel.create({
-//                          seriesName: carDetailData.seriesName,
-//                          modelCode: carDetailData.modelCode,
-//                          carBrand_id: carBrand._id,
-//                     });
-//                } else {
-//                     throw new Error('Missing seriesName');
-//                }
-//           }
-
-//           // Save the image URLs into an array of objects
-
-//           for (let i = 1; i <= 6; i++) {
-//                if (carDetailData[`image_${i}_url`]) {
-//                     images.push({
-//                          imageUrl: carDetailData[`image_${i}_url`],
-//                     });
-//                }
-//           }
-
-//           // Create the new car detail entry using the retrieved IDs
-//           const newCarDetail = new carDetailModel({
-//                leaseType_id: leaseType ? leaseType._id : null,
-//                carBrand_id: carBrand ? carBrand._id : null,
-//                carSeries_id: carSeries ? carSeries._id : null,
-//                makeCode: carDetailData.makeCode,
-//                modelCode: carDetailData.modelCode,
-//                yearModel: carDetailData.yearModel,
-//                image: images ? images : [],
-//                acceleration: carDetailData.acceleration,
-//                fuelType: carDetailData.fuelType,
-//                seat: carDetailData.seat,
-//                door: carDetailData.door,
-//                bodyType: carDetailData.bodyType,
-//                transmission: carDetailData.transmission,
-//                gears: carDetailData.gears,
-//                tankCapacity: carDetailData.tankCapacity,
-//                c02: carDetailData.co2,
-//           });
-
-//           const savedCarDetail = await newCarDetail.save();
-
-//           return savedCarDetail;
-//      } catch (error) {
-//           console.log(error);
-//           throw new Error('Car details upload failed');
-//      }
-// };
-
 const createCarDetail = async (carDetailData) => {
      try {
-          let leaseTypes = [];
-          let carBrand;
-          let carSeries;
-          var images = [];
+          const leaseTypes = carDetailData.leaseType
+               ? await leaseTypeModel.find({
+                      leaseType: carDetailData.leaseType,
+                 })
+               : [];
 
-          // Query the database for matching records based on the makeCode and modelCode provided
-          if (carDetailData.leaseType) {
-               leaseTypes = await leaseTypeModel.find({
-                    leaseType: carDetailData.leaseType,
-               });
-          }
-
-          // If carBrand doesn't exist, create a new entry in carbrands collection
           if (!carDetailData.companyName) {
                throw new Error('Missing companyName');
           }
 
-          // Check if the companyName exists in multiple lease types in carbrands collection
-          const existingCarBrands = await carBrandModel.find({
+          let carBrand = await carBrandModel.findOne({
                companyName: carDetailData.companyName,
                makeCode: carDetailData.makeCode,
           });
 
-          // Set the leaseTypes based on the existing carBrand records
-          if (existingCarBrands.length > 0) {
-               existingCarBrands.forEach((brand) => {
-                    if (brand.leaseType_id) {
-                         leaseTypes.push(brand.leaseType_id);
-                    }
-               });
-          }
-
-          // If carBrand doesn't exist for any of the given leaseTypes, create a new entry in carbrands collection
-          if (
-               !existingCarBrands.some((brand) =>
-                    leaseTypes.includes(brand.leaseType_id)
-               )
-          ) {
+          if (!carBrand) {
                carBrand = await carBrandModel.create({
                     companyName: carDetailData.companyName,
                     makeCode: carDetailData.makeCode,
                     leaseType_id: leaseTypes,
                });
-          } else {
-               carBrand = existingCarBrands.find((brand) =>
-                    leaseTypes.includes(brand.leaseType_id)
-               );
+          } else if (leaseTypes.length > 0) {
+               const leaseTypeIdsToAdd = leaseTypes
+                    .map((leaseType) => leaseType._id)
+                    .filter(
+                         (leaseTypeId) =>
+                              !carBrand.leaseType_id.includes(leaseTypeId)
+                    );
+               if (leaseTypeIdsToAdd.length > 0) {
+                    carBrand.leaseType_id = [
+                         ...carBrand.leaseType_id,
+                         ...leaseTypeIdsToAdd,
+                    ];
+                    await carBrand.save();
+               }
           }
 
+          const existingCarBrands = await carBrandModel.find({
+               makeCode: carDetailData.makeCode,
+               leaseType_id: {
+                    $in: leaseTypes.map((leaseType) => leaseType._id),
+               },
+          });
+
           // Check if the modelCode exists in carseries collection for the given carBrand
-          carSeries = await carSeriesModel.findOne({
+          let carSeries = await carSeriesModel.findOne({
                modelCode: carDetailData.modelCode,
-               carBrand_id: carBrand._id,
+               carBrand_id: {
+                    $in: existingCarBrands.map((brand) => brand._id),
+               },
           });
 
           // If carSeries doesn't exist, create a new entry in carseries collection
@@ -791,13 +657,11 @@ const createCarDetail = async (carDetailData) => {
                     carBrand_id: carBrand._id,
                });
           }
-          // Save the image URLs into an array of objects
 
+          const images = [];
           for (let i = 1; i <= 6; i++) {
                if (carDetailData[`image_${i}_url`]) {
-                    images.push({
-                         imageUrl: carDetailData[`image_${i}_url`],
-                    });
+                    images.push({ imageUrl: carDetailData[`image_${i}_url`] });
                }
           }
 
@@ -828,16 +692,6 @@ const createCarDetail = async (carDetailData) => {
           throw new Error('Car details upload failed');
      }
 };
-
-// const bulkUpdateCarDetails = async (bulkOps) => {
-//      try {
-//           const result = await carDetailModel.bulkWrite(bulkOps);
-//           return result;
-//      } catch (error) {
-//           console.log(error);
-//           throw new Error('Bulk update failed');
-//      }
-// };
 
 async function getCarsByBrandAndSeries(companyName, seriesName) {
      try {

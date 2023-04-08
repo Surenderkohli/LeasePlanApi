@@ -10,9 +10,60 @@ const getAllCarFeature = async () => {
      return response;
 };
 
-const addCarFeature = async (data) => {
-     const response = await carFeatureModel.create(data);
-     return response;
+// const addCarFeature = async (data) => {
+//      const response = await carFeatureModel.create(data);
+//      return response;
+// };
+
+const createCarFeatureManual = async (carFeatureData) => {
+     try {
+          // Extract the features from the carFeatureData object
+          const {
+               modelCode,
+               makeCode,
+               yearModel,
+               exteriorFeatures,
+               interiorFeatures,
+               safetySecurityFeatures,
+               comfortConvenienceFeatures,
+               audioEntertainmentFeatures,
+          } = carFeatureData;
+
+          // Query the database for matching carBrand and carSeries documents
+          const carBrand = await CarBrand.findOne({
+               makeCode: makeCode,
+          });
+          const carSeries = await CarSeries.findOne({
+               modelCode: modelCode,
+          });
+
+          // Create the new car feature entry using the retrieved IDs
+          const newCarFeature = new carFeatureModel({
+               carBrand_id: carBrand ? carBrand._id : null,
+               carSeries_id: carSeries ? carSeries._id : null,
+               makeCode: makeCode,
+               modelCode: modelCode,
+               yearModel: yearModel,
+               exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
+               interiorFeatures: interiorFeatures ? interiorFeatures : [],
+               safetySecurityFeatures: safetySecurityFeatures
+                    ? safetySecurityFeatures
+                    : [],
+               comfortConvenienceFeatures: comfortConvenienceFeatures
+                    ? comfortConvenienceFeatures
+                    : [],
+               audioEntertainmentFeatures: audioEntertainmentFeatures
+                    ? audioEntertainmentFeatures
+                    : [],
+          });
+
+          const savedCarFeature = await newCarFeature.save();
+
+          return savedCarFeature;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Car feature creation failed');
+     }
 };
 
 const getSingleCarFeature = async (id) => {
@@ -97,6 +148,7 @@ const deleteCarFeatures = async (id) => {
 //           throw new Error('Car features upload failed');
 //      }
 // };
+
 const createCarFeautre = async (carDetailData) => {
      try {
           // Extract the exterior and interior features from the row
@@ -159,7 +211,7 @@ const createCarFeautre = async (carDetailData) => {
 
 export const carFeatureService = {
      getAllCarFeature,
-     addCarFeature,
+     createCarFeatureManual,
      getSingleCarFeature,
      deleteCarFeatures,
      updateCarFeatures,

@@ -37,21 +37,36 @@ router.get(
      })
 );
 
-router.post(
-     '/add-carFeature',
-     httpHandler(async (req, res) => {
-          try {
-               const carFeatureData = req.body;
-               const carFeature = await carFeatureService.addCarFeature(
-                    carFeatureData
-               );
-               res.status(201).json({ success: true, data: carFeature });
-          } catch (error) {
-               console.error(error);
-               res.status(500).send('Server error');
-          }
-     })
-);
+// router.post(
+//      '/add-carFeature',
+//      httpHandler(async (req, res) => {
+//           try {
+//                const carFeatureData = req.body;
+//                const carFeature = await carFeatureService.addCarFeature(
+//                     carFeatureData
+//                );
+//                res.status(201).json({ success: true, data: carFeature });
+//           } catch (error) {
+//                console.error(error);
+//                res.status(500).send('Server error');
+//           }
+//      })
+// );
+router.post('/car-features-manual', async (req, res) => {
+     try {
+          const carFeatureData = req.body;
+          const carFeature = await carFeatureService.createCarFeatureManual(
+               carFeatureData
+          );
+          res.status(201).json({
+               message: 'Car feature added successfully',
+               data: carFeature,
+          });
+     } catch (error) {
+          console.log(error);
+          res.status(400).json({ message: error.message });
+     }
+});
 
 router.put(
      '/update/:id',

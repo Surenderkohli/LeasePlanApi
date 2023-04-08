@@ -41,4 +41,14 @@ router.get('/', async (req, res) => {
      res.send(result);
 });
 
+router.get('/best-deals', async (req, res) => {
+     try {
+          const bestDeals = await carOfferService.getBestDeals();
+          res.json(bestDeals);
+     } catch (err) {
+          console.error(err);
+          res.status(500).send('Internal Server Error');
+     }
+});
+
 export default router;

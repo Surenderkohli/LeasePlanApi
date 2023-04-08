@@ -182,7 +182,25 @@ const getAllOffer = async () => {
      return response;
 };
 
+const getBestDeals = async () => {
+     try {
+          const bestDeals = await carOfferModel
+               .find({ deals: 'inactive' })
+               .sort({ 'offers.monthlyCost': 1 })
+               .limit(10)
+               .populate('carBrand_id', 'companyName')
+               .populate('carSeries_id', 'seriesName')
+               .populate('leaseType_id', 'leaseType');
+
+          return bestDeals;
+     } catch (err) {
+          console.error(err);
+          throw new Error('Unable to retrieve best deals');
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
+     getBestDeals,
 };

@@ -663,11 +663,28 @@ const deleteCar = async (id) => {
 
 const createCarDetail = async (carDetailData) => {
      try {
-          const leaseTypes = carDetailData.leaseType
-               ? await leaseTypeModel.find({
-                      leaseType: carDetailData.leaseType,
-                 })
-               : [];
+          // const leaseTypes = carDetailData.leaseType
+          //      ? await leaseTypeModel.find({
+          //             leaseType: carDetailData.leaseType,
+          //        })
+          //      : [];
+
+          let leaseTypes;
+          if (carDetailData.leaseType) {
+               leaseTypes = await leaseTypeModel.find({
+                    leaseType: carDetailData.leaseType,
+               });
+               if (leaseTypes.length === 0) {
+                    // Create a new leaseType entry in the leaseTypeModel collection
+                    const newLeaseType = new leaseTypeModel({
+                         leaseType: carDetailData.leaseType,
+                    });
+                    const savedLeaseType = await newLeaseType.save();
+                    leaseTypes = [savedLeaseType];
+               }
+          } else {
+               leaseTypes = [];
+          }
 
           if (!carDetailData.companyName) {
                throw new Error('Missing companyName');

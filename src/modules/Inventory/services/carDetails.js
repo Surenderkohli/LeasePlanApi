@@ -777,6 +777,7 @@ const getSingleCars = async (id) => {
           });
 
           const carOffers = await carOfferModel.find({
+               leaseType_id: car.leaseType_id,
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
                yearModel: car.yearModel,

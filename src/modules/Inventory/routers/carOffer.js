@@ -9,6 +9,23 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
+/* 
+// POST /car-offers
+
+router.post('/car-offers-manual', async (req, res) => {
+  try {
+    const carOffer = await carOfferService.createCarOfferManual(req.body);
+    res.status(201).json({
+      message: 'Car offer added successfully',
+      data: carOffer,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+ */
+
 router.post('/car-offers', upload.single('file'), async (req, res) => {
      try {
           let carOffers = [];

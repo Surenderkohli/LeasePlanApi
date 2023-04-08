@@ -14,7 +14,7 @@ router.post(
           try {
                try {
                     // Retrieve car details using relevant query and criteria
-                    const { monthlyLeasePrice } = req.query;
+                    const { monthlyCost } = req.query;
                     const { carDetails_id } = req.body;
 
                     // Retrieve car details using carId from carDetails collection
@@ -52,15 +52,15 @@ router.post(
                     const { companyName } = carBrand;
 
                     const enquiryData = {
-                         contractLengthInMonth: req.query.contractLengthInMonth,
+                         duration: req.query.duration,
                          annualMileage: req.query.annualMileage,
-                         upfrontCost: req.query.upfrontCost,
-                         upfrontPayment: req.query.upfrontPayment,
+                         //  upfrontCost: req.query.upfrontCost,
+                         // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
                          leaseType,
                          companyName,
-                         monthlyLeasePrice,
+                         monthlyCost,
                     };
                     const enquireFormData = req.body;
 

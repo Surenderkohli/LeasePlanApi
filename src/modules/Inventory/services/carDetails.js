@@ -758,6 +758,7 @@ const createCarDetail = async (carDetailData) => {
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
+               description: carDetailData.description,
                image: images ? images : [],
                acceleration: carDetailData.acceleration,
                fuelType: carDetailData.fuelType,

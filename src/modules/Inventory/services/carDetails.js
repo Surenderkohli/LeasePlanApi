@@ -801,12 +801,13 @@ const getCarsByBrandSeriesLeaseType = async (
      leaseType_id
 ) => {
      try {
-          const cars = await carD;
-          g.find({
-               carBrand_id,
-               carSeries_id,
-               leaseType_id,
-          }).sort({ yearModel: 1 });
+          const cars = await carDetailModel
+               .find({
+                    carBrand_id,
+                    carSeries_id,
+                    leaseType_id,
+               })
+               .sort({ yearModel: 1 });
           const uniqueYears = Array.from(
                new Set(cars.map((car) => car.yearModel))
           );

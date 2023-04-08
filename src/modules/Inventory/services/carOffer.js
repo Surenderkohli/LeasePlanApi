@@ -69,7 +69,7 @@ const createCarOffer = async (carOfferData) => {
                               monthlyCost: carOfferData.monthlyCost,
                          },
                     ],
-                    deals: 'inactive',
+                    deals: carOfferData.deals,
                });
                return newCarOffer;
           }
@@ -185,7 +185,7 @@ const getAllOffer = async () => {
 const getBestDeals = async () => {
      try {
           const bestDeals = await carOfferModel
-               .find({ deals: 'inactive' })
+               .find({ deals: 'active' })
                .sort({ 'offers.monthlyCost': 1 })
                .limit(10)
                .populate('carBrand_id', 'companyName')

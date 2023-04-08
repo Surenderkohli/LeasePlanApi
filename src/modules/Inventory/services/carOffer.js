@@ -1,67 +1,7 @@
-import carFeatureModel from '../models/carFeatures.js';
-import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
-
-// const createCarOffer = async (carOfferData) => {
-//      try {
-//           const leaseType = await leaseTypeModel.findOne({
-//                leaseType: carOfferData.leaseType,
-//           });
-
-//           const companyName = await carBrandModel.findOne({
-//                makeCode: carOfferData.makeCode,
-//           });
-//           if (!companyName) {
-//                throw new Error(
-//                     `Car brand with makeCode ${carOfferData.makeCode} not found`
-//                );
-//           }
-
-//           const seriesName = await carSeriesModel.findOne({
-//                modelCode: carOfferData.modelCode,
-//                carBrand_id: companyName._id,
-//           });
-//           if (!seriesName) {
-//                throw new Error(
-//                     `Car series with modelCode ${carOfferData.modelCode} not found`
-//                );
-//           }
-
-//           const yearModel = carOfferData.yearModel;
-
-//           const carOffers = await carOfferModel.find({
-//                carBrand_id: companyName._id,
-//                carSeries_id: seriesName._id,
-
-//                yearModel: yearModel,
-//           });
-
-//           const groupedOffers = {
-//                carBrand_id: companyName._id,
-//                carSeries_id: seriesName._id,
-//                leaseType_id: leaseType._id,
-//                yearModel: yearModel,
-//                offers: [],
-//                deals: 'inactive',
-//           };
-
-//           carOffers.forEach((offer) => {
-//                groupedOffers.offers.push({
-//                     duration: offer.offers.duration,
-//                     annualMileage: offer.offers.annualMileage,
-//                     monthlyCost: offer.offers.monthlyCost,
-//                });
-//           });
-
-//           return groupedOffers;
-//      } catch (error) {
-//           console.log(error);
-//           throw new Error('Failed to create car offer.');
-//      }
-// };
 
 const createCarOffer = async (carOfferData) => {
      try {
@@ -96,6 +36,7 @@ const createCarOffer = async (carOfferData) => {
           const yearModel = carOfferData.yearModel;
 
           const existingCarOffer = await carOfferModel.findOne({
+               leaseType_id: leaseType._id,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
                yearModel: yearModel,

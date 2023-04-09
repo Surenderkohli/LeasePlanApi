@@ -121,7 +121,6 @@ const createCarOffer = async (carOfferData) => {
           if (existingCarOffer) {
                // car offer already exists, add new offer to existing group
                existingCarOffer.offers.push({
-                    leaseType_id: leaseType._id,
                     duration: carOfferData.duration,
                     annualMileage: carOfferData.annualMileage,
                     monthlyCost: carOfferData.monthlyCost,

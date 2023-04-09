@@ -111,6 +111,25 @@ const createCarOffer = async (carOfferData) => {
 
           const yearModel = carOfferData.yearModel;
 
+          /*    const existingCarOffer = await carOfferModel.findOneAndUpdate(
+               {
+                    leaseType_id: leaseType._id,
+                    carBrand_id: companyName._id,
+                    carSeries_id: seriesName._id,
+                    yearModel: yearModel,
+               },
+               {
+                    $push: {
+                         offers: {
+                              duration: carOfferData.duration,
+                              annualMileage: carOfferData.annualMileage,
+                              monthlyCost: carOfferData.monthlyCost,
+                         },
+                    },
+               },
+               { new: true, upsert: true }
+          ); */
+
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseType._id,
                carBrand_id: companyName._id,
@@ -157,7 +176,7 @@ const createCarOffer = async (carOfferData) => {
 /* 
 
 
-const createOrUpdateCarOffer = async (carOfferData) => {
+const createCarOffer = async (carOfferData) => {
      try {
           const leaseType = await leaseTypeModel.findOne({
                leaseType: carOfferData.leaseType,
@@ -197,36 +216,29 @@ const createOrUpdateCarOffer = async (carOfferData) => {
           });
 
           if (existingCarOffer) {
-               // car offer already exists, update existing offer or add new offer to existing group
-               const existingOfferIndex = existingCarOffer.offers.findIndex(
+               // car offer already exists, update offer with new values
+               const updatedOffer = {
+                    duration: carOfferData.duration,
+                    annualMileage: carOfferData.annualMileage,
+                    monthlyCost: carOfferData.monthlyCost,
+               };
+               const offerIndex = existingCarOffer.offers.findIndex(
                     (offer) =>
-                         offer.leaseType_id.toString() === leaseType._id.toString() &&
                          offer.duration === carOfferData.duration &&
                          offer.annualMileage === carOfferData.annualMileage
                );
-               if (existingOfferIndex !== -1) {
+               if (offerIndex !== -1) {
                     // update existing offer
-                    existingCarOffer.offers[existingOfferIndex].monthlyCost =
-                         carOfferData.monthlyCost;
-                    await existingCarOffer.save();
-                    return {
-                         message: 'Car offer updated successfully',
-                         data: existingCarOffer,
-                    };
+                    existingCarOffer.offers[offerIndex] = updatedOffer;
                } else {
-                    // add new offer to existing group
-                    existingCarOffer.offers.push({
-                         leaseType_id: leaseType._id,
-                         duration: carOfferData.duration,
-                         annualMileage: carOfferData.annualMileage,
-                         monthlyCost: carOfferData.monthlyCost,
-                    });
-                    await existingCarOffer.save();
-                    return {
-                         message: 'Car offer updated successfully',
-                         data: existingCarOffer,
-                    };
+                    // add new offer to offers array
+                    existingCarOffer.offers.push(updatedOffer);
                }
+               await existingCarOffer.save();
+               return {
+                    message: 'Car offer updated successfully',
+                    data: existingCarOffer,
+               };
           } else {
                // create new car offer with a new group
                const newCarOffer = await carOfferModel.create({
@@ -241,7 +253,7 @@ const createOrUpdateCarOffer = async (carOfferData) => {
                               monthlyCost: carOfferData.monthlyCost,
                          },
                     ],
-                    deals: 'inactive',
+                    deals: carOfferData.deals,
                });
                return newCarOffer;
           }
@@ -250,6 +262,8 @@ const createOrUpdateCarOffer = async (carOfferData) => {
           throw new Error('Failed to create/update car offer.');
      }
 };
+
+
 */
 
 const getAllOffer = async () => {

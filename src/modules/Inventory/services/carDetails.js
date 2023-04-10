@@ -160,6 +160,15 @@ const getAllCar = async (
                });
           }
 
+          console.log(annualMileage);
+          if (annualMileage) {
+               aggregateFilter.push({
+                    $match: {
+                         'offers.offers.annualMileage': parseInt(annualMileage),
+                    },
+               });
+          }
+
           if (querySrch) {
                aggregateFilter.push({
                     $match: {
@@ -193,14 +202,6 @@ const getAllCar = async (
                aggregateFilter.push({
                     $match: {
                          bodyType,
-                    },
-               });
-          }
-
-          if (annualMileage) {
-               aggregateFilter.push({
-                    $match: {
-                         annualMileage: parseInt(annualMileage),
                     },
                });
           }

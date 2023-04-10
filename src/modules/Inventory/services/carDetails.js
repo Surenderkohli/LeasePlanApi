@@ -160,7 +160,6 @@ const getAllCar = async (
                });
           }
 
-          console.log(annualMileage);
           if (annualMileage) {
                aggregateFilter.push({
                     $match: {

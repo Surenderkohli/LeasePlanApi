@@ -76,7 +76,7 @@ const getAllCar = async (
                          let: {
                               carBrandId: '$carBrand_id',
                               carSeriesId: '$carSeries_id',
-                              // leaseTypeId: '$leaseType_id',
+                              leaseTypeId: '$leaseType_id',
                               yearModel: '$yearModel',
                          },
                          pipeline: [
@@ -96,17 +96,17 @@ const getAllCar = async (
                                                             '$$carSeriesId',
                                                        ],
                                                   },
-                                                  // {
-                                                  //      $eq: [
-                                                  //           {
-                                                  //                $arrayElemAt: [
-                                                  //                     '$leaseType_id',
-                                                  //                     0,
-                                                  //                ],
-                                                  //           },
-                                                  //           '$$leaseTypeId',
-                                                  //      ],
-                                                  // },
+                                                  {
+                                                       $in: [
+                                                            {
+                                                                 $arrayElemAt: [
+                                                                      '$leaseType_id',
+                                                                      0,
+                                                                 ],
+                                                            },
+                                                            '$$leaseTypeId',
+                                                       ],
+                                                  },
                                                   {
                                                        $eq: [
                                                             '$yearModel',

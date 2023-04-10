@@ -71,6 +71,58 @@ const getAllCar = async (
                     },
                },
                {
+                    $lookup: {
+                         from: 'caroffers',
+                         let: {
+                              carBrandId: '$carBrand_id',
+                              carSeriesId: '$carSeries_id',
+                              // leaseTypeId: '$leaseType_id',
+                              yearModel: '$yearModel',
+                         },
+                         pipeline: [
+                              {
+                                   $match: {
+                                        $expr: {
+                                             $and: [
+                                                  {
+                                                       $eq: [
+                                                            '$carBrand_id',
+                                                            '$$carBrandId',
+                                                       ],
+                                                  },
+                                                  {
+                                                       $eq: [
+                                                            '$carSeries_id',
+                                                            '$$carSeriesId',
+                                                       ],
+                                                  },
+                                                  // {
+                                                  //      $eq: [
+                                                  //           {
+                                                  //                $arrayElemAt: [
+                                                  //                     '$leaseType_id',
+                                                  //                     0,
+                                                  //                ],
+                                                  //           },
+                                                  //           '$$leaseTypeId',
+                                                  //      ],
+                                                  // },
+                                                  {
+                                                       $eq: [
+                                                            '$yearModel',
+                                                            '$$yearModel',
+                                                       ],
+                                                  },
+                                             ],
+                                        },
+                                   },
+                              },
+                         ],
+                         as: 'offers',
+                    },
+               },
+
+               {
                     $unwind: '$carBrand',
                },
                {
@@ -79,7 +131,9 @@ const getAllCar = async (
                {
                     $unwind: '$leaseType',
                },
-
+               {
+                    $unwind: '$offers',
+               },
                {
                     $skip: skip,
                },
@@ -87,6 +141,24 @@ const getAllCar = async (
                     $limit: limit,
                },
           ];
+
+          if (priceMin || priceMax) {
+               const priceFilter = {};
+
+               if (priceMin) {
+                    priceFilter.$gte = parseInt(priceMin);
+               }
+
+               if (priceMax) {
+                    priceFilter.$lte = parseInt(priceMax);
+               }
+
+               aggregateFilter.push({
+                    $match: {
+                         'offers.offers.monthlyCost': priceFilter,
+                    },
+               });
+          }
 
           if (querySrch) {
                aggregateFilter.push({
@@ -125,24 +197,6 @@ const getAllCar = async (
                });
           }
 
-          if (priceMin) {
-               aggregateFilter.push({
-                    $match: {
-                         price: {
-                              $gte: parseInt(priceMin),
-                         },
-                    },
-               });
-          }
-          if (priceMax) {
-               aggregateFilter.push({
-                    $match: {
-                         price: {
-                              $lte: parseInt(priceMax),
-                         },
-                    },
-               });
-          }
           if (annualMileage) {
                aggregateFilter.push({
                     $match: {
@@ -158,24 +212,6 @@ const getAllCar = async (
                     },
                });
           }
-
-          // if (Array.isArray(yearModels) && yearModels.length > 0) {
-          //      // Use the $in operator to filter by multiple yearModel values
-          //      aggregateFilter.push({
-          //           $match: {
-          //                yearModel: {
-          //                     $in: yearModels.map(yearModel),
-          //                },
-          //           },
-          //      });
-          // } else if (yearModel) {
-          //      // Use the $eq operator to filter by a single yearModel value
-          //      aggregateFilter.push({
-          //           $match: {
-          //                yearModel: parseInt(yearModel),
-          //           },
-          //      });
-          // }
 
           const response = await carDetailModel.aggregate(aggregateFilter);
 

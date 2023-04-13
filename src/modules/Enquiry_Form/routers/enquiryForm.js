@@ -52,14 +52,14 @@ router.post(
                     const { companyName } = carBrand;
 
                     const enquiryData = {
-                         duration: req.query.duration,
-                         annualMileage: req.query.annualMileage,
-                         //  upfrontCost: req.query.upfrontCost,
+                         // upfrontCost: req.query.upfrontCost,
                          // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
                          leaseType,
                          companyName,
+                         duration: req.query.duration,
+                         annualMileage: req.query.annualMileage,
                          monthlyCost,
                     };
                     const enquireFormData = req.body;

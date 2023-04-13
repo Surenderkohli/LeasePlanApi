@@ -173,6 +173,34 @@ const createCarOffer = async (carOfferData) => {
      }
 };
 
+const updateOffersAndDeals = async (
+     carBrand_id,
+     carSeries_id,
+     leaseType_id,
+     yearModel,
+     offers,
+     deals
+) => {
+     try {
+          const result = await CarOffer.findOneAndUpdate(
+               {
+                    carBrand_id,
+                    carSeries_id,
+                    leaseType_id,
+                    yearModel,
+               },
+               {
+                    offers,
+                    deals,
+               }
+          );
+
+          return result ? true : false;
+     } catch (error) {
+          throw error;
+     }
+};
+
 /* 
 
 
@@ -263,6 +291,35 @@ const createCarOffer = async (carOfferData) => {
      }
 };
 
+// update carOffer with csv
+const updateOffers = async (offers) => {
+     for (const offer of offers) {
+          // Validate CSV data
+          if (
+               !offer.carBrand_id ||
+               !offer.carSeries_id ||
+               !offer.leaseType_id ||
+               !offer.yearModel
+          ) {
+               throw new Error('Invalid CSV data: missing required fields');
+          }
+
+          // Find matching car offer document
+          const carOffer = await carOfferModel.findOne({
+               carBrand_id: offer.carBrand_id,
+               carSeries_id: offer.carSeries_id,
+               leaseType_id: offer.leaseType_id,
+               yearModel: offer.yearModel,
+          });
+
+          if (carOffer) {
+               // Update offers and deals fields
+               carOffer.offers = offer.offers;
+               carOffer.deals = offer.deals;
+               await carOffer.save();
+          }
+     }
+};
 
 */
 
@@ -292,4 +349,5 @@ export const carOfferService = {
      createCarOffer,
      getAllOffer,
      getBestDeals,
+     updateOffersAndDeals,
 };

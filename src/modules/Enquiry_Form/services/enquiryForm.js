@@ -137,23 +137,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                  <td>Lease Type:</td>
                  <td>${enquiryData.leaseType}</td>
                </tr>
-               <tr>
-                 <td>Contract Type:</td>
-                 <td>${enquiryData.contractLengthInMonth} months</td>
-               </tr>
-               <tr>
-                 <td>Annual Mileage:</td>
-                 <td>${enquiryData.annualMileage} miles</td>
-               </tr>
-               <tr>
-               <td>Upfront Payment:</td>
-               <td>${enquiryData.upfrontPayment} </td>
-             </tr>
-             <tr>
-               <td>Monthly price:</td>
-               <td>${enquiryData.monthlyLeasePrice} </td>
-             </tr>
-             <tr>
+              <tr>
                <td>Fuel Type:</td>
                <td>${enquiryData.fuelType} </td>
              </tr>
@@ -161,6 +145,19 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
              <td>Gearbox Type:</td>
              <td>${enquiryData.gears} miles</td>
            </tr>
+               <tr>
+                 <td>Contract Type:</td>
+                 <td>${enquiryData.duration} months</td>
+               </tr>
+               <tr>
+                 <td>Annual Mileage:</td>
+                 <td>${enquiryData.annualMileage} miles</td>
+               </tr>
+               <tr>
+               <td>Monthly Payment:</td>
+               <td>${enquiryData.monthlyCost} DHS </td>
+             </tr>
+        
            </table>      
                </div>
                <div class="thank-you">

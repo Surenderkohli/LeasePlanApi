@@ -53,6 +53,36 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
      }
 });
 
+router.post('/update-offers-and-deals', async (req, res) => {
+     const {
+          carBrand_id,
+          carSeries_id,
+          leaseType_id,
+          yearModel,
+          offers,
+          deals,
+     } = req.body;
+
+     try {
+          const result = await updateOffersAndDeals(
+               carBrand_id,
+               carSeries_id,
+               leaseType_id,
+               yearModel,
+               offers,
+               deals
+          );
+
+          if (result) {
+               res.status(200).send('Offers and deals updated successfully.');
+          } else {
+               res.status(400).send('Could not update offers and deals.');
+          }
+     } catch (error) {
+          res.status(500).send(error.message);
+     }
+});
+
 router.get('/', async (req, res) => {
      const result = await carOfferService.getAllOffer();
      res.send(result);

@@ -699,6 +699,18 @@ const deleteCar = async (id) => {
 
 const createCarDetail = async (carDetailData) => {
      try {
+          /*   
+          const { makeCode, modelCode, yearModel } = carDetailData;
+          let carDetail = await carDetailModel.findOne({ makeCode, modelCode, yearModel });
+          if (carDetail) {
+               // Car detail already exists, update it with the new data
+               Object.assign(carDetail, carDetailData);
+               await carDetail.save();
+          } else {
+               // Car detail does not exist, create a new entry
+               from line 720 to end------
+         */
+
           // const leaseTypes = carDetailData.leaseType
           //      ? await leaseTypeModel.find({
           //             leaseType: carDetailData.leaseType,

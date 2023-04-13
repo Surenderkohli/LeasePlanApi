@@ -830,7 +830,12 @@ const createCarDetail = async (carDetailData) => {
 
 const getSingleCars = async (id) => {
      try {
-          const car = await carDetailModel.findOne({ _id: id });
+          const car = await carDetailModel
+               .findOne({ _id: id })
+               .populate('leaseType_id')
+               .populate('carBrand_id')
+               .populate('carSeries_id');
+
           if (!car) {
                throw new Error('Car not found');
           }

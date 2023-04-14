@@ -70,57 +70,57 @@ const getAllCar = async (
                          as: 'carSeries',
                     },
                },
-               // {
-               //      $lookup: {
-               //           from: 'caroffers',
-               //           let: {
-               //                carBrandId: '$carBrand_id',
-               //                carSeriesId: '$carSeries_id',
-               //                leaseTypeId: '$leaseType_id',
-               //                yearModel: '$yearModel',
-               //           },
-               //           pipeline: [
-               //                {
-               //                     $match: {
-               //                          $expr: {
-               //                               $and: [
-               //                                    {
-               //                                         $eq: [
-               //                                              '$carBrand_id',
-               //                                              '$$carBrandId',
-               //                                         ],
-               //                                    },
-               //                                    {
-               //                                         $eq: [
-               //                                              '$carSeries_id',
-               //                                              '$$carSeriesId',
-               //                                         ],
-               //                                    },
-               //                                    // {
-               //                                    //      $in: [
-               //                                    //           {
-               //                                    //                $arrayElemAt: [
-               //                                    //                     '$leaseType_id',
-               //                                    //                     0,
-               //                                    //                ],
-               //                                    //           },
-               //                                    //           '$$leaseTypeId',
-               //                                    //      ],
-               //                                    // },
-               //                                    {
-               //                                         $eq: [
-               //                                              '$yearModel',
-               //                                              '$$yearModel',
-               //                                         ],
-               //                                    },
-               //                               ],
-               //                          },
-               //                     },
-               //                },
-               //           ],
-               //           as: 'offers',
-               //      },
-               // },
+               {
+                    $lookup: {
+                         from: 'caroffers',
+                         let: {
+                              carBrandId: '$carBrand_id',
+                              carSeriesId: '$carSeries_id',
+                              leaseTypeId: '$leaseType_id',
+                              yearModel: '$yearModel',
+                         },
+                         pipeline: [
+                              {
+                                   $match: {
+                                        $expr: {
+                                             $and: [
+                                                  {
+                                                       $eq: [
+                                                            '$carBrand_id',
+                                                            '$$carBrandId',
+                                                       ],
+                                                  },
+                                                  {
+                                                       $eq: [
+                                                            '$carSeries_id',
+                                                            '$$carSeriesId',
+                                                       ],
+                                                  },
+                                                  // {
+                                                  //      $in: [
+                                                  //           {
+                                                  //                $arrayElemAt: [
+                                                  //                     '$leaseType_id',
+                                                  //                     0,
+                                                  //                ],
+                                                  //           },
+                                                  //           '$$leaseTypeId',
+                                                  //      ],
+                                                  // },
+                                                  {
+                                                       $eq: [
+                                                            '$yearModel',
+                                                            '$$yearModel',
+                                                       ],
+                                                  },
+                                             ],
+                                        },
+                                   },
+                              },
+                         ],
+                         as: 'offers',
+                    },
+               },
 
                {
                     $unwind: '$carBrand',
@@ -131,9 +131,9 @@ const getAllCar = async (
                // {
                //      $unwind: '$leaseType',
                // },
-               // {
-               //      $unwind: '$offers',
-               // },
+               {
+                    $unwind: '$offers',
+               },
                {
                     $skip: skip,
                },

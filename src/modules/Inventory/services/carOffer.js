@@ -81,22 +81,70 @@ const createCarOfferManual = async (carOfferData) => {
 
 const createCarOffer = async (carOfferData) => {
      try {
-          const leaseType = await leaseTypeModel.findOne({
-               leaseType: carOfferData.leaseType,
-          });
-          if (!leaseType) {
-               throw new Error(
-                    `Lease type ${carOfferData.leaseType} not found`
-               );
+          // const leaseType = await leaseTypeModel.findOne({
+          //      leaseType: carOfferData.leaseType,
+          // });
+          // if (!leaseType) {
+          //      throw new Error(
+          //           `Lease type ${carOfferData.leaseType} not found`
+          //      );
+          // }
+
+          let leaseTypes;
+          if (carOfferData.leaseType) {
+               leaseTypes = await leaseTypeModel.find({
+                    leaseType: carOfferData.leaseType,
+               });
+               if (leaseTypes.length === 0) {
+                    // Create a new leaseType entry in the leaseTypeModel collection
+                    const newLeaseType = new leaseTypeModel({
+                         leaseType: carOfferData.leaseType,
+                    });
+                    const savedLeaseType = await newLeaseType.save();
+                    leaseTypes = [savedLeaseType];
+               }
+          } else {
+               leaseTypes = [];
           }
 
-          const companyName = await carBrandModel.findOne({
+          // const companyName = await carBrandModel.findOne({
+          //      makeCode: carOfferData.makeCode,
+          // });
+          // if (!companyName) {
+          //      throw new Error(
+          //           `Car brand with makeCode ${carOfferData.makeCode} not found`
+          //      );
+          // }
+
+          if (!carOfferData.companyName) {
+               throw new Error('Missing companyName');
+          }
+
+          let companyName = await carBrandModel.findOne({
+               companyName: carOfferData.companyName,
                makeCode: carOfferData.makeCode,
           });
+
           if (!companyName) {
-               throw new Error(
-                    `Car brand with makeCode ${carOfferData.makeCode} not found`
-               );
+               companyName = await carBrandModel.create({
+                    companyName: carOfferData.companyName,
+                    makeCode: carOfferData.makeCode,
+                    leaseType_id: leaseTypes,
+               });
+          } else if (leaseTypes.length > 0) {
+               const leaseTypeIdsToAdd = leaseTypes
+                    .map((leaseType) => leaseType._id)
+                    .filter(
+                         (leaseTypeId) =>
+                              !companyName.leaseType_id.includes(leaseTypeId)
+                    );
+               if (leaseTypeIdsToAdd.length > 0) {
+                    companyName.leaseType_id = [
+                         ...companyName.leaseType_id,
+                         ...leaseTypeIdsToAdd,
+                    ];
+                    await companyName.save();
+               }
           }
 
           const seriesName = await carSeriesModel.findOne({
@@ -131,7 +179,7 @@ const createCarOffer = async (carOfferData) => {
           ); */
 
           const existingCarOffer = await carOfferModel.findOne({
-               leaseType_id: leaseType._id,
+               leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
                yearModel: yearModel,
@@ -154,7 +202,7 @@ const createCarOffer = async (carOfferData) => {
                const newCarOffer = await carOfferModel.create({
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
-                    leaseType_id: leaseType._id,
+                    leaseType_id: leaseTypes,
                     yearModel: yearModel,
                     offers: [
                          {

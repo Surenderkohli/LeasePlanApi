@@ -88,6 +88,20 @@ router.get('/', async (req, res) => {
      res.send(result);
 });
 
+router.get('/count', async (req, res) => {
+     try {
+          const counts = await carOfferService.getCount();
+          res.status(200).json({
+               success: true,
+               privateLeaseCount: counts.privateLeaseCount,
+               flexiPlanCount: counts.flexiPlanCount,
+               businessLeaseCount: counts.businessLeaseCount,
+          });
+     } catch (error) {
+          res.status(400).json({ success: false, error: error.message });
+     }
+});
+
 router.get('/best-deals', async (req, res) => {
      try {
           const bestDeals = await carOfferService.getBestDeals();

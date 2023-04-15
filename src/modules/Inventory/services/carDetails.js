@@ -251,46 +251,46 @@ const updateCar = async (id, data) => {
      }
 };
 
-const getCount = async () => {
-     const counts = await carDetailModel.aggregate([
-          {
-               $match: { isDeleted: false },
-          },
-          {
-               $lookup: {
-                    from: 'leasetypes',
-                    localField: 'leaseType_id',
-                    foreignField: '_id',
-                    as: 'leaseType',
-               },
-          },
-          {
-               $unwind: '$leaseType',
-          },
-          {
-               $group: {
-                    _id: '$leaseType.leaseType',
-                    count: { $sum: 1 },
-               },
-          },
-     ]);
+// const getCount = async () => {
+//      const counts = await carDetailModel.aggregate([
+//           {
+//                $match: { isDeleted: false },
+//           },
+//           {
+//                $lookup: {
+//                     from: 'leasetypes',
+//                     localField: 'leaseType_id',
+//                     foreignField: '_id',
+//                     as: 'leaseType',
+//                },
+//           },
+//           {
+//                $unwind: '$leaseType',
+//           },
+//           {
+//                $group: {
+//                     _id: '$leaseType.leaseType',
+//                     count: { $sum: 1 },
+//                },
+//           },
+//      ]);
 
-     const countObject = {
-          privateLeaseCount: 0,
-          flexiPlanCount: 0,
-          businessLeaseCount: 0,
-     };
-     counts.forEach((count) => {
-          if (count._id === 'Private Lease')
-               countObject.privateLeaseCount = count.count;
-          if (count._id === 'FlexiPlan')
-               countObject.flexiPlanCount = count.count;
-          if (count._id === 'Business Lease')
-               countObject.businessLeaseCount = count.count;
-     });
+//      const countObject = {
+//           privateLeaseCount: 0,
+//           flexiPlanCount: 0,
+//           businessLeaseCount: 0,
+//      };
+//      counts.forEach((count) => {
+//           if (count._id === 'Private Lease')
+//                countObject.privateLeaseCount = count.count;
+//           if (count._id === 'FlexiPlan')
+//                countObject.flexiPlanCount = count.count;
+//           if (count._id === 'Business Lease')
+//                countObject.businessLeaseCount = count.count;
+//      });
 
-     return countObject;
-};
+//      return countObject;
+// };
 
 const getDeals = async (query) => {
      try {
@@ -915,7 +915,7 @@ export const CarServices = {
      addNewCar,
      updateCar,
      deleteCar,
-     getCount,
+     // getCount,
      getSingleCars,
      getDeals,
      createCarDetail,

@@ -376,6 +376,49 @@ const getAllOffer = async () => {
      return response;
 };
 
+const getCount = async () => {
+     const counts = await carOfferModel.aggregate([
+          {
+               $unwind: '$leaseType_id',
+          },
+          {
+               $lookup: {
+                    from: 'leasetypes',
+                    localField: 'leaseType_id',
+                    foreignField: '_id',
+                    as: 'leaseType',
+               },
+          },
+          {
+               $unwind: '$leaseType',
+          },
+          {
+               $group: {
+                    _id: '$leaseType.leaseType',
+                    count: { $sum: 1 },
+               },
+          },
+     ]);
+
+     const countObject = {
+          privateLeaseCount: 0,
+          flexiPlanCount: 0,
+          businessLeaseCount: 0,
+     };
+
+     counts.forEach((count) => {
+          if (count._id === 'Private Lease') {
+               countObject.privateLeaseCount += count.count;
+          } else if (count._id === 'FlexiPlan') {
+               countObject.flexiPlanCount += count.count;
+          } else if (count._id === 'Business Lease') {
+               countObject.businessLeaseCount += count.count;
+          }
+     });
+
+     return countObject;
+};
+
 const getBestDeals = async () => {
      try {
           const bestDeals = await carOfferModel
@@ -398,4 +441,5 @@ export const carOfferService = {
      getAllOffer,
      getBestDeals,
      updateOffersAndDeals,
+     getCount,
 };

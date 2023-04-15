@@ -854,18 +854,20 @@ const getSingleCars = async (id) => {
                yearModel: car.yearModel,
           });
 
-          const carOffers = await carOfferModel.find({
-               // leaseType_id: car.leaseType_id,
-               carBrand_id: car.carBrand_id,
-               carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
-          });
+          const carOffers = await carOfferModel
+               .find({
+                    // leaseType_id: car.leaseType_id,
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+                    yearModel: car.yearModel,
+               })
+               .populate('leaseType_id');
 
           const result = {
                car,
                features: carFeatures || [],
                offers: carOffers || [],
-               //leaseType: leaseType.leaseType,
+               // leaseType: carOffers[0].leaseType,
           };
 
           return result;

@@ -45,7 +45,7 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const {
-                    leaseType,
+                    //  leaseType,
                     carBrand,
                     carSeries,
                     fuelType,
@@ -61,7 +61,7 @@ router.get(
                const skip = parseInt(req.query.skip) || 0;
 
                const result = await CarServices.getAllCar(
-                    leaseType,
+                    //  leaseType,
                     carBrand,
                     carSeries,
                     fuelType,
@@ -195,22 +195,22 @@ router.put(
      })
 );
 
-router.get(
-     '/count',
-     httpHandler(async (req, res) => {
-          try {
-               const counts = await CarServices.getCount();
-               res.status(200).json({
-                    success: true,
-                    privateLeaseCount: counts.privateLeaseCount,
-                    flexiPlanCount: counts.flexiPlanCount,
-                    businessLeaseCount: counts.businessLeaseCount,
-               });
-          } catch (error) {
-               res.status(400).json({ success: false, error: error.message });
-          }
-     })
-);
+// router.get(
+//      '/count',
+//      httpHandler(async (req, res) => {
+//           try {
+//                const counts = await CarServices.getCount();
+//                res.status(200).json({
+//                     success: true,
+//                     privateLeaseCount: counts.privateLeaseCount,
+//                     flexiPlanCount: counts.flexiPlanCount,
+//                     businessLeaseCount: counts.businessLeaseCount,
+//                });
+//           } catch (error) {
+//                res.status(400).json({ success: false, error: error.message });
+//           }
+//      })
+// );
 
 router.get('/best-deals', async (req, res) => {
      try {

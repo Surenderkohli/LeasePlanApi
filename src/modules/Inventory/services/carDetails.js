@@ -6,7 +6,7 @@ import carFeatureModel from '../models/carFeatures.js';
 import carOfferModel from '../models/carOffer.js';
 
 const getAllCar = async (
-     leaseType,
+     //leaseType,
      carBrand,
      carSeries,
      fuelType,
@@ -22,9 +22,9 @@ const getAllCar = async (
      try {
           const preFilter = {};
 
-          if (leaseType) {
-               preFilter.leaseType_id = leaseType;
-          }
+          // if (leaseType) {
+          //      preFilter.leaseType_id = leaseType;
+          // }
 
           if (carBrand) {
                preFilter.carBrand_id = carBrand;
@@ -54,14 +54,14 @@ const getAllCar = async (
                          as: 'carBrand',
                     },
                },
-               {
-                    $lookup: {
-                         from: 'leasetypes',
-                         localField: 'leaseType_id',
-                         foreignField: '_id',
-                         as: 'leaseType',
-                    },
-               },
+               // {
+               //      $lookup: {
+               //           from: 'leasetypes',
+               //           localField: 'leaseType_id',
+               //           foreignField: '_id',
+               //           as: 'leaseType',
+               //      },
+               // },
                {
                     $lookup: {
                          from: 'carseries',
@@ -96,17 +96,17 @@ const getAllCar = async (
                                                             '$$carSeriesId',
                                                        ],
                                                   },
-                                                  {
-                                                       $in: [
-                                                            {
-                                                                 $arrayElemAt: [
-                                                                      '$leaseType_id',
-                                                                      0,
-                                                                 ],
-                                                            },
-                                                            '$$leaseTypeId',
-                                                       ],
-                                                  },
+                                                  // {
+                                                  //      $in: [
+                                                  //           {
+                                                  //                $arrayElemAt: [
+                                                  //                     '$leaseType_id',
+                                                  //                     0,
+                                                  //                ],
+                                                  //           },
+                                                  //           '$$leaseTypeId',
+                                                  //      ],
+                                                  // },
                                                   {
                                                        $eq: [
                                                             '$yearModel',
@@ -128,9 +128,9 @@ const getAllCar = async (
                {
                     $unwind: '$carSeries',
                },
-               {
-                    $unwind: '$leaseType',
-               },
+               // {
+               //      $unwind: '$leaseType',
+               // },
                {
                     $unwind: '$offers',
                },
@@ -251,46 +251,46 @@ const updateCar = async (id, data) => {
      }
 };
 
-const getCount = async () => {
-     const counts = await carDetailModel.aggregate([
-          {
-               $match: { isDeleted: false },
-          },
-          {
-               $lookup: {
-                    from: 'leasetypes',
-                    localField: 'leaseType_id',
-                    foreignField: '_id',
-                    as: 'leaseType',
-               },
-          },
-          {
-               $unwind: '$leaseType',
-          },
-          {
-               $group: {
-                    _id: '$leaseType.leaseType',
-                    count: { $sum: 1 },
-               },
-          },
-     ]);
+// const getCount = async () => {
+//      const counts = await carDetailModel.aggregate([
+//           {
+//                $match: { isDeleted: false },
+//           },
+//           {
+//                $lookup: {
+//                     from: 'leasetypes',
+//                     localField: 'leaseType_id',
+//                     foreignField: '_id',
+//                     as: 'leaseType',
+//                },
+//           },
+//           {
+//                $unwind: '$leaseType',
+//           },
+//           {
+//                $group: {
+//                     _id: '$leaseType.leaseType',
+//                     count: { $sum: 1 },
+//                },
+//           },
+//      ]);
 
-     const countObject = {
-          privateLeaseCount: 0,
-          flexiPlanCount: 0,
-          businessLeaseCount: 0,
-     };
-     counts.forEach((count) => {
-          if (count._id === 'Private Lease')
-               countObject.privateLeaseCount = count.count;
-          if (count._id === 'FlexiPlan')
-               countObject.flexiPlanCount = count.count;
-          if (count._id === 'Business Lease')
-               countObject.businessLeaseCount = count.count;
-     });
+//      const countObject = {
+//           privateLeaseCount: 0,
+//           flexiPlanCount: 0,
+//           businessLeaseCount: 0,
+//      };
+//      counts.forEach((count) => {
+//           if (count._id === 'Private Lease')
+//                countObject.privateLeaseCount = count.count;
+//           if (count._id === 'FlexiPlan')
+//                countObject.flexiPlanCount = count.count;
+//           if (count._id === 'Business Lease')
+//                countObject.businessLeaseCount = count.count;
+//      });
 
-     return countObject;
-};
+//      return countObject;
+// };
 
 const getDeals = async (query) => {
      try {
@@ -717,22 +717,22 @@ const createCarDetail = async (carDetailData) => {
           //        })
           //      : [];
 
-          let leaseTypes;
-          if (carDetailData.leaseType) {
-               leaseTypes = await leaseTypeModel.find({
-                    leaseType: carDetailData.leaseType,
-               });
-               if (leaseTypes.length === 0) {
-                    // Create a new leaseType entry in the leaseTypeModel collection
-                    const newLeaseType = new leaseTypeModel({
-                         leaseType: carDetailData.leaseType,
-                    });
-                    const savedLeaseType = await newLeaseType.save();
-                    leaseTypes = [savedLeaseType];
-               }
-          } else {
-               leaseTypes = [];
-          }
+          // let leaseTypes;
+          // if (carDetailData.leaseType) {
+          //      leaseTypes = await leaseTypeModel.find({
+          //           leaseType: carDetailData.leaseType,
+          //      });
+          //      if (leaseTypes.length === 0) {
+          //           // Create a new leaseType entry in the leaseTypeModel collection
+          //           const newLeaseType = new leaseTypeModel({
+          //                leaseType: carDetailData.leaseType,
+          //           });
+          //           const savedLeaseType = await newLeaseType.save();
+          //           leaseTypes = [savedLeaseType];
+          //      }
+          // } else {
+          //      leaseTypes = [];
+          // }
 
           if (!carDetailData.companyName) {
                throw new Error('Missing companyName');
@@ -747,29 +747,30 @@ const createCarDetail = async (carDetailData) => {
                carBrand = await carBrandModel.create({
                     companyName: carDetailData.companyName,
                     makeCode: carDetailData.makeCode,
-                    leaseType_id: leaseTypes,
+                    // leaseType_id: leaseTypes,
                });
-          } else if (leaseTypes.length > 0) {
-               const leaseTypeIdsToAdd = leaseTypes
-                    .map((leaseType) => leaseType._id)
-                    .filter(
-                         (leaseTypeId) =>
-                              !carBrand.leaseType_id.includes(leaseTypeId)
-                    );
-               if (leaseTypeIdsToAdd.length > 0) {
-                    carBrand.leaseType_id = [
-                         ...carBrand.leaseType_id,
-                         ...leaseTypeIdsToAdd,
-                    ];
-                    await carBrand.save();
-               }
           }
+          // else if (leaseTypes.length > 0) {
+          //      const leaseTypeIdsToAdd = leaseTypes
+          //           .map((leaseType) => leaseType._id)
+          //           .filter(
+          //                (leaseTypeId) =>
+          //                     !carBrand.leaseType_id.includes(leaseTypeId)
+          //           );
+          //      if (leaseTypeIdsToAdd.length > 0) {
+          //           carBrand.leaseType_id = [
+          //                ...carBrand.leaseType_id,
+          //                ...leaseTypeIdsToAdd,
+          //           ];
+          //           await carBrand.save();
+          //      }
+          // }
 
           const existingCarBrands = await carBrandModel.find({
                makeCode: carDetailData.makeCode,
-               leaseType_id: {
-                    $in: leaseTypes.map((leaseType) => leaseType._id),
-               },
+               // leaseType_id: {
+               //      $in: leaseTypes.map((leaseType) => leaseType._id),
+               // },
           });
 
           let carSeries = await carSeriesModel.findOne({
@@ -800,7 +801,7 @@ const createCarDetail = async (carDetailData) => {
 
           // Create the new car detail entry using the retrieved IDs
           const newCarDetail = new carDetailModel({
-               leaseType_id: leaseTypes,
+               // leaseType_id: leaseTypes,
                carBrand_id: carBrand._id,
                carSeries_id: carSeries._id,
                makeCode: carDetailData.makeCode,
@@ -832,7 +833,7 @@ const getSingleCars = async (id) => {
      try {
           const car = await carDetailModel
                .findOne({ _id: id })
-               .populate('leaseType_id')
+               // .populate('leaseType_id')
                .populate('carBrand_id')
                .populate('carSeries_id');
 
@@ -840,12 +841,12 @@ const getSingleCars = async (id) => {
                throw new Error('Car not found');
           }
 
-          const { leaseType_id } = car;
+          //  const { leaseType_id } = car;
           // Retrieve lease type details using leaseType_id from leasetypes collection
-          const leaseType = await leaseTypeModel.findOne({
-               _id: leaseType_id,
-               isDeleted: false,
-          });
+          // const leaseType = await leaseTypeModel.findOne({
+          //      _id: leaseType_id,
+          //      isDeleted: false,
+          // });
 
           const carFeatures = await carFeatureModel.findOne({
                carBrand_id: car.carBrand_id,
@@ -854,7 +855,7 @@ const getSingleCars = async (id) => {
           });
 
           const carOffers = await carOfferModel.find({
-               leaseType_id: car.leaseType_id,
+               // leaseType_id: car.leaseType_id,
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
                yearModel: car.yearModel,
@@ -864,7 +865,7 @@ const getSingleCars = async (id) => {
                car,
                features: carFeatures || [],
                offers: carOffers || [],
-               leaseType: leaseType.leaseType,
+               //leaseType: leaseType.leaseType,
           };
 
           return result;
@@ -914,7 +915,7 @@ export const CarServices = {
      addNewCar,
      updateCar,
      deleteCar,
-     getCount,
+     // getCount,
      getSingleCars,
      getDeals,
      createCarDetail,

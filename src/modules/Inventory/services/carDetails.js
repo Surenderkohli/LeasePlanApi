@@ -877,17 +877,13 @@ const getSingleCars = async (id) => {
      }
 };
 
-const getCarsByBrandSeriesLeaseType = async (
-     carBrand_id,
-     carSeries_id,
-     leaseType_id
-) => {
+const getCarsByBrandSeriesLeaseType = async (carBrand_id, carSeries_id) => {
      try {
           const cars = await carDetailModel
                .find({
                     carBrand_id,
                     carSeries_id,
-                    leaseType_id,
+                    // leaseType_id,
                })
                .sort({ yearModel: 1 });
           const uniqueYears = Array.from(

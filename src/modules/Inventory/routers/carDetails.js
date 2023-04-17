@@ -400,4 +400,18 @@ router.get('/list', async (req, res) => {
      }
 });
 
+router.delete(
+     '/deleted/:id',
+     httpHandler(async (req, res) => {
+          const data = req.body;
+          const { id } = req.params;
+          const result = await CarServices.deletedCar(id, req.body);
+          res.send({
+               success: true,
+               message: 'Car with offers and features deleted successfully',
+               data: result,
+          });
+     })
+);
+
 export default router;

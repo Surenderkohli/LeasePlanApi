@@ -908,6 +908,37 @@ const getCarsByBrandSeriesLeaseType = async (carBrand_id, carSeries_id) => {
           );
      }
 };
+
+const deletedCar = async (id) => {
+     try {
+          const car = await carDetailModel.findOne({ _id: id });
+          if (!car) {
+               throw new Error('Car not found');
+          }
+
+          // Delete associated car offers
+          await carOfferModel.deleteMany({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               yearModel: car.yearModel,
+          });
+
+          // Delete associated car features
+          await carFeatureModel.deleteMany({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               yearModel: car.yearModel,
+          });
+
+          car.isDeleted = true;
+          await car.save();
+          return car;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -918,4 +949,5 @@ export const CarServices = {
      getDeals,
      createCarDetail,
      getCarsByBrandSeriesLeaseType,
+     deletedCar,
 };

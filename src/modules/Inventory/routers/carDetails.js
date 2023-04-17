@@ -380,7 +380,11 @@ router.get('/fetch-singles/:id', async (req, res) => {
 
           res.status(200).json({ success: true, data: result });
      } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
+          if (error.message === 'Car not found') {
+               res.status(404).json({ success: false, msg: 'Car not found' });
+          } else {
+               res.status(400).json({ success: false, msg: error.message });
+          }
      }
 });
 

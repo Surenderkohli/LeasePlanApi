@@ -697,6 +697,15 @@ const deleteCar = async (id) => {
 // }
 // <----------------------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------------------------------------------------------->
 
+// const deleteAllCarDetails = async () => {
+//      try {
+//           await carDetailModel.deleteMany({});
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Failed to delete car details');
+//      }
+// };
+
 const createCarDetail = async (carDetailData) => {
      try {
           /*   
@@ -950,4 +959,5 @@ export const CarServices = {
      createCarDetail,
      getCarsByBrandSeriesLeaseType,
      deletedCar,
+     // deleteAllCarDetails,
 };

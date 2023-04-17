@@ -372,7 +372,9 @@ const updateOffers = async (offers) => {
 */
 
 const getAllOffer = async () => {
-     const response = await carOfferModel.find();
+     const response = await carOfferModel
+          .find()
+          .populate(['carBrand_id', 'carSeries_id', 'leaseType_id']);
      return response;
 };
 

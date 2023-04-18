@@ -6,6 +6,7 @@ import generateToken from '../utils/generateToken.js';
 import userModel from '../models/user.js';
 import { isAdmin, protect, isAuthenticated } from '../middleware/auth.js';
 import { v2 as cloudinary } from 'cloudinary';
+import mongoose from 'mongoose';
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -321,6 +322,15 @@ router.delete('/delete/:id', async (req, res) => {
                error: error.message,
           });
      }
+});
+
+router.delete('/delete-multiple-collections', async (req, res) => {
+     const collectionsToDelete = ['caroffers', 'cardetails']; //['caroffers', 'cardetails', 'carfeatures']
+     const promises = collectionsToDelete.map((collectionName) =>
+          mongoose.connection.dropCollection(collectionName)
+     );
+     await Promise.all(promises);
+     res.status(200).json({ message: 'Collections deleted successfully' });
 });
 
 export default router;

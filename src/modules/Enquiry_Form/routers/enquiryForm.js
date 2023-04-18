@@ -2,7 +2,6 @@ import { Router } from 'express';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
-import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
 import carOfferModel from '../../Inventory/models/carOffer.js';
 import puppeteer from 'puppeteer';

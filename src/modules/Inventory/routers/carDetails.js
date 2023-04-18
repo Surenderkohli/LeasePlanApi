@@ -220,7 +220,7 @@ router.get('/best-deals', async (req, res) => {
                parseInt(skip)
           );
 
-          if (result.length) {
+          if (result) {
                res.status(200).json({ success: true, data: result });
           } else {
                res.status(200).json({

@@ -292,19 +292,63 @@ const updateCar = async (id, data) => {
 //      return countObject;
 // };
 
+// const getDeals = async (query) => {
+//      try {
+//           const carDetails = await carDetailModel
+//                .find({ deals: 'active', ...query })
+//                .populate(['carBrand_id', 'carSeries_id']);
+//           const carOffers = await carOfferModel.find({
+//                carBrand_id: {
+//                     $in: carDetails.map((detail) => detail.carBrand_id._id),
+//                },
+//                carSeries_id: {
+//                     $in: carDetails.map((detail) => detail.carSeries_id._id),
+//                },
+//                yearModel: { $in: carDetails.map((detail) => detail.yearModel) },
+//           });
+//           return carOffers;
+//      } catch (error) {
+//           throw new Error(error.message);
+//      }
+// };
 const getDeals = async (query) => {
      try {
           const carDetails = await carDetailModel
                .find({
                     deals: 'active',
-                    ...query, // any other filters specified in the query parameter
+                    ...query,
                })
                .populate(['carBrand_id', 'carSeries_id']);
-          return carDetails;
+
+          const carOffers = await carOfferModel
+               .find({
+                    carBrand_id: {
+                         $in: carDetails.map(
+                              (detail) => detail.carBrand_id._id
+                         ),
+                    },
+                    carSeries_id: {
+                         $in: carDetails.map(
+                              (detail) => detail.carSeries_id._id
+                         ),
+                    },
+                    yearModel: {
+                         $in: carDetails.map((detail) => detail.yearModel),
+                    },
+               })
+               .populate('leaseType_id');
+
+          const result = {
+               carDetails,
+               carOffers,
+          };
+
+          return result;
      } catch (error) {
           throw new Error(error.message);
      }
 };
+
 const deleteCar = async (id) => {
      try {
           const response = await carDetailModel.deleteOne(

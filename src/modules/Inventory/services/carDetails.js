@@ -294,10 +294,12 @@ const updateCar = async (id, data) => {
 
 const getDeals = async (query) => {
      try {
-          const carDetails = await carDetailModel.find({
-               deals: 'active',
-               ...query, // any other filters specified in the query parameter
-          });
+          const carDetails = await carDetailModel
+               .find({
+                    deals: 'active',
+                    ...query, // any other filters specified in the query parameter
+               })
+               .populate(['carBrand_id', 'carSeries_id']);
           return carDetails;
      } catch (error) {
           throw new Error(error.message);

@@ -57,7 +57,7 @@ router.get(
                     querySrch,
                } = req.query;
 
-               const limit = parseInt(req.query.limit) || 100;
+               const limit = parseInt(req.query.limit) || 1000000;
                const skip = parseInt(req.query.skip) || 0;
 
                const result = await CarServices.getAllCar(

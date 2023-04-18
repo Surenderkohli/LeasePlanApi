@@ -994,6 +994,95 @@ const deletedCar = async (id) => {
      }
 };
 
+const createCarDetailUpdateExistingCar = async (carDetailData) => {
+     try {
+          if (!carDetailData.companyName) {
+               throw new Error('Missing companyName');
+          }
+
+          let carBrand = await carBrandModel.findOne({
+               companyName: carDetailData.companyName,
+               makeCode: carDetailData.makeCode,
+          });
+
+          if (!carBrand) {
+               carBrand = await carBrandModel.create({
+                    companyName: carDetailData.companyName,
+                    makeCode: carDetailData.makeCode,
+               });
+          }
+
+          const existingCarBrands = await carBrandModel.find({
+               makeCode: carDetailData.makeCode,
+          });
+
+          let carSeries = await carSeriesModel.findOne({
+               modelCode: carDetailData.modelCode,
+               carBrand_id: {
+                    $in: existingCarBrands.map((brand) => brand._id),
+               },
+          });
+
+          if (!carSeries) {
+               if (!carDetailData.seriesName) {
+                    throw new Error('Missing seriesName');
+               }
+               carSeries = await carSeriesModel.create({
+                    seriesName: carDetailData.seriesName,
+                    modelCode: carDetailData.modelCode,
+                    carBrand_id: carBrand._id,
+               });
+          }
+
+          const existingCarDetail = await carDetailModel.findOne({
+               makeCode: carDetailData.makeCode,
+               modelCode: carDetailData.modelCode,
+               yearModel: carDetailData.yearModel,
+               carBrand_id: carBrand._id,
+               carSeries_id: carSeries._id,
+          });
+
+          let images = [];
+          for (let i = 1; i <= 6; i++) {
+               if (carDetailData[`image_${i}_url`]) {
+                    images.push({ imageUrl: carDetailData[`image_${i}_url`] });
+               }
+          }
+
+          if (existingCarDetail) {
+               // If car with the same carBrand_id, carSeries_id, makeCode, modelCode and yearModel exists, update the fields
+               existingCarDetail.description =
+                    carDetailData.description || existingCarDetail.description;
+               existingCarDetail.acceleration =
+                    carDetailData.acceleration ||
+                    existingCarDetail.acceleration;
+               existingCarDetail.fuelType =
+                    carDetailData.fuelType || existingCarDetail.fuelType;
+               existingCarDetail.image =
+                    images.length > 0 ? images : existingCarDetail.image;
+               const updatedCarDetail = await existingCarDetail.save();
+               return updatedCarDetail;
+          } else {
+               // If car does not exist, create a new entry in the carDetail collection
+               const newCarDetail = new carDetailModel({
+                    carBrand_id: carBrand._id,
+                    carSeries_id: carSeries._id,
+                    makeCode: carDetailData.makeCode,
+                    modelCode: carDetailData.modelCode,
+                    yearModel: carDetailData.yearModel,
+                    description: carDetailData.description,
+                    image: images.length > 0 ? images : [],
+                    acceleration: carDetailData.acceleration,
+                    fuelType: carDetailData.fuelType,
+               });
+               const savedCarDetail = await newCarDetail.save();
+               return savedCarDetail;
+          }
+     } catch (error) {
+          console.log(error);
+          throw new Error('Car details upload failed');
+     }
+};
 export const CarServices = {
      getAllCar,
      addNewCar,
@@ -1006,4 +1095,5 @@ export const CarServices = {
      getCarsByBrandSeriesLeaseType,
      deletedCar,
      // deleteAllCarDetails,
+     createCarDetailUpdateExistingCar,
 };

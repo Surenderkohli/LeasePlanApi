@@ -186,12 +186,32 @@ const createCarOffer = async (carOfferData) => {
           });
 
           if (existingCarOffer) {
-               // car offer already exists, add new offer to existing group
-               existingCarOffer.offers.push({
-                    duration: carOfferData.duration,
-                    annualMileage: carOfferData.annualMileage,
-                    monthlyCost: carOfferData.monthlyCost,
-               });
+               // car offer already exists, check for update
+               let found = false;
+               for (let i = 0; i < existingCarOffer.offers.length; i++) {
+                    const offer = existingCarOffer.offers[i];
+                    if (
+                         offer.duration === carOfferData.duration ||
+                         offer.annualMileage === carOfferData.annualMileage ||
+                         offer.monthlyCost === carOfferData.monthlyCost
+                    ) {
+                         // found offer to update
+                         offer.duration = carOfferData.duration;
+                         offer.annualMileage = carOfferData.annualMileage;
+                         offer.monthlyCost = carOfferData.monthlyCost;
+
+                         found = true;
+                         break;
+                    }
+               }
+               if (!found) {
+                    // add new offer to existing group
+                    existingCarOffer.offers.push({
+                         duration: carOfferData.duration,
+                         annualMileage: carOfferData.annualMileage,
+                         monthlyCost: carOfferData.monthlyCost,
+                    });
+               }
                await existingCarOffer.save();
                return {
                     message: 'Car offer updated successfully',

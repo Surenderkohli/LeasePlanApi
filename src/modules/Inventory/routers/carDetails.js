@@ -349,17 +349,19 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                //await CarServices.deleteAllCarDetails();
 
                for (let i = 0; i < carDetailData.length; i++) {
-                    const carDetail = await CarServices.createCarDetail(
-                         carDetailData[i]
-                    );
+                    const carDetail =
+                         await CarServices.createCarDetailUpdateExistingCar(
+                              carDetailData[i]
+                         );
                     carDetails.push(carDetail);
                }
           } else if (req.body) {
                // Manual upload
                const carDetailData = req.body;
-               const carDetail = await CarServices.createCarDetail(
-                    carDetailData
-               );
+               const carDetail =
+                    await CarServices.createCarDetailUpdateExistingCar(
+                         carDetailData
+                    );
                carDetails.push(carDetail);
           } else {
                throw new Error('No file or data provided');

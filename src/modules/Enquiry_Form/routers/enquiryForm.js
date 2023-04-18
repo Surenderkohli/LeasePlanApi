@@ -4,6 +4,7 @@ import { enquiryFormService } from '../services/enquiryForm.js';
 import carDetailModel from '../../Inventory/models/carDetails.js';
 import leaseTypeModel from '../../Inventory/models/leaseType.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
+import carOfferModel from '../../Inventory/models/carOffer.js';
 import puppeteer from 'puppeteer';
 
 const router = new Router();
@@ -14,7 +15,7 @@ router.post(
           try {
                try {
                     // Retrieve car details using relevant query and criteria
-                    const { monthlyCost } = req.query;
+
                     const { carDetails_id } = req.body;
 
                     // Retrieve car details using carId from carDetails collection
@@ -26,19 +27,48 @@ router.post(
                     }
 
                     // Extract relevant fields from carDetails
-                    const { fuelType, gears, leaseType_id, carBrand_id } =
-                         carDetails;
+                    const {
+                         fuelType,
+                         gears,
+                         carBrand_id,
+                         carSeries_id,
+                         yearModel,
+                    } = carDetails;
 
-                    // Retrieve lease type details using leaseTypeId from leasetypes collection
-                    const leaseTypes = await leaseTypeModel.findById({
-                         _id: leaseType_id,
-                    });
+                    // // Retrieve lease type details using leaseTypeId from leasetypes collection
+                    // const leaseTypes = await leaseTypeModel.findById({
+                    //      _id: leaseType_id,
+                    // });
 
-                    if (!leaseTypes) {
-                         throw new Error('Lease type details not found');
+                    // if (!leaseTypes) {
+                    //      throw new Error('Lease type details not found');
+                    // }
+
+                    // Use find() method to retrieve the matching carOffers document with populated leaseType data
+                    const carOffer = await carOfferModel
+                         .findOne({
+                              carBrand_id: carBrand_id,
+                              carSeries_id: carSeries_id,
+                              yearModel: yearModel,
+                         })
+                         .populate({
+                              path: 'leaseType_id',
+                              model: 'leaseType',
+                         })
+                         .exec();
+
+                    if (!carOffer) {
+                         throw new Error('Car offer details not found');
                     }
 
-                    const { leaseType } = leaseTypes;
+                    // Extract the leaseType data from the populated carOffer document
+                    const leaseTypes = carOffer.leaseType_id;
+
+                    const leaseTypeValues = leaseTypes.map(
+                         (type) => type.leaseType
+                    );
+
+                    // const { leaseType } = leaseTypes;
 
                     // Retrieve carBrand name using carBrandId from carbrands collection
                     const carBrand = await carBrandModel.findById({
@@ -56,11 +86,11 @@ router.post(
                          // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
-                         leaseType,
+                         leaseTypeValues,
                          companyName,
                          duration: req.query.duration,
                          annualMileage: req.query.annualMileage,
-                         monthlyCost,
+                         monthlyCost: req.query.monthlyCost,
                     };
                     const enquireFormData = req.body;
 

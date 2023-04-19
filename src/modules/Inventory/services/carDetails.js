@@ -221,7 +221,12 @@ const getAllCar = async (
      }
 };
 
-const addNewCar = async (carDetailsData, carImage, carFeaturesData) => {
+const addNewCar = async (
+     carDetailsData,
+     carImage,
+     carFeaturesData,
+     carOffersData
+) => {
      try {
           // Validate input
           if (!carDetailsData || !carFeaturesData) {
@@ -254,8 +259,14 @@ const addNewCar = async (carDetailsData, carImage, carFeaturesData) => {
           // Create car in CarFeatures collection
           const newCarFeatures = await carFeatureModel.create(carFeaturesData);
 
+          const carOffer = await carOfferModel.create(carOffersData);
+
           // Return the new car object
-          return { carDetails: newCarDetails, carFeatures: newCarFeatures };
+          return {
+               carDetails: newCarDetails,
+               carFeatures: newCarFeatures,
+               carOffers: carOffer,
+          };
      } catch (error) {
           console.log(error);
           //res.send({ status: 400, success: false, msg: error.message });

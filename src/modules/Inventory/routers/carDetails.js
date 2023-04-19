@@ -114,6 +114,28 @@ router.post(
                     //  safetySecurityFeatures: req.body.safetySecurityFeatures,
                };
 
+               const carOffersData = {
+                    carBrand_id: carDetailsData.carBrand_id,
+                    carSeries_id: carDetailsData.carSeries_id,
+                    yearModel: carDetailsData.yearModel,
+                    leaseType_id: carDetailsData.leaseType_id,
+                    offers: [],
+               };
+
+               for (let i = 1; i <= 10; i++) {
+                    const duration = req.body[`duration${i}`];
+                    const annualMileage = req.body[`annualMileage${i}`];
+                    const monthlyCost = req.body[`monthlyCost${i}`];
+
+                    if (duration && annualMileage && monthlyCost) {
+                         carOffersData.offers.push({
+                              duration: duration,
+                              annualMileage: annualMileage,
+                              monthlyCost: monthlyCost,
+                         });
+                    }
+               }
+
                const carImage = [];
                if (files) {
                     const uploadPromises = files.map((file) => {
@@ -147,7 +169,8 @@ router.post(
                const result = await CarServices.addNewCar(
                     carDetailsData,
                     carImage,
-                    carFeaturesData
+                    carFeaturesData,
+                    carOffersData
                );
                res.send(result);
           } catch (error) {

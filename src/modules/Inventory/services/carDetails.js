@@ -221,20 +221,44 @@ const getAllCar = async (
      }
 };
 
-const addNewCar = async (data, carImage) => {
+const addNewCar = async (carDetailsData, carImage, carFeaturesData) => {
      try {
+          // Validate input
+          if (!carDetailsData || !carFeaturesData) {
+               throw new Error(
+                    'Both carDetails and carFeatures must be provided'
+               );
+          }
+
+          // Check if car with same carBrand_id, carSeries_id, and yearModel already exists
+          const existingCar = await carDetailModel.findOne({
+               carBrand_id: carDetailsData.carBrand_id,
+               carSeries_id: carDetailsData.carSeries_id,
+               yearModel: carDetailsData.yearModel,
+          });
+          if (existingCar) {
+               throw new Error('Car already exists');
+          }
+
           const images = carImage.map((image) => ({
                imageUrl: image.imageUrl,
                publicId: image.publicId,
           }));
-          const response = await carDetailModel.create({
-               ...data,
+
+          // Create car in CarDetails collection
+          const newCarDetails = await carDetailModel.create({
+               ...carDetailsData,
                image: images,
           });
-          return response;
+
+          // Create car in CarFeatures collection
+          const newCarFeatures = await carFeatureModel.create(carFeaturesData);
+
+          // Return the new car object
+          return { carDetails: newCarDetails, carFeatures: newCarFeatures };
      } catch (error) {
           console.log(error);
-          res.send({ status: 400, success: false, msg: error.message });
+          //res.send({ status: 400, success: false, msg: error.message });
      }
 };
 

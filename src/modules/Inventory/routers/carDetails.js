@@ -100,8 +100,19 @@ router.post(
                     throw new Error('Invalid deals status');
                }
 
-               const data = req.body;
+               const carDetailsData = req.body;
                const files = req.files; // Get the image files from the request
+
+               const carFeaturesData = {
+                    carSeries_id: carDetailsData.carSeries_id,
+                    carBrand_id: carDetailsData.carBrand_id,
+                    modelCode: carDetailsData.modelCode, // Map modelCode from carDetailsData to carFeaturesData
+                    makeCode: carDetailsData.makeCode, // Map makeCode from carDetailsData to carFeaturesData
+                    yearModel: carDetailsData.yearModel,
+                    exteriorFeatures: req.body.exteriorFeatures,
+                    interiorFeatures: req.body.interiorFeatures,
+                    //  safetySecurityFeatures: req.body.safetySecurityFeatures,
+               };
 
                const carImage = [];
                if (files) {
@@ -119,21 +130,25 @@ router.post(
                     });
                }
                // Check if id is a valid ObjectId
-               const fieldsToCheck = [
-                    'carBrand_id',
-                    'carSeries_id',
-                    'leaseType_id',
-               ];
-               for (let field of fieldsToCheck) {
-                    if (!mongoose.Types.ObjectId.isValid(data[field])) {
-                         return res.status(400).send({
-                              success: false,
-                              msg: `Invalid ObjectId `,
-                         });
-                    }
-               }
+               // const fieldsToCheck = [
+               //      'carBrand_id',
+               //      'carSeries_id',
+               //      'leaseType_id',
+               // ];
+               // for (let field of fieldsToCheck) {
+               //      if (!mongoose.Types.ObjectId.isValid(data[field])) {
+               //           return res.status(400).send({
+               //                success: false,
+               //                msg: `Invalid ObjectId `,
+               //           });
+               //      }
+               // }
 
-               const result = await CarServices.addNewCar(data, carImage);
+               const result = await CarServices.addNewCar(
+                    carDetailsData,
+                    carImage,
+                    carFeaturesData
+               );
                res.send(result);
           } catch (error) {
                console.error('Error in adding new carDetails:', error);

@@ -6,6 +6,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
 import leaseTypeModel from '../models/leaseType.js';
+import carBrandModel from '../models/carBrand.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -132,8 +133,67 @@ router.post(
                     leaseTypes = [];
                }
 
-               const carOffersData = {
+               // if (!carDetailsData.carBrand_id) {
+               //      throw new Error('Missing carBrand_id');
+               // }
+
+               // let carBrand_id = await carBrandModel.findOne({
+               //      carBrand_id: carDetailsData.carBrand_id,
+               //      makeCode: carDetailsData.makeCode,
+               // });
+
+               // if (!carBrand_id) {
+               //      carBrand_id = await carBrandModel.create({
+               //           carBrand_id: carDetailsData.carBrand_id,
+               //           makeCode: carDetailsData.makeCode,
+               //           leaseType_id: leaseTypes,
+               //      });
+               // } else if (leaseTypes.length > 0) {
+               //      const leaseTypeIdsToAdd = leaseTypes
+               //           .map((leaseType) => leaseType._id)
+               //           .filter(
+               //                (leaseTypeId) =>
+               //                     !carBrand_id.leaseType_id.includes(
+               //                          leaseTypeId
+               //                     )
+               //           );
+               //      if (leaseTypeIdsToAdd.length > 0) {
+               //           carBrand_id.leaseType_id = [
+               //                ...carBrand_id.leaseType_id,
+               //                ...leaseTypeIdsToAdd,
+               //           ];
+               //           await carBrand_id.save();
+               //      }
+               // }
+               let carBrand_id = await carBrandModel.findOne({
                     carBrand_id: carDetailsData.carBrand_id,
+                    makeCode: carDetailsData.makeCode,
+               });
+
+               if (!carBrand_id) {
+                    throw new Error('Invalid carBrand_id');
+               }
+
+               if (leaseTypes.length > 0) {
+                    const leaseTypeIdsToAdd = leaseTypes
+                         .map((leaseType) => leaseType._id)
+                         .filter(
+                              (leaseTypeId) =>
+                                   !carBrand_id.leaseType_id.includes(
+                                        leaseTypeId
+                                   )
+                         );
+                    if (leaseTypeIdsToAdd.length > 0) {
+                         carBrand_id.leaseType_id = [
+                              ...carBrand_id.leaseType_id,
+                              ...leaseTypeIdsToAdd,
+                         ];
+                         await carBrand_id.save();
+                    }
+               }
+
+               const carOffersData = {
+                    carBrand_id: carBrand_id._id,
                     carSeries_id: carDetailsData.carSeries_id,
                     yearModel: carDetailsData.yearModel,
                     leaseType_id: leaseTypes,

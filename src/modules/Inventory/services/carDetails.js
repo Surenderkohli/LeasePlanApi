@@ -239,7 +239,7 @@ const addNewCar = async (
           const existingCar = await carDetailModel.findOne({
                carBrand_id: carDetailsData.carBrand_id,
                carSeries_id: carDetailsData.carSeries_id,
-               yearModel: carDetailsData.yearModel,
+               // yearModel: carDetailsData.yearModel,
           });
           if (existingCar) {
                throw new Error('Car already exists');

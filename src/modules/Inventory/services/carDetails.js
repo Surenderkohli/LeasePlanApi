@@ -274,19 +274,69 @@ const addNewCar = async (
      }
 };
 
-const updateCar = async (id, data) => {
+// const updateCar = async (id, data) => {
+//      try {
+//           const response = await carDetailModel.findByIdAndUpdate(
+//                { _id: id },
+//                { $set: data },
+//                { new: true }
+//           );
+//           return response;
+//      } catch (error) {
+//           console.log(error);
+//      }
+// };
+
+const updateCar = async (
+     carId,
+     carDetailsData,
+     carFeaturesData,
+     carOffersData
+) => {
      try {
-          const response = await carDetailModel.findByIdAndUpdate(
-               { _id: id },
-               { $set: data },
+          // Validate input
+          if (!carDetailsData || !carFeaturesData || !carOffersData) {
+               throw new Error(
+                    'carDetails, carFeatures, and carOffers must be provided'
+               );
+          }
+
+          // Update car in CarDetails collection
+          const updatedCarDetails = await carDetailModel.findByIdAndUpdate(
+               carId,
+               { ...carDetailsData },
                { new: true }
           );
-          return response;
+
+          // Update car in CarFeatures collection
+          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+               {
+                    carBrand_id: carFeaturesData.carBrand_id,
+                    carSeries_id: carFeaturesData.carSeries_id,
+                    yearModel: carFeaturesData.yearModel,
+               },
+               { ...carFeaturesData },
+               { new: true }
+          );
+
+          // Update car in CarOffers collection
+          const updatedCarOffers = await carOfferModel.findOneAndUpdate(
+               { _id: updatedCarDetails.carOffers_id },
+               carOffersData,
+               { new: true }
+          );
+
+          // Return the updated car object
+          return {
+               carDetails: updatedCarDetails,
+               carFeatures: updatedCarFeatures,
+               carOffers: updatedCarOffers,
+          };
      } catch (error) {
-          console.log(error);
+          console.error('Error in updating car:', error);
+          throw new Error(error.message);
      }
 };
-
 // const getCount = async () => {
 //      const counts = await carDetailModel.aggregate([
 //           {

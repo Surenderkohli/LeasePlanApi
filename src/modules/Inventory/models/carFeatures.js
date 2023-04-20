@@ -11,10 +11,10 @@ const carFeatureSchema = new mongoose.Schema({
      },
      modelCode: String,
      makeCode: String,
-     // yearModel: {
-     //      type: Number,
-     //      required: false,
-     // },
+     yearModel: {
+          type: Number,
+          required: false,
+     },
      exteriorFeatures: [String],
      interiorFeatures: [String],
      safetySecurityFeatures: [String],

@@ -947,49 +947,49 @@ const getSingleCars = async (id) => {
                yearModel: car.yearModel,
           });
 
-          // const carOffers = await carOfferModel
-          //      .find({
-          //           // leaseType_id: car.leaseType_id,
-          //           carBrand_id: car.carBrand_id,
-          //           carSeries_id: car.carSeries_id,
-          //           // yearModel: car.yearModel,
-          //      })
-          //      .populate('leaseType_id');
+          const carOffers = await carOfferModel
+               .find({
+                    // leaseType_id: car.leaseType_id,
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+                    yearModel: car.yearModel,
+               })
+               .populate('leaseType_id');
 
-          const carOffers = await carOfferModel.aggregate([
-               {
-                    $match: {
-                         carBrand_id: car.carBrand_id,
-                         carSeries_id: car.carSeries_id,
-                    },
-               },
-               {
-                    $lookup: {
-                         from: 'leaseTypes',
-                         localField: 'leaseType_id',
-                         foreignField: '_id',
-                         as: 'leaseType',
-                    },
-               },
-               {
-                    $unwind: '$leaseType',
-               },
-               {
-                    $group: {
-                         _id: '$offer',
-                         leaseTypes: {
-                              $addToSet: '$leaseType',
-                         },
-                    },
-               },
-               {
-                    $project: {
-                         _id: 0,
-                         offer: '$_id',
-                         leaseTypes: 1,
-                    },
-               },
-          ]);
+          // const carOffers = await carOfferModel.aggregate([
+          //      {
+          //           $match: {
+          //                carBrand_id: car.carBrand_id,
+          //                carSeries_id: car.carSeries_id,
+          //           },
+          //      },
+          //      {
+          //           $lookup: {
+          //                from: 'leaseTypes',
+          //                localField: 'leaseType_id',
+          //                foreignField: '_id',
+          //                as: 'leaseType',
+          //           },
+          //      },
+          //      {
+          //           $unwind: '$leaseType',
+          //      },
+          //      {
+          //           $group: {
+          //                _id: '$offer',
+          //                leaseTypes: {
+          //                     $addToSet: '$leaseType',
+          //                },
+          //           },
+          //      },
+          //      {
+          //           $project: {
+          //                _id: 0,
+          //                offer: '$_id',
+          //                leaseTypes: 1,
+          //           },
+          //      },
+          // ]);
 
           const result = {
                car,

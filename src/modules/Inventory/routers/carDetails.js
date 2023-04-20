@@ -110,7 +110,7 @@ router.post(
                     carBrand_id: carDetailsData.carBrand_id,
                     modelCode: carDetailsData.modelCode, // Map modelCode from carDetailsData to carFeaturesData
                     makeCode: carDetailsData.makeCode, // Map makeCode from carDetailsData to carFeaturesData
-                    // yearModel: carDetailsData.yearModel,
+                    yearModel: carDetailsData.yearModel,
                     exteriorFeatures: req.body.exteriorFeatures,
                     interiorFeatures: req.body.interiorFeatures,
                     safetySecurityFeatures: req.body.safetySecurityFeatures,

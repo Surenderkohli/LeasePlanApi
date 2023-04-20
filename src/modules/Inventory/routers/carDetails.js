@@ -5,6 +5,7 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
+import leaseTypeModel from '../models/leaseType.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -114,11 +115,28 @@ router.post(
                     safetySecurityFeatures: req.body.safetySecurityFeatures,
                };
 
+               let leaseTypes;
+               if (carDetailsData.leaseType) {
+                    leaseTypes = await leaseTypeModel.find({
+                         leaseType: carDetailsData.leaseType,
+                    });
+                    if (leaseTypes.length === 0) {
+                         // Create a new leaseType entry in the leaseTypeModel collection
+                         const newLeaseType = new leaseTypeModel({
+                              leaseType: carDetailsData.leaseType,
+                         });
+                         const savedLeaseType = await newLeaseType.save();
+                         leaseTypes = [savedLeaseType];
+                    }
+               } else {
+                    leaseTypes = [];
+               }
+
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
                     carSeries_id: carDetailsData.carSeries_id,
                     yearModel: carDetailsData.yearModel,
-                    leaseType_id: carDetailsData.leaseType_id,
+                    leaseType_id: leaseTypes,
                     offers: [],
                };
 

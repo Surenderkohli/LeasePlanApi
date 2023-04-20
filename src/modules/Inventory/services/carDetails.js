@@ -236,14 +236,14 @@ const addNewCar = async (
           }
 
           // Check if car with same carBrand_id, carSeries_id, and yearModel already exists
-          const existingCar = await carDetailModel.findOne({
-               carBrand_id: carDetailsData.carBrand_id,
-               carSeries_id: carDetailsData.carSeries_id,
-               // yearModel: carDetailsData.yearModel,
-          });
-          if (existingCar) {
-               throw new Error('Car already exists');
-          }
+          // const existingCar = await carDetailModel.findOne({
+          //      carBrand_id: carDetailsData.carBrand_id,
+          //      carSeries_id: carDetailsData.carSeries_id,
+          //      // yearModel: carDetailsData.yearModel,
+          // });
+          // if (existingCar) {
+          //      throw new Error('Car already exists');
+          // }
 
           const images = carImage.map((image) => ({
                imageUrl: image.imageUrl,

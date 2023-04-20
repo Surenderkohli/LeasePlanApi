@@ -4,6 +4,7 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carFeatureModel from '../models/carFeatures.js';
 import carOfferModel from '../models/carOffer.js';
+import mongoose from 'mongoose';
 
 const getAllCar = async (
      //leaseType,
@@ -951,15 +952,49 @@ const getSingleCars = async (id) => {
                     // leaseType_id: car.leaseType_id,
                     carBrand_id: car.carBrand_id,
                     carSeries_id: car.carSeries_id,
-                    yearModel: car.yearModel,
+                    // yearModel: car.yearModel,
                })
                .populate('leaseType_id');
+
+          // const carOffers = await carOfferModel.aggregate([
+          //      {
+          //           $match: {
+          //                carBrand_id: car.carBrand_id,
+          //                carSeries_id: car.carSeries_id,
+          //           },
+          //      },
+          //      {
+          //           $lookup: {
+          //                from: 'leaseTypes',
+          //                localField: 'leaseType_id',
+          //                foreignField: '_id',
+          //                as: 'leaseType',
+          //           },
+          //      },
+          //      {
+          //           $unwind: '$leaseType',
+          //      },
+          //      {
+          //           $group: {
+          //                _id: '$offer',
+          //                leaseTypes: {
+          //                     $addToSet: '$leaseType',
+          //                },
+          //           },
+          //      },
+          //      {
+          //           $project: {
+          //                _id: 0,
+          //                offer: '$_id',
+          //                leaseTypes: 1,
+          //           },
+          //      },
+          // ]);
 
           const result = {
                car,
                features: carFeatures || [],
                offers: carOffers || [],
-               // leaseType: carOffers[0].leaseType,
           };
 
           return result;

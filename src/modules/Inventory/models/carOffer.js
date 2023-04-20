@@ -25,8 +25,10 @@ const carOfferSchema = new mongoose.Schema(
                     duration: Number,
                     annualMileage: Number,
                     monthlyCost: Number,
+                    calculationNo: Number,
                },
           ],
+
           // deals: {
           //      type: String,
           //      enum: ['active', 'inactive'],

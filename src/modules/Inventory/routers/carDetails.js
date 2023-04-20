@@ -171,12 +171,19 @@ router.post(
                     const duration = req.body[`duration${i}`];
                     const annualMileage = req.body[`annualMileage${i}`];
                     const monthlyCost = req.body[`monthlyCost${i}`];
+                    const calculationNo = req.body[`calculationNo${i}`];
 
-                    if (duration && annualMileage && monthlyCost) {
+                    if (
+                         duration &&
+                         annualMileage &&
+                         monthlyCost &&
+                         calculationNo
+                    ) {
                          carOffersData.offers.push({
                               duration: duration,
                               annualMileage: annualMileage,
                               monthlyCost: monthlyCost,
+                              calculationNo: req.body[`calculationNo${i}`],
                          });
                     }
                }

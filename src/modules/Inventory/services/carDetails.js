@@ -315,10 +315,14 @@ const updateCar = async (
                     carSeries_id: carFeaturesData.carSeries_id,
                     yearModel: carFeaturesData.yearModel,
                },
-               { ...carFeaturesData },
+               {
+                    exteriorFeatures: carDetailsData.exteriorFeatures,
+                    interiorFeatures: carDetailsData.interiorFeatures,
+                    safetySecurityFeatures:
+                         carDetailsData.safetySecurityFeatures,
+               },
                { new: true }
           );
-
           // Update car in CarOffers collection
           const updatedCarOffers = await carOfferModel.findOneAndUpdate(
                { _id: updatedCarDetails.carOffers_id },
@@ -972,7 +976,7 @@ const deleteCar = async (id) => {
 //      }
 // };
 
-const getSingleCars = async (id) => {
+const getSingleCars = async (id, leaseTypeId) => {
      try {
           const car = await carDetailModel
                .findOne({ _id: id })
@@ -996,14 +1000,16 @@ const getSingleCars = async (id) => {
                carSeries_id: car.carSeries_id,
                yearModel: car.yearModel,
           });
-
+          let clause = {
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               yearModel: car.yearModel,
+          };
+          if (leaseTypeId) {
+               clause.leaseType_id = leaseTypeId;
+          }
           const carOffers = await carOfferModel
-               .find({
-                    // leaseType_id: car.leaseType_id,
-                    carBrand_id: car.carBrand_id,
-                    carSeries_id: car.carSeries_id,
-                    yearModel: car.yearModel,
-               })
+               .find(clause)
                .populate('leaseType_id');
 
           // const carOffers = await carOfferModel.aggregate([

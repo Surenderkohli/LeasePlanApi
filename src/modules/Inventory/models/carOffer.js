@@ -28,6 +28,10 @@ const carOfferSchema = new mongoose.Schema(
                     calculationNo: Number,
                },
           ],
+          carDetails_id: {
+               type: mongoose.Schema.ObjectId,
+               ref: 'carDetails',
+          },
 
           // deals: {
           //      type: String,

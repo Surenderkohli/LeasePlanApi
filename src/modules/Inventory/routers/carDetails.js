@@ -263,12 +263,23 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
                const calculationNo = req.body[`calculationNo${i}`];
 
                if (duration && annualMileage && monthlyCost && calculationNo) {
-                    carOffersData.offers.push({
-                         duration: duration,
-                         annualMileage: annualMileage,
-                         monthlyCost: monthlyCost,
-                         calculationNo: calculationNo,
-                    });
+                    const offerIndex = carOffersData.offers.findIndex(
+                         (offer) => offer.calculationNo === calculationNo
+                    );
+                    if (offerIndex !== -1) {
+                         carOffersData.offers[offerIndex].duration = duration;
+                         carOffersData.offers[offerIndex].annualMileage =
+                              annualMileage;
+                         carOffersData.offers[offerIndex].monthlyCost =
+                              monthlyCost;
+                    } else {
+                         carOffersData.offers.push({
+                              duration: duration,
+                              annualMileage: annualMileage,
+                              monthlyCost: monthlyCost,
+                              calculationNo: calculationNo,
+                         });
+                    }
                }
           }
 

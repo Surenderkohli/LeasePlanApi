@@ -311,18 +311,20 @@ const updateCar = async (
           // Update car in CarFeatures collection
           const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
                {
-                    carBrand_id: carFeaturesData.carBrand_id,
                     carSeries_id: carFeaturesData.carSeries_id,
+                    carBrand_id: carFeaturesData.carBrand_id,
                     yearModel: carFeaturesData.yearModel,
                },
+
                {
-                    exteriorFeatures: carDetailsData.exteriorFeatures,
-                    interiorFeatures: carDetailsData.interiorFeatures,
+                    exteriorFeatures: carFeaturesData.exteriorFeatures,
+                    interiorFeatures: carFeaturesData.interiorFeatures,
                     safetySecurityFeatures:
-                         carDetailsData.safetySecurityFeatures,
+                         carFeaturesData.safetySecurityFeatures,
                },
                { new: true }
           );
+
           // Update car in CarOffers collection
           const updatedCarOffers = await carOfferModel.findOneAndUpdate(
                { _id: updatedCarDetails.carOffers_id },

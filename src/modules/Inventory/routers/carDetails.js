@@ -236,12 +236,14 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
      try {
           const carId = req.params.id;
           const carDetailsData = req.body;
+          // const carFeaturesData = req.body.carFeatures;
 
           const carFeaturesData = {
                carSeries_id: carDetailsData.carSeries_id,
                carBrand_id: carDetailsData.carBrand_id,
-               modelCode: carDetailsData.modelCode,
-               makeCode: carDetailsData.makeCode,
+               // modelCode: carDetailsData.modelCode,
+               // makeCode: carDetailsData.makeCode,
+               yearModel: carDetailsData.yearModel,
                exteriorFeatures: req.body.exteriorFeatures,
                interiorFeatures: req.body.interiorFeatures,
                safetySecurityFeatures: req.body.safetySecurityFeatures,

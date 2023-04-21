@@ -309,19 +309,29 @@ const updateCar = async (
           );
 
           // Update car in CarFeatures collection
-          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
-               {
-                    carSeries_id: carFeaturesData.carSeries_id,
-                    carBrand_id: carFeaturesData.carBrand_id,
-                    yearModel: carFeaturesData.yearModel,
-               },
+          const filter = {
+               carBrand_id: carFeaturesData.carBrand_id,
+               carSeries_id: carFeaturesData.carSeries_id,
+               yearModel: carFeaturesData.yearModel,
+          };
 
-               {
-                    exteriorFeatures: carFeaturesData.exteriorFeatures,
-                    interiorFeatures: carFeaturesData.interiorFeatures,
-                    safetySecurityFeatures:
-                         carFeaturesData.safetySecurityFeatures,
-               },
+          const updateFields = {};
+
+          for (const [key, value] of Object.entries(carDetailsData)) {
+               if (key.endsWith('Features') && Array.isArray(value)) {
+                    const featureIndex = key.slice(0, -8);
+                    value.forEach((featureValue, index) => {
+                         updateFields[`${featureIndex}Features.${index}`] =
+                              featureValue;
+                    });
+               } else {
+                    updateFields[key] = value;
+               }
+          }
+
+          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+               filter,
+               updateFields,
                { new: true }
           );
 

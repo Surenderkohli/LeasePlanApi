@@ -116,54 +116,55 @@ router.post(
                     safetySecurityFeatures: req.body.safetySecurityFeatures,
                };
 
-               let leaseTypes;
-               if (carDetailsData.leaseType) {
-                    leaseTypes = await leaseTypeModel.find({
-                         leaseType: carDetailsData.leaseType,
-                    });
-                    if (leaseTypes.length === 0) {
-                         // Create a new leaseType entry in the leaseTypeModel collection
-                         const newLeaseType = new leaseTypeModel({
-                              leaseType: carDetailsData.leaseType,
-                         });
-                         const savedLeaseType = await newLeaseType.save();
-                         leaseTypes = [savedLeaseType];
-                    }
-               } else {
-                    leaseTypes = [];
-               }
+               // let leaseTypes;
+               // if (carDetailsData.leaseType) {
+               //      leaseTypes = await leaseTypeModel.find({
+               //           leaseType: carDetailsData.leaseType,
+               //      });
+               //      if (leaseTypes.length === 0) {
+               //           // Create a new leaseType entry in the leaseTypeModel collection
+               //           const newLeaseType = new leaseTypeModel({
+               //                leaseType: carDetailsData.leaseType,
+               //           });
+               //           const savedLeaseType = await newLeaseType.save();
+               //           leaseTypes = [savedLeaseType];
+               //      }
+               // } else {
+               //      leaseTypes = [];
+               // }
 
-               // Find the car brand
-               const carBrand = await carBrandModel.findOne({
-                    _id: carDetailsData.carBrand_id,
-                    // makeCode: carDetailsData.makeCode,
-               });
+               // // Find the car brand
+               // const carBrand = await carBrandModel.findOne({
+               //      _id: carDetailsData.carBrand_id,
+               //      // makeCode: carDetailsData.makeCode,
+               // });
 
-               if (!carBrand) {
-                    throw new Error('Invalid carBrand_id');
-               }
+               // if (!carBrand) {
+               //      throw new Error('Invalid carBrand_id');
+               // }
 
-               if (leaseTypes.length > 0) {
-                    const leaseTypeIdsToAdd = leaseTypes
-                         .map((leaseType) => leaseType._id)
-                         .filter(
-                              (leaseTypeId) =>
-                                   !carBrand.leaseType_id.includes(leaseTypeId)
-                         );
-                    if (leaseTypeIdsToAdd.length > 0) {
-                         carBrand.leaseType_id = [
-                              ...carBrand.leaseType_id,
-                              ...leaseTypeIdsToAdd,
-                         ];
-                         await carBrand.save();
-                    }
-               }
+               // if (leaseTypes.length > 0) {
+               //      const leaseTypeIdsToAdd = leaseTypes
+               //           .map((leaseType) => leaseType._id)
+               //           .filter(
+               //                (leaseTypeId) =>
+               //                     !carBrand.leaseType_id.includes(leaseTypeId)
+               //           );
+               //      if (leaseTypeIdsToAdd.length > 0) {
+               //           carBrand.leaseType_id = [
+               //                ...carBrand.leaseType_id,
+               //                ...leaseTypeIdsToAdd,
+               //           ];
+               //           await carBrand.save();
+               //      }
+               // }
 
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
                     carSeries_id: carDetailsData.carSeries_id,
                     yearModel: carDetailsData.yearModel,
-                    leaseType_id: leaseTypes,
+                    //leaseType_id: leaseTypes.map((leaseType) => leaseType._id),
+                    leaseType_id: carDetailsData.leaseType_id,
                     offers: [],
                };
 

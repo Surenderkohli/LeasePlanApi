@@ -335,13 +335,39 @@ const updateCar = async (
                { new: true }
           );
 
-          // Update car in CarOffers collection
-          const updatedCarOffers = await carOfferModel.findOneAndUpdate(
-               { _id: updatedCarDetails.carOffers_id },
-               carOffersData,
+          // Find car offers based on carBrand_id, carSeries_id, yearModel, and leaseType_id
+          const query = {
+               carBrand_id: carDetailsData.carBrand_id,
+               carSeries_id: carDetailsData.carSeries_id,
+               yearModel: carDetailsData.yearModel,
+               // leaseType_id: { $in: carOffersData.leaseType },
+               leaseType_id: carDetailsData.leaseType_id,
+          };
+          console.log(query);
+
+          const carOffersDoc = await carOfferModel.findOne(query);
+
+          // Update offers array based on calculationNo
+          const offers = carOffersDoc.offers;
+          for (let i = 0; i < offers.length; i++) {
+               if (
+                    offers[i].calculationNo ===
+                    carOffersData.offers[0].calculationNo
+               ) {
+                    offers[i].duration = carOffersData.offers[0].duration;
+                    offers[i].annualMileage =
+                         carOffersData.offers[0].annualMileage;
+                    offers[i].monthlyCost = carOffersData.offers[0].monthlyCost;
+                    break;
+               }
+          }
+
+          // Update car offers
+          const updatedCarOffers = await carOfferModel.findByIdAndUpdate(
+               carOffersDoc._id,
+               { offers },
                { new: true }
           );
-
           // Return the updated car object
           return {
                carDetails: updatedCarDetails,

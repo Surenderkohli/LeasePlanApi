@@ -5,8 +5,6 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
-import leaseTypeModel from '../models/leaseType.js';
-import carBrandModel from '../models/carBrand.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -108,56 +106,13 @@ router.post(
                const carFeaturesData = {
                     carSeries_id: carDetailsData.carSeries_id,
                     carBrand_id: carDetailsData.carBrand_id,
-                    modelCode: carDetailsData.modelCode, // Map modelCode from carDetailsData to carFeaturesData
-                    makeCode: carDetailsData.makeCode, // Map makeCode from carDetailsData to carFeaturesData
+                    modelCode: carDetailsData.modelCode,
+                    makeCode: carDetailsData.makeCode,
                     yearModel: carDetailsData.yearModel,
                     exteriorFeatures: req.body.exteriorFeatures,
                     interiorFeatures: req.body.interiorFeatures,
                     safetySecurityFeatures: req.body.safetySecurityFeatures,
                };
-
-               // let leaseTypes;
-               // if (carDetailsData.leaseType) {
-               //      leaseTypes = await leaseTypeModel.find({
-               //           leaseType: carDetailsData.leaseType,
-               //      });
-               //      if (leaseTypes.length === 0) {
-               //           // Create a new leaseType entry in the leaseTypeModel collection
-               //           const newLeaseType = new leaseTypeModel({
-               //                leaseType: carDetailsData.leaseType,
-               //           });
-               //           const savedLeaseType = await newLeaseType.save();
-               //           leaseTypes = [savedLeaseType];
-               //      }
-               // } else {
-               //      leaseTypes = [];
-               // }
-
-               // // Find the car brand
-               // const carBrand = await carBrandModel.findOne({
-               //      _id: carDetailsData.carBrand_id,
-               //      // makeCode: carDetailsData.makeCode,
-               // });
-
-               // if (!carBrand) {
-               //      throw new Error('Invalid carBrand_id');
-               // }
-
-               // if (leaseTypes.length > 0) {
-               //      const leaseTypeIdsToAdd = leaseTypes
-               //           .map((leaseType) => leaseType._id)
-               //           .filter(
-               //                (leaseTypeId) =>
-               //                     !carBrand.leaseType_id.includes(leaseTypeId)
-               //           );
-               //      if (leaseTypeIdsToAdd.length > 0) {
-               //           carBrand.leaseType_id = [
-               //                ...carBrand.leaseType_id,
-               //                ...leaseTypeIdsToAdd,
-               //           ];
-               //           await carBrand.save();
-               //      }
-               // }
 
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
@@ -205,19 +160,15 @@ router.post(
                     });
                }
                // Check if id is a valid ObjectId
-               // const fieldsToCheck = [
-               //      'carBrand_id',
-               //      'carSeries_id',
-               //      'leaseType_id',
-               // ];
-               // for (let field of fieldsToCheck) {
-               //      if (!mongoose.Types.ObjectId.isValid(data[field])) {
-               //           return res.status(400).send({
-               //                success: false,
-               //                msg: `Invalid ObjectId `,
-               //           });
-               //      }
-               // }
+               const fieldsToCheck = ['carBrand_id', 'carSeries_id'];
+               for (let field of fieldsToCheck) {
+                    if (!mongoose.Types.ObjectId.isValid(data[field])) {
+                         return res.status(400).send({
+                              success: false,
+                              msg: `Invalid ObjectId `,
+                         });
+                    }
+               }
 
                const result = await CarServices.addNewCar(
                     carDetailsData,
@@ -237,13 +188,10 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
      try {
           const carId = req.params.id;
           const carDetailsData = req.body;
-          // const carFeaturesData = req.body.carFeatures;
 
           const carFeaturesData = {
                carSeries_id: carDetailsData.carSeries_id,
                carBrand_id: carDetailsData.carBrand_id,
-               // modelCode: carDetailsData.modelCode,
-               // makeCode: carDetailsData.makeCode,
                yearModel: carDetailsData.yearModel,
                exteriorFeatures: req.body.exteriorFeatures,
                interiorFeatures: req.body.interiorFeatures,
@@ -324,76 +272,6 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
      }
 });
 
-// router.put(
-//      '/update/:id',
-//      carUpload.array('image', 6),
-//      httpHandler(async (req, res) => {
-//           try {
-//                // check if there are new files uploaded
-//                const { id } = req.params;
-
-//                const { deals } = req.body;
-//                if (deals && !['active', 'inactive'].includes(deals)) {
-//                     throw new Error('Invalid deals status');
-//                }
-
-//                const data = req.body;
-//                const images = [];
-
-//                // check if there are new files uploaded
-//                if (req.files && req.files.length > 0) {
-//                     // delete old images from cloudinary
-//                     const carImage = await CarServices.getSingleCar(id);
-
-//                     if (carImage && carImage.image) {
-//                          for (const image of carImage.image) {
-//                               await cloudinary.uploader.destroy(image.publicId);
-//                          }
-//                     }
-
-//                     // upload new image files to cloudinary
-//                     for (const file of req.files) {
-//                          const result = await cloudinary.uploader.upload(
-//                               file.path
-//                          );
-
-//                          images.push({
-//                               imageUrl: result.secure_url,
-//                               publicId: result.public_id,
-//                          });
-//                     }
-
-//                     // update the images array in the request body
-//                     data.image = images;
-//                }
-
-//                const result = await CarServices.updateCar(id, data);
-
-//                res.send(result);
-//           } catch (error) {
-//                console.error('Error in updating  carDetails:', error);
-//                res.send({ status: 400, success: false, msg: error.message });
-//           }
-//      })
-// );
-
-// router.get(
-//      '/count',
-//      httpHandler(async (req, res) => {
-//           try {
-//                const counts = await CarServices.getCount();
-//                res.status(200).json({
-//                     success: true,
-//                     privateLeaseCount: counts.privateLeaseCount,
-//                     flexiPlanCount: counts.flexiPlanCount,
-//                     businessLeaseCount: counts.businessLeaseCount,
-//                });
-//           } catch (error) {
-//                res.status(400).json({ success: false, error: error.message });
-//           }
-//      })
-// );
-
 router.get('/best-deals', async (req, res) => {
      try {
           const { limit = 5, skip = 0 } = req.query;
@@ -426,93 +304,7 @@ router.delete(
      })
 );
 
-// router.get('/fetch-single/:id', async (req, res) => {
-//      try {
-//           const { id } = req.params;
-
-//           let {
-//                contractLengthInMonth,
-//                annualMileage,
-//                upfrontPayment,
-//                includeMaintenance,
-//                monthlyLeasePrice,
-//           } = req.query;
-
-//           const result = await CarServices.getSingleCar(
-//                id,
-//                contractLengthInMonth,
-//                annualMileage,
-//                upfrontPayment,
-//                includeMaintenance,
-//                monthlyLeasePrice
-//           );
-//           if (!result) {
-//                res.status(404).json({
-//                     success: false,
-//                     message: 'No car found with the specified id.',
-//                });
-//           }
-//           res.send(result);
-//      } catch (error) {
-//           res.send({ status: 400, success: false, msg: error.message });
-//      }
-// });
-
-// router.get('/cars/:companyName/:seriesName', async (req, res) => {
-//      try {
-//           const { companyName, seriesName } = req.params;
-//           const cars = await CarServices.getCarsByBrandAndSeries(
-//                companyName,
-//                seriesName
-//           );
-//           res.status(200).json(cars);
-//      } catch (err) {
-//           console.error(err);
-//           res.status(500).json({ message: 'Server error' });
-//      }
-// });
-
-// router.get('/cars-with-offers', async (req, res) => {
-//      const { companyName, seriesName, yearModels } = req.query;
-
-//      try {
-//           const carOffers = await CarServices.getCarsWithOffers(
-//                companyName,
-//                seriesName,
-//                yearModels
-//           );
-
-//           res.json(carOffers);
-//      } catch (error) {
-//           console.error(error);
-//           res.status(500).json({ error: 'Server error' });
-//      }
-// });
-
-// router.get(
-//      '/best-deals',
-//      httpHandler(async (req, res) => {
-//           try {
-//                const { limit = 3, skip = 0 } = req.query;
-//                const result = await CarServices.getBestDeals(
-//                     parseInt(limit),
-//                     parseInt(skip)
-//                );
-//                if (result) {
-//                     res.status(200).json({ success: true, data: result });
-//                } else {
-//                     res.status(404).json({
-//                          success: false,
-//                          message: 'Not found any best deals',
-//                     });
-//                }
-//           } catch (error) {
-//                res.send({ status: 400, success: false, msg: error.message });
-//           }
-//      })
-// );
-
-// <----------------------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------------------------------------------------------->
+// ---------------------------------------------------------------- >>>>>>>>>>>  CSV upload
 
 const storage = multer.memoryStorage();
 

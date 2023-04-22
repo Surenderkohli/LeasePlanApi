@@ -37,21 +37,6 @@ router.get(
      })
 );
 
-// router.post(
-//      '/add-carFeature',
-//      httpHandler(async (req, res) => {
-//           try {
-//                const carFeatureData = req.body;
-//                const carFeature = await carFeatureService.addCarFeature(
-//                     carFeatureData
-//                );
-//                res.status(201).json({ success: true, data: carFeature });
-//           } catch (error) {
-//                console.error(error);
-//                res.status(500).send('Server error');
-//           }
-//      })
-// );
 router.post('/car-features-manual', async (req, res) => {
      try {
           const carFeatureData = req.body;

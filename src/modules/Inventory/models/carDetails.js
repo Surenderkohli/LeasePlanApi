@@ -20,10 +20,6 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          // carFeatures_id: {
-          //      type: mongoose.Schema.ObjectId,
-          //      ref: 'carFeature',
-          // },
           description: String,
           image: {
                type: [],
@@ -38,7 +34,6 @@ const carDetailSchema = new mongoose.Schema(
                type: String,
                required: false,
           },
-          // price: Number,
           bodyType: {
                type: String,
                enum: [
@@ -59,7 +54,6 @@ const carDetailSchema = new mongoose.Schema(
                required: false,
                default: '6 SPEED',
           },
-          // milesPerGallon: Number,
           acceleration: {
                type: String,
                required: false,

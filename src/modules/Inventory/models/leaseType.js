@@ -7,7 +7,6 @@ const leaseTypeSchema = new mongoose.Schema(
                required: false,
                //enum: ['Private Lease', 'FlexiPlan', 'Business Lease'],
           },
-
           isDeleted: {
                type: Boolean,
                default: false,

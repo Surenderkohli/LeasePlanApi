@@ -9,23 +9,6 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
-/* 
-// POST /car-offers
-
-router.post('/car-offers-manual', async (req, res) => {
-  try {
-    const carOffer = await carOfferService.createCarOfferManual(req.body);
-    res.status(201).json({
-      message: 'Car offer added successfully',
-      data: carOffer,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ message: error.message });
-  }
-});
- */
-
 router.post('/car-offers', upload.single('file'), async (req, res) => {
      try {
           let carOffers = [];
@@ -101,15 +84,5 @@ router.get('/count', async (req, res) => {
           res.status(400).json({ success: false, error: error.message });
      }
 });
-
-// router.get('/best-deals', async (req, res) => {
-//      try {
-//           const bestDeals = await carOfferService.getBestDeals();
-//           res.json(bestDeals);
-//      } catch (err) {
-//           console.error(err);
-//           res.status(500).send('Internal Server Error');
-//      }
-// });
 
 export default router;

@@ -191,6 +191,7 @@ const createCarOffer = async (carOfferData) => {
                     duration: carOfferData.duration,
                     annualMileage: carOfferData.annualMileage,
                     monthlyCost: carOfferData.monthlyCost,
+                    calculationNo: carOfferData.calculationNo,
                });
 
                // car offer already exists, check for update
@@ -236,6 +237,7 @@ const createCarOffer = async (carOfferData) => {
                               duration: carOfferData.duration,
                               annualMileage: carOfferData.annualMileage,
                               monthlyCost: carOfferData.monthlyCost,
+                              calculationNo: carOfferData.calculationNo,
                          },
                     ],
                     deals: carOfferData.deals,

@@ -294,16 +294,6 @@ router.get('/best-deals', async (req, res) => {
      }
 });
 
-router.delete(
-     '/delete/:id',
-     httpHandler(async (req, res) => {
-          const data = req.body;
-          const { id } = req.params;
-          const result = await CarServices.deleteCar(id, req.body);
-          res.send(result);
-     })
-);
-
 // ---------------------------------------------------------------- >>>>>>>>>>>  CSV upload
 
 const storage = multer.memoryStorage();
@@ -384,7 +374,7 @@ router.get('/list', async (req, res) => {
 });
 
 router.delete(
-     '/deleted/:id',
+     '/deleteCd/:id',
      httpHandler(async (req, res) => {
           const data = req.body;
           const { id } = req.params;

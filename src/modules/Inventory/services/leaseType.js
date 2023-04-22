@@ -5,15 +5,6 @@ const getAllLeaseType = async () => {
      return response;
 };
 
-// const addNewleasetype = async (data,reqfile) => {
-//     let carimage = []
-//      reqfile.map((img)=>{
-//            carimage.push(img.filename)
-//     })
-//     const response = await leasetypemodel.create({...data,img:carimage});
-//    return response;
-// };
-
 const addLeaseType = async (data) => {
      const response = await leaseTypeModel.create({
           leaseType: data.leaseType,

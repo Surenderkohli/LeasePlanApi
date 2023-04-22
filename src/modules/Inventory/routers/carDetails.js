@@ -254,6 +254,7 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
                carBrand_id: carDetailsData.carBrand_id,
                carSeries_id: carDetailsData.carSeries_id,
                yearModel: carDetailsData.yearModel,
+               leaseType_id: carDetailsData.leaseType_id,
                offers: [],
           };
 
@@ -262,7 +263,6 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
                const annualMileage = req.body[`annualMileage${i}`];
                const monthlyCost = req.body[`monthlyCost${i}`];
                const calculationNo = req.body[`calculationNo${i}`];
-
                if (duration && annualMileage && monthlyCost && calculationNo) {
                     const offerIndex = carOffersData.offers.findIndex(
                          (offer) => offer.calculationNo === calculationNo

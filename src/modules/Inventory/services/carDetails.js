@@ -335,39 +335,50 @@ const updateCar = async (
                { new: true }
           );
 
-          // Find car offers based on carBrand_id, carSeries_id, yearModel, and leaseType_id
-          const query = {
-               carBrand_id: carDetailsData.carBrand_id,
-               carSeries_id: carDetailsData.carSeries_id,
-               yearModel: carDetailsData.yearModel,
-               // leaseType_id: { $in: carOffersData.leaseType },
-               leaseType_id: carDetailsData.leaseType_id,
+          // Update car in CarOffers collection
+          const filterOne = {
+               carBrand_id: carOffersData.carBrand_id,
+               carSeries_id: carOffersData.carSeries_id,
+               yearModel: carOffersData.yearModel,
+               leaseType_id: { $in: carOffersData.leaseType_id },
           };
-          console.log(query);
 
-          const carOffersDoc = await carOfferModel.findOne(query);
+          // construct the update object for the CarOffers collection
+          const update = {
+               $set: {},
+          };
 
-          // Update offers array based on calculationNo
-          const offers = carOffersDoc.offers;
-          for (let i = 0; i < offers.length; i++) {
-               if (
-                    offers[i].calculationNo ===
-                    carOffersData.offers[0].calculationNo
-               ) {
-                    offers[i].duration = carOffersData.offers[0].duration;
-                    offers[i].annualMileage =
-                         carOffersData.offers[0].annualMileage;
-                    offers[i].monthlyCost = carOffersData.offers[0].monthlyCost;
-                    break;
+          // loop through the offers array in the request body and add each offer to the update object
+          for (const offer of carOffersData.offers) {
+               // check if the offer already exists in the CarOffers collection
+               const existingOffer = await carOfferModel.findOne({
+                    ...filterOne,
+                    'offers.calculationNo': offer.calculationNo,
+               });
+               if (existingOffer) {
+                    // update the existing offer
+                    update.$set['offers.$[o].duration'] = offer.duration;
+                    update.$set['offers.$[o].annualMileage'] =
+                         offer.annualMileage;
+                    update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
+
+                    // set the positional operator for the update operation
+                    update.arrayFilters = [
+                         { 'o.calculationNo': offer.calculationNo },
+                    ];
+               } else {
+                    // add the new offer to the offers array
+                    update.$push = { offers: offer };
                }
           }
 
-          // Update car offers
-          const updatedCarOffers = await carOfferModel.findByIdAndUpdate(
-               carOffersDoc._id,
-               { offers },
+          // update the car in the CarOffers collection
+          const updatedCarOffers = await carOfferModel.findOneAndUpdate(
+               filter,
+               update,
                { new: true }
           );
+
           // Return the updated car object
           return {
                carDetails: updatedCarDetails,

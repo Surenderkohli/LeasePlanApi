@@ -1,3 +1,4 @@
+// git commit -m "Add comment.js file in models inventory v-1"
 //------------------------------------------------------------------------------------------carDetails.js-----------------------------------------------------------------------------------
 //enum: ['Private Lease', 'FlexiPlan', 'Business Lease'],
 

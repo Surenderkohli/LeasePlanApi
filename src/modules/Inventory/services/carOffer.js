@@ -3,6 +3,16 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 
+const deleteAllCarOffers = async () => {
+     try {
+          await carOfferModel.deleteMany({});
+          console.log('All car offers deleted successfully.');
+     } catch (error) {
+          console.log(`Error deleting car offers: ${error}`);
+          throw error;
+     }
+};
+
 // const createCarOffer = async (carOfferData) => {
 //      try {
 //           let leaseTypes;
@@ -84,6 +94,33 @@ import carOfferModel from '../models/carOffer.js';
 //                { new: true, upsert: true }
 //           ); */
 
+//           // const existingCarOffer = await carOfferModel.findOne({
+//           //      leaseType_id: leaseTypes,
+//           //      carBrand_id: companyName._id,
+//           //      carSeries_id: seriesName._id,
+//           //      yearModel: yearModel,
+//           //      'offers.calculationNo': carOfferData.calculationNo,
+//           // });
+
+//           // if (existingCarOffer) {
+//           //      // car offer already exists with the given calculationNo, update the offer
+//           //      const offerIndex = existingCarOffer.offers.findIndex(
+//           //           (offer) =>
+//           //                offer.calculationNo === carOfferData.calculationNo
+//           //      );
+//           //      existingCarOffer.offers[offerIndex].duration =
+//           //           carOfferData.duration;
+//           //      existingCarOffer.offers[offerIndex].annualMileage =
+//           //           carOfferData.annualMileage;
+//           //      existingCarOffer.offers[offerIndex].monthlyCost =
+//           //           carOfferData.monthlyCost;
+
+//           //      await existingCarOffer.save();
+//           //      return {
+//           //           message: 'Car offer updated successfully',
+//           //           data: existingCarOffer,
+//           //      };
+
 //           const existingCarOffer = await carOfferModel.findOne({
 //                leaseType_id: leaseTypes,
 //                carBrand_id: companyName._id,
@@ -129,16 +166,6 @@ import carOfferModel from '../models/carOffer.js';
 //           throw new Error('Failed to create/update car offer.');
 //      }
 // };
-
-const deleteAllCarOffers = async () => {
-     try {
-          await carOfferModel.deleteMany({});
-          console.log('All car offers deleted successfully.');
-     } catch (error) {
-          console.log(`Error deleting car offers: ${error}`);
-          throw error;
-     }
-};
 
 const createCarOffer = async (carOfferData) => {
      try {
@@ -202,52 +229,6 @@ const createCarOffer = async (carOfferData) => {
 
           const yearModel = carOfferData.yearModel;
 
-          /*    const existingCarOffer = await carOfferModel.findOneAndUpdate(
-               {
-                    leaseType_id: leaseType._id,
-                    carBrand_id: companyName._id,
-                    carSeries_id: seriesName._id,
-                    yearModel: yearModel,
-               },
-               {
-                    $push: {
-                         offers: {
-                              duration: carOfferData.duration,
-                              annualMileage: carOfferData.annualMileage,
-                              monthlyCost: carOfferData.monthlyCost,
-                         },
-                    },
-               },
-               { new: true, upsert: true }
-          ); */
-
-          // const existingCarOffer = await carOfferModel.findOne({
-          //      leaseType_id: leaseTypes,
-          //      carBrand_id: companyName._id,
-          //      carSeries_id: seriesName._id,
-          //      yearModel: yearModel,
-          //      'offers.calculationNo': carOfferData.calculationNo,
-          // });
-
-          // if (existingCarOffer) {
-          //      // car offer already exists with the given calculationNo, update the offer
-          //      const offerIndex = existingCarOffer.offers.findIndex(
-          //           (offer) =>
-          //                offer.calculationNo === carOfferData.calculationNo
-          //      );
-          //      existingCarOffer.offers[offerIndex].duration =
-          //           carOfferData.duration;
-          //      existingCarOffer.offers[offerIndex].annualMileage =
-          //           carOfferData.annualMileage;
-          //      existingCarOffer.offers[offerIndex].monthlyCost =
-          //           carOfferData.monthlyCost;
-
-          //      await existingCarOffer.save();
-          //      return {
-          //           message: 'Car offer updated successfully',
-          //           data: existingCarOffer,
-          //      };
-
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
@@ -256,13 +237,25 @@ const createCarOffer = async (carOfferData) => {
           });
 
           if (existingCarOffer) {
-               // car offer already exists, add new offer to existing group
-               existingCarOffer.offers.push({
-                    duration: carOfferData.duration,
-                    annualMileage: carOfferData.annualMileage,
-                    monthlyCost: carOfferData.monthlyCost,
-                    calculationNo: carOfferData.calculationNo,
-               });
+               // car offer already exists with the given calculationNo, update the offer
+               const existingOffer = existingCarOffer.offers.find(
+                    (offer) =>
+                         offer.calculationNo === carOfferData.calculationNo
+               );
+               if (existingOffer) {
+                    // update only the changed values
+                    existingOffer.duration = carOfferData.duration;
+                    existingOffer.annualMileage = carOfferData.annualMileage;
+                    existingOffer.monthlyCost = carOfferData.monthlyCost;
+               } else {
+                    // add a new offer object with the same calculationNo
+                    existingCarOffer.offers.push({
+                         duration: carOfferData.duration,
+                         annualMileage: carOfferData.annualMileage,
+                         monthlyCost: carOfferData.monthlyCost,
+                         calculationNo: carOfferData.calculationNo,
+                    });
+               }
 
                await existingCarOffer.save();
                return {

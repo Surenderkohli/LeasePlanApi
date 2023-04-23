@@ -35,7 +35,7 @@ const carOfferSchema = new mongoose.Schema(
           validTo: {
                type: Date,
                required: false,
-          },;
+          },
      },
 
      { timestamps: true }

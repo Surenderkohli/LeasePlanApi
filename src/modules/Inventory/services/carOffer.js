@@ -3,6 +3,143 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 
+// const createCarOffer = async (carOfferData) => {
+//      try {
+//           let leaseTypes;
+//           if (carOfferData.leaseType) {
+//                leaseTypes = await leaseTypeModel.find({
+//                     leaseType: carOfferData.leaseType,
+//                });
+//                if (leaseTypes.length === 0) {
+//                     // Create a new leaseType entry in the leaseTypeModel collection
+//                     const newLeaseType = new leaseTypeModel({
+//                          leaseType: carOfferData.leaseType,
+//                     });
+//                     const savedLeaseType = await newLeaseType.save();
+//                     leaseTypes = [savedLeaseType];
+//                }
+//           } else {
+//                leaseTypes = [];
+//           }
+
+//           if (!carOfferData.companyName) {
+//                throw new Error('Missing companyName');
+//           }
+
+//           let companyName = await carBrandModel.findOne({
+//                companyName: carOfferData.companyName,
+//                makeCode: carOfferData.makeCode,
+//           });
+
+//           if (!companyName) {
+//                companyName = await carBrandModel.create({
+//                     companyName: carOfferData.companyName,
+//                     makeCode: carOfferData.makeCode,
+//                     leaseType_id: leaseTypes,
+//                });
+//           } else if (leaseTypes.length > 0) {
+//                const leaseTypeIdsToAdd = leaseTypes
+//                     .map((leaseType) => leaseType._id)
+//                     .filter(
+//                          (leaseTypeId) =>
+//                               !companyName.leaseType_id.includes(leaseTypeId)
+//                     );
+//                if (leaseTypeIdsToAdd.length > 0) {
+//                     companyName.leaseType_id = [
+//                          ...companyName.leaseType_id,
+//                          ...leaseTypeIdsToAdd,
+//                     ];
+//                     await companyName.save();
+//                }
+//           }
+
+//           const seriesName = await carSeriesModel.findOne({
+//                modelCode: carOfferData.modelCode,
+//                carBrand_id: companyName._id,
+//           });
+//           if (!seriesName) {
+//                throw new Error(
+//                     `Car series with modelCode ${carOfferData.modelCode} not found`
+//                );
+//           }
+
+//           const yearModel = carOfferData.yearModel;
+
+//           /*    const existingCarOffer = await carOfferModel.findOneAndUpdate(
+//                {
+//                     leaseType_id: leaseType._id,
+//                     carBrand_id: companyName._id,
+//                     carSeries_id: seriesName._id,
+//                     yearModel: yearModel,
+//                },
+//                {
+//                     $push: {
+//                          offers: {
+//                               duration: carOfferData.duration,
+//                               annualMileage: carOfferData.annualMileage,
+//                               monthlyCost: carOfferData.monthlyCost,
+//                          },
+//                     },
+//                },
+//                { new: true, upsert: true }
+//           ); */
+
+//           const existingCarOffer = await carOfferModel.findOne({
+//                leaseType_id: leaseTypes,
+//                carBrand_id: companyName._id,
+//                carSeries_id: seriesName._id,
+//                yearModel: yearModel,
+//           });
+
+//           if (existingCarOffer) {
+//                // car offer already exists, add new offer to existing group
+//                existingCarOffer.offers.push({
+//                     duration: carOfferData.duration,
+//                     annualMileage: carOfferData.annualMileage,
+//                     monthlyCost: carOfferData.monthlyCost,
+//                     calculationNo: carOfferData.calculationNo,
+//                });
+
+//                await existingCarOffer.save();
+//                return {
+//                     message: 'Car offer updated successfully',
+//                     data: existingCarOffer,
+//                };
+//           } else {
+//                // create new car offer with a new group
+//                const newCarOffer = await carOfferModel.create({
+//                     carBrand_id: companyName._id,
+//                     carSeries_id: seriesName._id,
+//                     leaseType_id: leaseTypes,
+//                     yearModel: yearModel,
+//                     offers: [
+//                          {
+//                               duration: carOfferData.duration,
+//                               annualMileage: carOfferData.annualMileage,
+//                               monthlyCost: carOfferData.monthlyCost,
+//                               calculationNo: carOfferData.calculationNo,
+//                          },
+//                     ],
+//                     deals: carOfferData.deals,
+//                });
+//                return newCarOffer;
+//           }
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Failed to create/update car offer.');
+//      }
+// };
+
+const deleteAllCarOffers = async () => {
+     try {
+          await carOfferModel.deleteMany({});
+          console.log('All car offers deleted successfully.');
+     } catch (error) {
+          console.log(`Error deleting car offers: ${error}`);
+          throw error;
+     }
+};
+
 const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes;
@@ -210,6 +347,7 @@ const getCount = async () => {
 
 export const carOfferService = {
      createCarOffer,
+     deleteAllCarOffers,
      getAllOffer,
      updateOffersAndDeals,
      getCount,

@@ -18,6 +18,9 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                const csvString = req.file.buffer.toString('utf8');
                const carOfferData = await csvtojson().fromString(csvString);
 
+               // delete existing car offers from database
+               await carOfferService.deleteAllCarOffers();
+
                for (let i = 0; i < carOfferData.length; i++) {
                     const carOffer = await carOfferService.createCarOffer(
                          carOfferData[i]

@@ -221,6 +221,33 @@ const createCarOffer = async (carOfferData) => {
                { new: true, upsert: true }
           ); */
 
+          // const existingCarOffer = await carOfferModel.findOne({
+          //      leaseType_id: leaseTypes,
+          //      carBrand_id: companyName._id,
+          //      carSeries_id: seriesName._id,
+          //      yearModel: yearModel,
+          //      'offers.calculationNo': carOfferData.calculationNo,
+          // });
+
+          // if (existingCarOffer) {
+          //      // car offer already exists with the given calculationNo, update the offer
+          //      const offerIndex = existingCarOffer.offers.findIndex(
+          //           (offer) =>
+          //                offer.calculationNo === carOfferData.calculationNo
+          //      );
+          //      existingCarOffer.offers[offerIndex].duration =
+          //           carOfferData.duration;
+          //      existingCarOffer.offers[offerIndex].annualMileage =
+          //           carOfferData.annualMileage;
+          //      existingCarOffer.offers[offerIndex].monthlyCost =
+          //           carOfferData.monthlyCost;
+
+          //      await existingCarOffer.save();
+          //      return {
+          //           message: 'Car offer updated successfully',
+          //           data: existingCarOffer,
+          //      };
+
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
@@ -264,34 +291,6 @@ const createCarOffer = async (carOfferData) => {
      } catch (error) {
           console.log(error);
           throw new Error('Failed to create/update car offer.');
-     }
-};
-
-const updateOffersAndDeals = async (
-     carBrand_id,
-     carSeries_id,
-     leaseType_id,
-     yearModel,
-     offers,
-     deals
-) => {
-     try {
-          const result = await CarOffer.findOneAndUpdate(
-               {
-                    carBrand_id,
-                    carSeries_id,
-                    leaseType_id,
-                    yearModel,
-               },
-               {
-                    offers,
-                    deals,
-               }
-          );
-
-          return result ? true : false;
-     } catch (error) {
-          throw error;
      }
 };
 
@@ -349,6 +348,5 @@ export const carOfferService = {
      createCarOffer,
      deleteAllCarOffers,
      getAllOffer,
-     updateOffersAndDeals,
      getCount,
 };

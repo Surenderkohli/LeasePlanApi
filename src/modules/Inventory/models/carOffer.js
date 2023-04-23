@@ -28,10 +28,14 @@ const carOfferSchema = new mongoose.Schema(
                     calculationNo: Number,
                },
           ],
-          carDetails_id: {
-               type: mongoose.Schema.ObjectId,
-               ref: 'carDetails',
+          validFrom: {
+               type: Date,
+               required: false,
           },
+          validTo: {
+               type: Date,
+               required: false,
+          },;
      },
 
      { timestamps: true }

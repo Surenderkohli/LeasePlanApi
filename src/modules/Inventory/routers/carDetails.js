@@ -166,7 +166,9 @@ router.post(
                // Check if id is a valid ObjectId
                const fieldsToCheck = ['carBrand_id', 'carSeries_id'];
                for (let field of fieldsToCheck) {
-                    if (!mongoose.Types.ObjectId.isValid(data[field])) {
+                    if (
+                         !mongoose.Types.ObjectId.isValid(carDetailsData[field])
+                    ) {
                          return res.status(400).send({
                               success: false,
                               msg: `Invalid ObjectId `,
@@ -182,6 +184,7 @@ router.post(
                );
                res.send(result);
           } catch (error) {
+               console.log(error);
                console.error('Error in adding new carDetails:', error);
                res.send({ status: 400, success: false, msg: error.message });
           }

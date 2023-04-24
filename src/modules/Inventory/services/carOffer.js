@@ -2,6 +2,7 @@ import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
+import carDetailsModel from '../models/carDetails.js';
 
 const deleteAllCarOffers = async () => {
      try {
@@ -294,6 +295,179 @@ const getAllOffer = async () => {
      return response;
 };
 
+const getAllCarWithOffers = async (
+     //leaseType,
+     carBrand,
+     carSeries,
+     fuelType,
+     priceMin,
+     priceMax,
+     bodyType,
+     annualMileage,
+     yearModel,
+     querySrch,
+     limit,
+     skip
+) => {
+     try {
+          const aggregateFilter = [
+               {
+                    $lookup: {
+                         from: 'carbrands',
+                         localField: 'carBrand_id',
+                         foreignField: '_id',
+                         as: 'carBrand',
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'leasetypes',
+                         localField: 'leaseType_id',
+                         foreignField: '_id',
+                         as: 'leaseType',
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'carseries',
+                         localField: 'carSeries_id',
+                         foreignField: '_id',
+                         as: 'carSeries',
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'cardetails',
+                         let: {
+                              carBrandId: '$carBrand_id',
+                              carSeriesId: '$carSeries_id',
+                              yearModel: '$yearModel',
+                         },
+                         pipeline: [
+                              {
+                                   $match: {
+                                        $expr: {
+                                             $and: [
+                                                  {
+                                                       $eq: [
+                                                            '$carBrand_id',
+                                                            '$$carBrandId',
+                                                       ],
+                                                  },
+                                                  {
+                                                       $eq: [
+                                                            '$carSeries_id',
+                                                            '$$carSeriesId',
+                                                       ],
+                                                  },
+                                                  {
+                                                       $eq: [
+                                                            '$yearModel',
+                                                            '$$yearModel',
+                                                       ],
+                                                  },
+                                             ],
+                                        },
+                                   },
+                              },
+                         ],
+                         as: 'details',
+                    },
+               },
+
+               {
+                    $unwind: '$carBrand',
+               },
+               {
+                    $unwind: '$carSeries',
+               },
+               {
+                    $skip: skip,
+               },
+               {
+                    $limit: limit,
+               },
+          ];
+
+          if (priceMin || priceMax) {
+               const priceFilter = {};
+
+               if (priceMin) {
+                    priceFilter.$gte = parseInt(priceMin);
+               }
+
+               if (priceMax) {
+                    priceFilter.$lte = parseInt(priceMax);
+               }
+
+               aggregateFilter.push({
+                    $match: {
+                         'offers.offers.monthlyCost': priceFilter,
+                    },
+               });
+          }
+
+          if (annualMileage) {
+               aggregateFilter.push({
+                    $match: {
+                         'offers.offers.annualMileage': parseInt(annualMileage),
+                    },
+               });
+          }
+
+          if (querySrch) {
+               aggregateFilter.push({
+                    $match: {
+                         $or: [
+                              {
+                                   'carBrand.companyName': {
+                                        $regex: `.*${querySrch}.*`,
+                                        $options: 'i',
+                                   },
+                              },
+                              {
+                                   'carSeries.seriesName': {
+                                        $regex: `.*${querySrch}.*`,
+                                        $options: 'i',
+                                   },
+                              },
+                         ],
+                    },
+               });
+          }
+
+          if (fuelType) {
+               aggregateFilter.push({
+                    $match: {
+                         fuelType: fuelType,
+                    },
+               });
+          }
+
+          if (bodyType) {
+               aggregateFilter.push({
+                    $match: {
+                         bodyType,
+                    },
+               });
+          }
+
+          if (yearModel) {
+               aggregateFilter.push({
+                    $match: {
+                         yearModel: parseInt(yearModel),
+                    },
+               });
+          }
+
+          const response = await carOfferModel.aggregate(aggregateFilter);
+
+          return response;
+     } catch (error) {
+          console.log(error);
+     }
+};
+
 const getCount = async () => {
      const counts = await carOfferModel.aggregate([
           {
@@ -342,4 +516,5 @@ export const carOfferService = {
      deleteAllCarOffers,
      getAllOffer,
      getCount,
+     getAllCarWithOffers,
 };

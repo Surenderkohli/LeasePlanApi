@@ -44,6 +44,53 @@ router.get('/', async (req, res) => {
      res.send(result);
 });
 
+router.get('/all-cars', async (req, res) => {
+     try {
+          const {
+               //  leaseType,
+               carBrand,
+               carSeries,
+               fuelType,
+               priceMin,
+               priceMax,
+               bodyType,
+               annualMileage,
+               yearModel,
+               querySrch,
+          } = req.query;
+
+          const limit = parseInt(req.query.limit) || 1000000;
+          const skip = parseInt(req.query.skip) || 0;
+
+          const result = await carOfferService.getAllCarWithOffers(
+               //  leaseType,
+               carBrand,
+               carSeries,
+               fuelType,
+               priceMin,
+               priceMax,
+               bodyType,
+               annualMileage,
+               yearModel,
+               querySrch,
+               limit,
+               skip
+          );
+
+          if (result) {
+               res.status(200).json({ success: true, data: result });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'No cars found with the given filters.',
+                    data: [],
+               });
+          }
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
+
 router.get('/count', async (req, res) => {
      try {
           const counts = await carOfferService.getCount();

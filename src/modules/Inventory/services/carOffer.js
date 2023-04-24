@@ -296,9 +296,6 @@ const getAllOffer = async () => {
 };
 
 const getAllCarWithOffers = async (
-     //leaseType,
-     carBrand,
-     carSeries,
      fuelType,
      priceMin,
      priceMax,
@@ -402,7 +399,7 @@ const getAllCarWithOffers = async (
 
                aggregateFilter.push({
                     $match: {
-                         'offers.offers.monthlyCost': priceFilter,
+                         'offers.monthlyCost': priceFilter,
                     },
                });
           }
@@ -410,7 +407,7 @@ const getAllCarWithOffers = async (
           if (annualMileage) {
                aggregateFilter.push({
                     $match: {
-                         'offers.offers.annualMileage': parseInt(annualMileage),
+                         'offers.annualMileage': parseInt(annualMileage),
                     },
                });
           }
@@ -439,7 +436,7 @@ const getAllCarWithOffers = async (
           if (fuelType) {
                aggregateFilter.push({
                     $match: {
-                         fuelType: fuelType,
+                         'details.fuelType': fuelType,
                     },
                });
           }
@@ -447,7 +444,7 @@ const getAllCarWithOffers = async (
           if (bodyType) {
                aggregateFilter.push({
                     $match: {
-                         bodyType,
+                         'details.bodyType': bodyType,
                     },
                });
           }

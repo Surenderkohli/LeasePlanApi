@@ -47,9 +47,6 @@ router.get('/', async (req, res) => {
 router.get('/all-cars', async (req, res) => {
      try {
           const {
-               //  leaseType,
-               carBrand,
-               carSeries,
                fuelType,
                priceMin,
                priceMax,
@@ -63,9 +60,6 @@ router.get('/all-cars', async (req, res) => {
           const skip = parseInt(req.query.skip) || 0;
 
           const result = await carOfferService.getAllCarWithOffers(
-               //  leaseType,
-               carBrand,
-               carSeries,
                fuelType,
                priceMin,
                priceMax,

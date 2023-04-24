@@ -147,7 +147,7 @@ router.get('/fetch-single/:id', async (req, res) => {
      }
 });
 
-router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
+router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
      try {
           const id = req.params.id;
           const carDetailsData = req.body;

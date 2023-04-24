@@ -175,6 +175,10 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                publicId: req.body.publicId,
           };
 
+          const carOffersData = {
+               offers: [],
+          };
+
           for (let i = 1; i <= 20; i++) {
                const duration = req.body[`duration${i}`];
                const annualMileage = req.body[`annualMileage${i}`];
@@ -232,7 +236,8 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                id,
                carDetailsData,
                carFeaturesData,
-               inventoryData
+               inventoryData,
+               carOffersData
           );
           res.send(result);
      } catch (error) {

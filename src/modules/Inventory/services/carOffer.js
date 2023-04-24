@@ -605,17 +605,9 @@ const updateCar = async (
                { new: true }
           );
 
-          // Update car in CarOffers collection
-          const filterOne = {
-               carBrand_id: carDetailsData.carBrand_id,
-               carSeries_id: carDetailsData.carSeries_id,
-               yearModel: carDetailsData.yearModel,
-               // leaseType_id: { $in: carOffersData.leaseType_id },
-          };
-
           // update the car in the CarOffers collection
           const updatedInventoryData = await carDetailsModel.findOneAndUpdate(
-               filterOne,
+               filter,
                inventoryData,
                { new: true }
           );

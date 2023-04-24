@@ -294,10 +294,13 @@ const updateCar = async (
           );
 
           // Update car in CarFeatures collection
+          const carDetails = await carDetailModel.findById(carId);
+          const { carBrand_id, carSeries_id, yearModel } = carDetails;
+
           const filter = {
-               carBrand_id: carFeaturesData.carBrand_id,
-               carSeries_id: carFeaturesData.carSeries_id,
-               yearModel: carFeaturesData.yearModel,
+               carBrand_id,
+               carSeries_id,
+               yearModel,
           };
 
           const updateFields = {};

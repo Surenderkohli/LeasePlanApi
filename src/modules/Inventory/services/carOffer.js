@@ -3,6 +3,7 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 import carDetailsModel from '../models/carDetails.js';
+import carFeaturesModel from '../models/carFeatures.js';
 
 const deleteAllCarOffers = async () => {
      try {
@@ -508,10 +509,55 @@ const getCount = async () => {
      return countObject;
 };
 
+const getSingleCar = async (id) => {
+     try {
+          const carOffer = await carOfferModel
+               .findOne({ _id: id })
+               .populate('leaseType_id')
+               .populate('carBrand_id')
+               .populate('carSeries_id');
+
+          if (!carOffer) {
+               throw new Error('Car not found');
+          }
+
+          //  const { leaseType_id } = car;
+          // Retrieve lease type details using leaseType_id from leasetypes collection
+          // const leaseType = await leaseTypeModel.findOne({
+          //      _id: leaseType_id,
+          //      isDeleted: false,
+          // });
+
+          const carFeatures = await carFeaturesModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+               yearModel: carOffer.yearModel,
+          });
+
+          const carDetails = await carDetailsModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+               yearModel: carOffer.yearModel,
+          });
+
+          const result = {
+               carOffer,
+               carDetails,
+               features: carFeatures || [],
+          };
+
+          return result;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      deleteAllCarOffers,
      getAllOffer,
      getCount,
      getAllCarWithOffers,
+     getSingleCar,
 };

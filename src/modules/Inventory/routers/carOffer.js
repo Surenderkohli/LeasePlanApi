@@ -99,4 +99,19 @@ router.get('/count', async (req, res) => {
      }
 });
 
+router.get('/fetch-single/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+
+          const result = await carOfferService.getSingleCar(id);
+          res.status(200).json({ success: true, data: result });
+     } catch (error) {
+          if (error.message === 'Car not found') {
+               res.status(404).json({ success: false, msg: 'Car not found' });
+          } else {
+               res.status(400).json({ success: false, msg: error.message });
+          }
+     }
+});
+
 export default router;

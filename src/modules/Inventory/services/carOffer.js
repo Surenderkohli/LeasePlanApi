@@ -553,6 +553,84 @@ const getSingleCar = async (id) => {
      }
 };
 
+const updateCar = async (
+     carId,
+     carDetailsData,
+     carFeaturesData,
+     inventoryData
+) => {
+     try {
+          // Validate input
+          if (!carDetailsData || !carFeaturesData || !inventoryData) {
+               throw new Error(
+                    'carDetails, carFeatures, and carOffers must be provided'
+               );
+          }
+
+          // Update car in CarDetails collection
+          const updatedCarDetails = await carOfferModel.findByIdAndUpdate(
+               carId,
+               { ...carDetailsData },
+               { new: true }
+          );
+
+          // Update car in CarFeatures collection
+          const carDetails = await carOfferModel.findById(carId);
+
+          const { carBrand_id, carSeries_id, yearModel } = carDetails;
+
+          const filter = {
+               carBrand_id,
+               carSeries_id,
+               yearModel,
+          };
+
+          const updateFields = {};
+
+          for (const [key, value] of Object.entries(carDetailsData)) {
+               if (key.endsWith('Features') && Array.isArray(value)) {
+                    const featureIndex = key.slice(0, -8);
+                    value.forEach((featureValue, index) => {
+                         updateFields[`${featureIndex}Features.${index}`] =
+                              featureValue;
+                    });
+               } else {
+                    updateFields[key] = value;
+               }
+          }
+
+          const updatedCarFeatures = await carFeaturesModel.findOneAndUpdate(
+               filter,
+               updateFields,
+               { new: true }
+          );
+
+          // Update car in CarOffers collection
+          const filterOne = {
+               carBrand_id: carDetailsData.carBrand_id,
+               carSeries_id: carDetailsData.carSeries_id,
+               yearModel: carDetailsData.yearModel,
+               // leaseType_id: { $in: carOffersData.leaseType_id },
+          };
+
+          // update the car in the CarOffers collection
+          const updatedInventoryData = await carDetailsModel.findOneAndUpdate(
+               filterOne,
+               inventoryData,
+               { new: true }
+          );
+
+          // Return the updated car object
+          return {
+               carDetails: updatedCarDetails,
+               carFeatures: updatedCarFeatures,
+               inventoryData: updatedInventoryData,
+          };
+     } catch (error) {
+          console.error('Error in updating car:', error);
+          throw new Error(error.message);
+     }
+};
 export const carOfferService = {
      createCarOffer,
      deleteAllCarOffers,
@@ -560,4 +638,5 @@ export const carOfferService = {
      getCount,
      getAllCarWithOffers,
      getSingleCar,
+     updateCar,
 };

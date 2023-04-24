@@ -112,6 +112,10 @@ router.post(
                     exteriorFeatures: req.body.exteriorFeatures,
                     interiorFeatures: req.body.interiorFeatures,
                     safetySecurityFeatures: req.body.safetySecurityFeatures,
+                    comfortConvenienceFeatures:
+                         req.body.comfortConvenienceFeatures,
+                    audioEntertainmentFeatures:
+                         req.body.audioEntertainmentFeatures,
                };
 
                const carOffersData = {
@@ -196,6 +200,8 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
                exteriorFeatures: req.body.exteriorFeatures,
                interiorFeatures: req.body.interiorFeatures,
                safetySecurityFeatures: req.body.safetySecurityFeatures,
+               comfortConvenienceFeatures: req.body.comfortConvenienceFeatures,
+               audioEntertainmentFeatures: req.body.audioEntertainmentFeatures,
           };
 
           const carOffersData = {

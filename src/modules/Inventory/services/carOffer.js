@@ -554,7 +554,7 @@ const getSingleCar = async (id) => {
 };
 
 const updateCar = async (
-     carId,
+     id,
      carDetailsData,
      carFeaturesData,
      inventoryData
@@ -569,13 +569,13 @@ const updateCar = async (
 
           // Update car in CarDetails collection
           const updatedCarDetails = await carOfferModel.findByIdAndUpdate(
-               carId,
+               id,
                { ...carDetailsData },
                { new: true }
           );
 
           // Update car in CarFeatures collection
-          const carDetails = await carOfferModel.findById(carId);
+          const carDetails = await carOfferModel.findById(id);
 
           const { carBrand_id, carSeries_id, yearModel } = carDetails;
 

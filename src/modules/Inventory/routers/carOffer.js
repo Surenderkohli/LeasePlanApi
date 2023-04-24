@@ -149,7 +149,7 @@ router.get('/fetch-single/:id', async (req, res) => {
 
 router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
      try {
-          const carId = req.params.id;
+          const id = req.params.id;
           const carDetailsData = req.body;
 
           const carFeaturesData = {
@@ -206,7 +206,7 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
           // check if there are new files uploaded
           if (req.files && req.files.length > 0) {
                // delete old images from cloudinary
-               const car = await carOfferService.getSingleCar(carId);
+               const car = await carOfferService.getSingleCar(id);
 
                if (car && car.image) {
                     for (const image of car.image) {
@@ -229,7 +229,7 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
           }
 
           const result = await carOfferService.updateCar(
-               carId,
+               id,
                carDetailsData,
                carFeaturesData,
                inventoryData

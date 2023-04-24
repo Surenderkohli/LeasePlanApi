@@ -380,7 +380,7 @@ router.get('/list', async (req, res) => {
 });
 
 router.delete(
-     '/deleteCd/:id',
+     '/deleted/:id',
      httpHandler(async (req, res) => {
           const data = req.body;
           const { id } = req.params;

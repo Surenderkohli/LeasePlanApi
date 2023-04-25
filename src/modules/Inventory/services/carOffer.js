@@ -607,49 +607,39 @@ const updateCar = async (
           );
 
           // Update car in CarOffers collection
-          const filterOne = {
-               carBrand_id: carOffersData.carBrand_id,
-               carSeries_id: carOffersData.carSeries_id,
-               yearModel: carOffersData.yearModel,
-               leaseType_id: { $in: carOffersData.leaseType_id },
+          const filters = {
+               _id: id,
           };
 
-          // construct the update object for the CarOffers collection
           const update = {
                $set: {},
+               arrayFilters: [],
           };
 
-          // loop through the offers array in the request body and add each offer to the update object
           for (const offer of carOffersData.offers) {
-               // check if the offer already exists in the CarOffers collection
                const existingOffer = await carOfferModel.findOne({
-                    ...filterOne,
+                    ...filters,
                     'offers.calculationNo': offer.calculationNo,
                });
+
                if (existingOffer) {
-                    // update the existing offer
                     update.$set['offers.$[o].duration'] = offer.duration;
                     update.$set['offers.$[o].annualMileage'] =
                          offer.annualMileage;
                     update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
-
-                    // set the positional operator for the update operation
-                    update.arrayFilters = [
-                         { 'o.calculationNo': offer.calculationNo },
-                    ];
+                    update.arrayFilters.push({
+                         'o.calculationNo': offer.calculationNo,
+                    });
                } else {
-                    // add the new offer to the offers array
                     update.$push = { offers: offer };
                }
           }
 
-          // update the car in the CarOffers collection
           const updatedCarOffers = await carOfferModel.findOneAndUpdate(
-               filter,
+               filters,
                update,
-               { new: true }
+               { new: true, arrayFilters: update.arrayFilters }
           );
-
           // Return the updated car object
           return {
                carOffers: updatedCarOffers,

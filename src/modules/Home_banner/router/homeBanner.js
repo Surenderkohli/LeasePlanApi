@@ -23,9 +23,7 @@ const bannerStorage = multer.diskStorage({
 // Configure Multer upload middleware
 const upload = multer({
      storage: bannerStorage,
-     limits: {
-          fileSize: 2000000,
-     },
+     limits: { fileSize: 20 * 1024 * 1024 },
      fileFilter(req, file, cb) {
           if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
                cb(

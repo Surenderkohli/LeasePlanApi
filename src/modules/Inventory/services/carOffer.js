@@ -643,7 +643,7 @@ const updateCar = async (
      }
 };
 export const carOfferService = {
-     createCarOffer,g
+     createCarOffer,
      getAllOffer,
      getCount,
      getAllCarWithOffers,

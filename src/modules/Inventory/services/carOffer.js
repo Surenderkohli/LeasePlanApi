@@ -242,7 +242,8 @@ const createCarOffer = async (carOfferData) => {
                // car offer already exists with the given calculationNo, update the offer
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
-                         offer.calculationNo === carOfferData.calculationNo
+                         offer.calculationNo.toString() ===
+                         carOfferData.calculationNo
                );
                if (existingOffer) {
                     // update only the changed values

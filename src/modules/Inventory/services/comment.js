@@ -994,3 +994,13 @@ const createCarFeautre = async (carDetailData) => {
           throw new Error('Car features upload failed');
      }
 };
+
+// const deleteAllCarOffers = async () => {
+//      try {
+//           await carOfferModel.deleteMany({});
+//           console.log('All car offers deleted successfully.');
+//      } catch (error) {
+//           console.log(`Error deleting car offers: ${error}`);
+//           throw error;
+//      }
+// };

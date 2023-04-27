@@ -5,16 +5,6 @@ import carOfferModel from '../models/carOffer.js';
 import carDetailsModel from '../models/carDetails.js';
 import carFeaturesModel from '../models/carFeatures.js';
 
-const deleteAllCarOffers = async () => {
-     try {
-          await carOfferModel.deleteMany({});
-          console.log('All car offers deleted successfully.');
-     } catch (error) {
-          console.log(`Error deleting car offers: ${error}`);
-          throw error;
-     }
-};
-
 // const createCarOffer = async (carOfferData) => {
 //      try {
 //           let leaseTypes;
@@ -653,8 +643,7 @@ const updateCar = async (
      }
 };
 export const carOfferService = {
-     createCarOffer,
-     deleteAllCarOffers,
+     createCarOffer,g
      getAllOffer,
      getCount,
      getAllCarWithOffers,

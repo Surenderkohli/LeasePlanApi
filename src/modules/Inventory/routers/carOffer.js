@@ -104,7 +104,7 @@ router.get('/all-cars', async (req, res) => {
                skip
           );
 
-          if (result) {
+          if (result.length) {
                res.status(200).json({ success: true, data: result });
           } else {
                res.status(200).json({

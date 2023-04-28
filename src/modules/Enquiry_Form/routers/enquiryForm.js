@@ -15,40 +15,12 @@ router.post(
                try {
                     // Retrieve car details using relevant query and criteria
 
-                    const { carDetails_id } = req.body;
+                    const { carOffers_id } = req.body;
 
-                    // Retrieve car details using carId from carDetails collection
-                    const carDetails = await carDetailModel.findById({
-                         _id: carDetails_id,
-                    });
-                    if (!carDetails) {
-                         throw new Error('Car details not found');
-                    }
-
-                    // Extract relevant fields from carDetails
-                    const {
-                         fuelType,
-                         gears,
-                         carBrand_id,
-                         carSeries_id,
-                         yearModel,
-                    } = carDetails;
-
-                    // // Retrieve lease type details using leaseTypeId from leasetypes collection
-                    // const leaseTypes = await leaseTypeModel.findById({
-                    //      _id: leaseType_id,
-                    // });
-
-                    // if (!leaseTypes) {
-                    //      throw new Error('Lease type details not found');
-                    // }
-
-                    // Use find() method to retrieve the matching carOffers document with populated leaseType data
-                    const carOffer = await carOfferModel
-                         .findOne({
-                              carBrand_id: carBrand_id,
-                              carSeries_id: carSeries_id,
-                              yearModel: yearModel,
+                    // Retrieve car details using carId from carOffers collection
+                    const carOffers = await carOfferModel
+                         .findById({
+                              _id: carOffers_id,
                          })
                          .populate({
                               path: 'leaseType_id',
@@ -56,18 +28,32 @@ router.post(
                          })
                          .exec();
 
-                    if (!carOffer) {
-                         throw new Error('Car offer details not found');
+                    // Extract relevant fields from carOffers documentq
+                    const { carBrand_id, carSeries_id, yearModel } = carOffers;
+
+                    if (!carOffers) {
+                         throw new Error('Car offers not found');
                     }
 
                     // Extract the leaseType data from the populated carOffer document
-                    const leaseTypes = carOffer.leaseType_id;
+                    const leaseTypes = carOffers.leaseType_id;
 
                     const leaseTypeValues = leaseTypes.map(
                          (type) => type.leaseType
                     );
 
-                    // const { leaseType } = leaseTypes;
+                    // Use find() method to retrieve the matching carOffers document with populated leaseType data
+                    const carDetails = await carDetailModel.findOne({
+                         carBrand_id: carBrand_id,
+                         carSeries_id: carSeries_id,
+                         yearModel: yearModel,
+                    });
+
+                    const { fuelType, gears } = carDetails;
+
+                    if (!carDetails) {
+                         throw new Error('Car  details not found');
+                    }
 
                     // Retrieve carBrand name using carBrandId from carbrands collection
                     const carBrand = await carBrandModel.findById({

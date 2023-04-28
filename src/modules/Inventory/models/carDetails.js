@@ -81,11 +81,11 @@ const carDetailSchema = new mongoose.Schema(
                type: Number,
                required: false,
           },
-          deals: {
-               type: String,
-               enum: ['active', 'inactive'],
-               default: 'inactive',
-          },
+          // deals: {
+          //      type: String,
+          //      enum: ['active', 'inactive'],
+          //      default: 'inactive',
+          // },
      },
 
      { timestamps: true }

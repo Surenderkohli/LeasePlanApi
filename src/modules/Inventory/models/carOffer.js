@@ -36,6 +36,11 @@ const carOfferSchema = new mongoose.Schema(
                type: Date,
                required: false,
           },
+          deals: {
+               type: String,
+               enum: ['active', 'inactive'],
+               default: 'inactive',
+          },
      },
 
      { timestamps: true }

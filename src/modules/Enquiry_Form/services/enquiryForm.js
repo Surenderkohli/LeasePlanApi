@@ -23,14 +23,14 @@ const getSingleForm = async (id) => {
           },
           {
                $lookup: {
-                    from: 'cardetails',
-                    localField: 'carDetails_id',
+                    from: 'caroffers',
+                    localField: 'carOffers_id',
                     foreignField: '_id',
-                    as: 'carDetails',
+                    as: 'carOffers',
                },
           },
           {
-               $unwind: '$carDetails',
+               $unwind: '$carOffers',
           },
      ];
 

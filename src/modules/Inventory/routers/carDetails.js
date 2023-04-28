@@ -125,6 +125,7 @@ router.post(
                     //leaseType_id: leaseTypes.map((leaseType) => leaseType._id),
                     leaseType_id: carDetailsData.leaseType_id,
                     offers: [],
+                    deals: req.body.deals,
                };
 
                for (let i = 1; i <= 20; i++) {

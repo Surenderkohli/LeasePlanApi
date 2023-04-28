@@ -18,6 +18,11 @@ const EnquiryFormSchema = new mongoose.Schema(
                required: false,
           },
           htmlTemplate: String,
+          // carDetails_id: {
+          //      type: mongoose.Schema.ObjectId,
+          //      ref: 'carDetails',
+          //      required: false,
+          // },
      },
      {
           timestamps: true,

@@ -13,8 +13,7 @@ router.post(
      httpHandler(async (req, res) => {
           try {
                try {
-                    // Retrieve car details using relevant query and criteria
-
+                    // Retrieve car offers using relevant query and criteria
                     const { carOffers_id } = req.body;
 
                     // Retrieve car details using carId from carOffers collection
@@ -187,4 +186,5 @@ router.get(
      })
 );
 
+//https://gitlab.com/plaxoniclabs/projects/leaseplan/api/-/commit/e910bce87c4a043ec75bd7c4ebf479a71c852766 - In this commit, I have changed carDetails_id to carOffers_id in the enquiryForm model
 export default router;

@@ -143,7 +143,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
              </tr>
              <tr>
              <td>Gearbox Type:</td>
-             <td>${enquiryData.gears} miles</td>
+             <td>${enquiryData.gears} </td>
            </tr>
                <tr>
                  <td>Contract Type:</td>

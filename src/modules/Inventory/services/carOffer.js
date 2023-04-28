@@ -625,6 +625,17 @@ const updateCar = async (
                     update.$push = { offers: offer };
                }
           }
+          /* 
+console.log(update)
+  {
+     '$set': {
+       'offers.$[o].duration': '61',
+       'offers.$[o].annualMileage': '25001',
+       'offers.$[o].monthlyCost': '3801'
+     },
+     arrayFilters: [ { 'o.calculationNo': '1248516' } ]
+   }
+*/
 
           const updatedCarOffers = await carOfferModel.findOneAndUpdate(
                filters,

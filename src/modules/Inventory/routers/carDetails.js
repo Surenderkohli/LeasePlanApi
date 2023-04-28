@@ -206,10 +206,10 @@ router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
           };
 
           const carOffersData = {
-               carBrand_id: carDetailsData.carBrand_id,
-               carSeries_id: carDetailsData.carSeries_id,
-               yearModel: carDetailsData.yearModel,
-               leaseType_id: carDetailsData.leaseType_id,
+               // carBrand_id: carDetailsData.carBrand_id,
+               // carSeries_id: carDetailsData.carSeries_id,
+               // yearModel: carDetailsData.yearModel,
+               // leaseType_id: carDetailsData.leaseType_id,
                offers: [],
           };
 

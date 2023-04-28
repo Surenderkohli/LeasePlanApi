@@ -333,24 +333,25 @@ const updateCar = async (
 
           // Update car in CarOffers collection
           const filterOne = {
-               carBrand_id: carOffersData.carBrand_id,
-               carSeries_id: carOffersData.carSeries_id,
-               yearModel: carOffersData.yearModel,
+               carBrand_id: carBrand_id,
+               carSeries_id: carSeries_id,
+               yearModel: yearModel,
                leaseType_id: { $in: carOffersData.leaseType_id },
           };
 
           // construct the update object for the CarOffers collection
           const update = {
                $set: {},
+               arrayFilters: [],
           };
 
           // loop through the offers array in the request body and add each offer to the update object
           for (const offer of carOffersData.offers) {
-               // check if the offer already exists in the CarOffers collection
                const existingOffer = await carOfferModel.findOne({
                     ...filterOne,
                     'offers.calculationNo': offer.calculationNo,
                });
+
                if (existingOffer) {
                     // update the existing offer
                     update.$set['offers.$[o].duration'] = offer.duration;
@@ -359,9 +360,9 @@ const updateCar = async (
                     update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
 
                     // set the positional operator for the update operation
-                    update.arrayFilters = [
-                         { 'o.calculationNo': offer.calculationNo },
-                    ];
+                    update.arrayFilters.push({
+                         'o.calculationNo': offer.calculationNo,
+                    });
                } else {
                     // add the new offer to the offers array
                     update.$push = { offers: offer };
@@ -370,7 +371,7 @@ const updateCar = async (
 
           // update the car in the CarOffers collection
           const updatedCarOffers = await carOfferModel.findOneAndUpdate(
-               filter,
+               filterOne,
                update,
                { new: true }
           );

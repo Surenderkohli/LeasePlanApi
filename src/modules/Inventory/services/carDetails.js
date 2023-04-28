@@ -330,52 +330,35 @@ const updateCar = async (
                updateFields,
                { new: true }
           );
+          // Create an empty array to store all the updated car offers
+          const updatedCarOffers = [];
 
-          // Update car in CarOffers collection
-          const filterOne = {
-               carBrand_id: carBrand_id,
-               carSeries_id: carSeries_id,
-               yearModel: yearModel,
-               leaseType_id: { $in: carOffersData.leaseType_id },
-          };
-
-          // construct the update object for the CarOffers collection
-          const update = {
-               $set: {},
-               arrayFilters: [],
-          };
-
-          // loop through the offers array in the request body and add each offer to the update object
+          // Update carOffers
           for (const offer of carOffersData.offers) {
-               const existingOffer = await carOfferModel.findOne({
-                    ...filterOne,
+               const filter = {
+                    carSeries_id: updatedCarDetails.carSeries_id,
+                    carBrand_id: updatedCarDetails.carBrand_id,
+                    yearModel: updatedCarDetails.yearModel,
                     'offers.calculationNo': offer.calculationNo,
-               });
+               };
 
-               if (existingOffer) {
-                    // update the existing offer
-                    update.$set['offers.$[o].duration'] = offer.duration;
-                    update.$set['offers.$[o].annualMileage'] =
-                         offer.annualMileage;
-                    update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
+               const update = {
+                    $set: {
+                         'offers.$.duration': offer.duration,
+                         'offers.$.annualMileage': offer.annualMileage,
+                         'offers.$.monthlyCost': offer.monthlyCost,
+                    },
+               };
 
-                    // set the positional operator for the update operation
-                    update.arrayFilters.push({
-                         'o.calculationNo': offer.calculationNo,
-                    });
-               } else {
-                    // add the new offer to the offers array
-                    update.$push = { offers: offer };
-               }
+               const updatedOffer = await carOfferModel.findOneAndUpdate(
+                    filter,
+                    update,
+                    { new: true }
+               );
+
+               // Push the updated offer to the array
+               updatedCarOffers.push(updatedOffer);
           }
-
-          // update the car in the CarOffers collection
-          const updatedCarOffers = await carOfferModel.findOneAndUpdate(
-               filterOne,
-               update,
-               { new: true }
-          );
-
           // Return the updated car object
           return {
                carDetails: updatedCarDetails,

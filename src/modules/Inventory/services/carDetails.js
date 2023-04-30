@@ -213,7 +213,17 @@ const getAllCar = async (
                });
           }
 
-          const response = await carDetailModel.aggregate(aggregateFilter);
+          //const response = await carDetailModel.aggregate(aggregateFilter);
+          const documents = await carDetailModel
+               .aggregate(aggregateFilter)
+               .exec();
+          const uniqueIds = {};
+          for (const document of documents) {
+               if (!uniqueIds[document._id]) {
+                    uniqueIds[document._id] = document;
+               }
+          }
+          const response = Object.values(uniqueIds);
 
           return response;
      } catch (error) {

@@ -73,14 +73,6 @@ const carDetailSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
-          priceMin: {
-               type: Number,
-               required: false,
-          },
-          priceMax: {
-               type: Number,
-               required: false,
-          },
           // deals: {
           //      type: String,
           //      enum: ['active', 'inactive'],

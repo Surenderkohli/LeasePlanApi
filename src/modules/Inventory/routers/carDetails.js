@@ -45,7 +45,6 @@ router.get(
      httpHandler(async (req, res) => {
           try {
                const {
-                    //  leaseType,
                     carBrand,
                     carSeries,
                     fuelType,
@@ -61,7 +60,6 @@ router.get(
                const skip = parseInt(req.query.skip) || 0;
 
                const result = await CarServices.getAllCar(
-                    //  leaseType,
                     carBrand,
                     carSeries,
                     fuelType,

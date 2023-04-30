@@ -54,14 +54,6 @@ const getAllCar = async (
                          as: 'carBrand',
                     },
                },
-               // {
-               //      $lookup: {
-               //           from: 'leasetypes',
-               //           localField: 'leaseType_id',
-               //           foreignField: '_id',
-               //           as: 'leaseType',
-               //      },
-               // },
                {
                     $lookup: {
                          from: 'carseries',

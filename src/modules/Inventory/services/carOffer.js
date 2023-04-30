@@ -271,6 +271,8 @@ const createCarOffer = async (carOfferData) => {
                          },
                     ],
                     deals: carOfferData.deals,
+                    validFrom: carOfferData.validFrom,
+                    validTo: carOfferData.validTo,
                });
                return newCarOffer;
           }

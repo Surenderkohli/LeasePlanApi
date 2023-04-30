@@ -4,7 +4,6 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carFeatureModel from '../models/carFeatures.js';
 import carOfferModel from '../models/carOffer.js';
-import mongoose from 'mongoose';
 
 const getAllCar = async (
      //leaseType,
@@ -446,6 +445,11 @@ const getSingleCars = async (id, leaseTypeId) => {
           const carOffers = await carOfferModel
                .find(clause)
                .populate('leaseType_id');
+
+          carOffers.forEach((carOffer) => {
+               // Call the `isExpired` method on each individual car offer document
+               carOffer.isExpired();
+          });
 
           const result = {
                car,

@@ -50,15 +50,15 @@ const carOfferSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-// carOfferSchema.methods.isExpired = function () {
-//      if (this.validTo && this.validTo < Date.now()) {
-//           this.expired = true;
-//      }
-//      this.offers.forEach((offer) => {
-//           if (offer.validTo && offer.validTo < Date.now()) {
-//                offer.expired = true;
-//           }
-//      });
-// };
+carOfferSchema.methods.isExpired = function () {
+     if (this.validTo && this.validTo < Date.now()) {
+          this.expired = true;
+     }
+     this.offers.forEach((offer) => {
+          if (offer.validTo && offer.validTo < Date.now()) {
+               offer.expired = true;
+          }
+     });
+};
 
 export default mongoose.model('carOffer', carOfferSchema);

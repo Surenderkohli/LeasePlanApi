@@ -422,13 +422,6 @@ const getSingleCars = async (id, leaseTypeId) => {
                throw new Error('Car not found');
           }
 
-          //  const { leaseType_id } = car;
-          // Retrieve lease type details using leaseType_id from leasetypes collection
-          // const leaseType = await leaseTypeModel.findOne({
-          //      _id: leaseType_id,
-          //      isDeleted: false,
-          // });
-
           const carFeatures = await carFeatureModel.findOne({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,

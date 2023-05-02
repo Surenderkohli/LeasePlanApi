@@ -128,9 +128,6 @@ const getAllCar = async (
                {
                     $unwind: '$carSeries',
                },
-               // {
-               //      $unwind: '$leaseType',
-               // },
                {
                     $unwind: '$offers',
                },

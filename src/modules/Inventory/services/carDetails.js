@@ -165,6 +165,8 @@ const getAllCar = async (
                });
           }
 
+          // i(ignore case): Case insensitivity to match upper and lower cases.https://www.mongodb.com/docs/manual/reference/operator/query/regex/#std-label-regex-case-insensitive
+
           if (querySrch) {
                aggregateFilter.push({
                     $match: {

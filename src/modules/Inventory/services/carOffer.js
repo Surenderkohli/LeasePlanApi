@@ -599,7 +599,33 @@ const updateCar = async (
                { new: true }
           );
 
-          // Update car in CarOffers collection
+          const updatedCarOffers = [];
+
+          for (const offer of carOffersData.offers) {
+               const filter = {
+                    _id: id,
+                    'offers.calculationNo': offer.calculationNo,
+               };
+
+               const update = {
+                    $set: {
+                         'offers.$.duration': offer.duration,
+                         'offers.$.annualMileage': offer.annualMileage,
+                         'offers.$.monthlyCost': offer.monthlyCost,
+                    },
+               };
+
+               const updatedOffer = await carOfferModel.findOneAndUpdate(
+                    filter,
+                    update,
+                    { new: true }
+               );
+               updatedCarOffers.push(updatedOffer);
+          }
+
+          /* 
+
+      // Update car in CarOffers collection
           const filters = {
                _id: id,
           };
@@ -627,23 +653,20 @@ const updateCar = async (
                     update.$push = { offers: offer };
                }
           }
-          /* 
-console.log(update)
-  {
-     '$set': {
-       'offers.$[o].duration': '61',
-       'offers.$[o].annualMileage': '25001',
-       'offers.$[o].monthlyCost': '3801'
-     },
-     arrayFilters: [ { 'o.calculationNo': '1248516' } ]
-   }
+             
+
+          Example of update object
+             {
+               '$set': {
+                         'offers.$[o].duration': '61',
+                         'offers.$[o].annualMileage': '25001',
+                         'offers.$[o].monthlyCost': '3801'
+             },
+              arrayFilters: [ { 'o.calculationNo': '1248516' } ]
+             }
+
 */
 
-          const updatedCarOffers = await carOfferModel.findOneAndUpdate(
-               filters,
-               update,
-               { new: true, arrayFilters: update.arrayFilters }
-          );
           // Return the updated car object
           return {
                carOffers: updatedCarOffers,

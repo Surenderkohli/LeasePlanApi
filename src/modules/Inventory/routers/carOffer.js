@@ -217,6 +217,9 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                publicId: req.body.publicId,
           };
 
+          const carOffersData = req.body;
+
+          /* 
           const carOffersData = {
                offers: [],
           };
@@ -245,7 +248,9 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                          });
                     }
                }
-          }
+          } 
+          
+       */
 
           const images = [];
 

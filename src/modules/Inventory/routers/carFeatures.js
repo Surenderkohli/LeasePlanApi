@@ -99,7 +99,7 @@ router.post('/car-features', upload.single('file'), async (req, res) => {
                const carFeatureData = await csvtojson().fromString(csvString);
 
                for (let i = 0; i < carFeatureData.length; i++) {
-                    const carDetail = await carFeatureService.createCarFeautre(
+                    const carDetail = await carFeatureService.upsertCarFeature(
                          carFeatureData[i]
                     );
                     carFeatures.push(carDetail);

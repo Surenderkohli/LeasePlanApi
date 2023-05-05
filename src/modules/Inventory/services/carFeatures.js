@@ -147,6 +147,95 @@ const createCarFeautre = async (carDetailData) => {
      }
 };
 
+const upsertCarFeature = async (carDetailData) => {
+     try {
+          // Extract the exterior and interior features from the row
+          const exteriorFeatures = [];
+          const interiorFeatures = [];
+          const safetySecurityFeatures = [];
+          const comfortConvenienceFeatures = [];
+          const audioEntertainmentFeatures = [];
+
+          Object.keys(carDetailData).forEach((key) => {
+               if (key.startsWith('exterior_')) {
+                    exteriorFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('interior_')) {
+                    interiorFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('safety_security_')) {
+                    safetySecurityFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('comfort_convenience_')) {
+                    comfortConvenienceFeatures.push(carDetailData[key]);
+               } else if (key.startsWith('audio_entertainment_')) {
+                    audioEntertainmentFeatures.push(carDetailData[key]);
+               }
+          });
+
+          // Query the database for matching carBrand and carSeries documents
+          const carBrand = await carBrandModel.findOne({
+               makeCode: carDetailData.makeCode,
+          });
+          const carSeries = await carSeriesModel.findOne({
+               modelCode: carDetailData.modelCode,
+          });
+
+          // Query the database for an existing car feature entry
+          let carFeature = await carFeatureModel.findOne({
+               makeCode: carDetailData.makeCode,
+               modelCode: carDetailData.modelCode,
+               yearModel: carDetailData.yearModel,
+          });
+
+          // If an existing car feature entry is found, update it; otherwise, create a new entry
+          if (carFeature) {
+               carFeature.carBrand_id = carBrand ? carBrand._id : null;
+               carFeature.carSeries_id = carSeries ? carSeries._id : null;
+               carFeature.exteriorFeatures = exteriorFeatures
+                    ? exteriorFeatures
+                    : [];
+               carFeature.interiorFeatures = interiorFeatures
+                    ? interiorFeatures
+                    : [];
+               carFeature.safetySecurityFeatures = safetySecurityFeatures
+                    ? safetySecurityFeatures
+                    : [];
+               carFeature.comfortConvenienceFeatures =
+                    comfortConvenienceFeatures
+                         ? comfortConvenienceFeatures
+                         : [];
+               carFeature.audioEntertainmentFeatures =
+                    audioEntertainmentFeatures
+                         ? audioEntertainmentFeatures
+                         : [];
+          } else {
+               carFeature = new carFeatureModel({
+                    carBrand_id: carBrand ? carBrand._id : null,
+                    carSeries_id: carSeries ? carSeries._id : null,
+                    makeCode: carDetailData.makeCode,
+                    modelCode: carDetailData.modelCode,
+                    yearModel: carDetailData.yearModel,
+                    exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
+                    interiorFeatures: interiorFeatures ? interiorFeatures : [],
+                    safetySecurityFeatures: safetySecurityFeatures
+                         ? safetySecurityFeatures
+                         : [],
+                    comfortConvenienceFeatures: comfortConvenienceFeatures
+                         ? comfortConvenienceFeatures
+                         : [],
+                    audioEntertainmentFeatures: audioEntertainmentFeatures
+                         ? audioEntertainmentFeatures
+                         : [],
+               });
+          }
+
+          const savedCarFeature = await carFeature.save();
+
+          return savedCarFeature;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Car features upload failed');
+     }
+};
+
 export const carFeatureService = {
      getAllCarFeature,
      createCarFeatureManual,
@@ -154,4 +243,5 @@ export const carFeatureService = {
      deleteCarFeatures,
      updateCarFeatures,
      createCarFeautre,
+     upsertCarFeature,
 };

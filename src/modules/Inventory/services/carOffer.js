@@ -506,7 +506,9 @@ const getAllCarWithOffers = async (
 
 const getCount = async () => {
      const counts = await carOfferModel.aggregate([
-          { $unwind: '$leaseType_id' },
+          {
+               $unwind: '$leaseType_id',
+          },
           {
                $lookup: {
                     from: 'leasetypes',
@@ -515,7 +517,9 @@ const getCount = async () => {
                     as: 'leaseType',
                },
           },
-          { $unwind: '$leaseType' },
+          {
+               $unwind: '$leaseType',
+          },
           {
                $group: {
                     _id: {

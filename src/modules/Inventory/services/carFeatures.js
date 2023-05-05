@@ -87,7 +87,7 @@ const deleteCarFeatures = async (id) => {
      }
 };
 
-const createCarFeautre = async (carDetailData) => {
+/* const createCarFeautre = async (carDetailData) => {
      try {
           // Extract the exterior and interior features from the row
           const exteriorFeatures = [];
@@ -145,7 +145,7 @@ const createCarFeautre = async (carDetailData) => {
           console.log(error);
           throw new Error('Car features upload failed');
      }
-};
+}; */
 
 const upsertCarFeature = async (carDetailData) => {
      try {
@@ -242,6 +242,5 @@ export const carFeatureService = {
      getSingleCarFeature,
      deleteCarFeatures,
      updateCarFeatures,
-     createCarFeautre,
      upsertCarFeature,
 };

@@ -161,21 +161,23 @@ import carFeaturesModel from '../models/carFeatures.js';
 
 const createCarOffer = async (carOfferData) => {
      try {
-          let leaseTypes;
-          if (carOfferData.leaseType) {
-               leaseTypes = await leaseTypeModel.find({
+          let leaseTypes = [];
+          if (carOfferData.leaseType && carOfferData.term) {
+               // Find or create a leaseType entry in the leaseTypeModel collection
+               const existingLeaseType = await leaseTypeModel.findOne({
                     leaseType: carOfferData.leaseType,
+                    term: carOfferData.term,
                });
-               if (leaseTypes.length === 0) {
-                    // Create a new leaseType entry in the leaseTypeModel collection
+               if (existingLeaseType) {
+                    leaseTypes.push(existingLeaseType);
+               } else {
                     const newLeaseType = new leaseTypeModel({
                          leaseType: carOfferData.leaseType,
+                         term: carOfferData.term,
                     });
                     const savedLeaseType = await newLeaseType.save();
-                    leaseTypes = [savedLeaseType];
+                    leaseTypes.push(savedLeaseType);
                }
-          } else {
-               leaseTypes = [];
           }
 
           if (!carOfferData.companyName) {

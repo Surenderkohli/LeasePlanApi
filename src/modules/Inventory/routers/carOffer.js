@@ -160,13 +160,12 @@ router.get('/all-cars', async (req, res) => {
      }
 });
 
-router.get('/count', async (req, res) => {
+router.get('/counts', async (req, res) => {
      try {
           const counts = await carOfferService.getCount();
           res.status(200).json({
                success: true,
                privateLeaseCount: counts.privateLeaseCount,
-               flexiPlanCount: counts.flexiPlanCount,
                businessLeaseCount: counts.businessLeaseCount,
           });
      } catch (error) {

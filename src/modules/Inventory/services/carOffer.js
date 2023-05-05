@@ -461,43 +461,97 @@ const getAllCarWithOffers = async (
      }
 };
 
+// const getCount = async () => {
+//      const counts = await carOfferModel.aggregate([
+//           {
+//                $unwind: '$leaseType_id',
+//           },
+//           {
+//                $lookup: {
+//                     from: 'leasetypes',
+//                     localField: 'leaseType_id',
+//                     foreignField: '_id',
+//                     as: 'leaseType',
+//                },
+//           },
+//           {
+//                $unwind: '$leaseType',
+//           },
+//           {
+//                $group: {
+//                     _id: '$leaseType.leaseType',
+//                     count: { $sum: 1 },
+//                },
+//           },
+//      ]);
+
+//      const countObject = {
+//           privateLeaseCount: 0,
+//           flexiPlanCount: 0,
+//           businessLeaseCount: 0,
+//      };
+
+//      counts.forEach((count) => {
+//           if (count._id === 'Private Lease') {
+//                countObject.privateLeaseCount += count.count;
+//           } else if (count._id === 'FlexiPlan') {
+//                countObject.flexiPlanCount += count.count;
+//           } else if (count._id === 'Business Lease') {
+//                countObject.businessLeaseCount += count.count;
+//           }
+//      });
+
+//      return countObject;
+// };
+
 const getCount = async () => {
      const counts = await carOfferModel.aggregate([
-          {
-               $unwind: '$leaseType_id',
-          },
+          { $unwind: '$leaseType_id' },
           {
                $lookup: {
                     from: 'leasetypes',
-                    localField: 'leaseType_id',
+                    localField: 'leaseType_id._id',
                     foreignField: '_id',
                     as: 'leaseType',
                },
           },
-          {
-               $unwind: '$leaseType',
-          },
+          { $unwind: '$leaseType' },
           {
                $group: {
-                    _id: '$leaseType.leaseType',
+                    _id: {
+                         leaseType: '$leaseType.leaseType',
+                         term: '$leaseType.term',
+                    },
                     count: { $sum: 1 },
                },
           },
      ]);
 
      const countObject = {
-          privateLeaseCount: 0,
-          flexiPlanCount: 0,
-          businessLeaseCount: 0,
+          privateLeaseCount: {
+               shortTerm: 0,
+               longTerm: 0,
+          },
+
+          businessLeaseCount: {
+               shortTerm: 0,
+               longTerm: 0,
+          },
      };
 
      counts.forEach((count) => {
-          if (count._id === 'Private Lease') {
-               countObject.privateLeaseCount += count.count;
-          } else if (count._id === 'FlexiPlan') {
-               countObject.flexiPlanCount += count.count;
-          } else if (count._id === 'Business Lease') {
-               countObject.businessLeaseCount += count.count;
+          if (count._id.leaseType === 'Private Lease') {
+               if (count._id.term === 'Short Term') {
+                    countObject.privateLeaseCount.shortTerm += count.count;
+               } else if (count._id.term === 'Long Term') {
+                    countObject.privateLeaseCount.longTerm += count.count;
+               }
+          } else if (count._id.leaseType === 'Business Lease') {
+               if (count._id.term === 'Short Term') {
+                    countObject.businessLeaseCount.shortTerm += count.count;
+               } else if (count._id.term === 'Long Term') {
+                    countObject.businessLeaseCount.longTerm += count.count;
+               }
           }
      });
 

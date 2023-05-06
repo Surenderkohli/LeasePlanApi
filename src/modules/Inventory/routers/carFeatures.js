@@ -89,26 +89,92 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
-router.post('/car-features', upload.single('file'), async (req, res) => {
-     try {
-          let carFeatures = [];
+// router.post('/car-features', upload.single('file'), async (req, res) => {
+//      try {
+//           let carFeatures = [];
 
-          if (req.file && req.file.mimetype === 'text/csv') {
-               // CSV upload
-               const csvString = req.file.buffer.toString('utf8');
-               const carFeatureData = await csvtojson().fromString(csvString);
+//           if (req.file && req.file.mimetype === 'text/csv') {
+//                // CSV upload
+//                const csvString = req.file.buffer.toString('utf8');
+//                const carFeatureData = await csvtojson().fromString(csvString);
 
-               for (let i = 0; i < carFeatureData.length; i++) {
-                    const carDetail = await carFeatureService.upsertCarFeature(
-                         carFeatureData[i]
-                    );
-                    carFeatures.push(carDetail);
+//                for (let i = 0; i < carFeatureData.length; i++) {
+//                     const carDetail = await carFeatureService.createCarFeature(
+//                          carFeatureData[i]
+//                     );
+//                     carFeatures.push(carDetail);
+//                }
+//           }
+
+//           res.status(201).json({
+//                message: 'Car features added successfully',
+//                data: carFeatures,
+//           });
+//      } catch (error) {
+//           console.log(error);
+//           res.status(400).json({ message: error.message });
+//      }
+// });
+
+// Route for uploading car feature category CSV file
+router.post(
+     '/car-feature-category',
+     upload.single('file'),
+     async (req, res) => {
+          try {
+               if (!req.file || req.file.mimetype !== 'text/csv') {
+                    return res.status(400).json({
+                         message: 'Invalid file format. Please upload a CSV file',
+                    });
                }
+
+               const csvString = req.file.buffer.toString('utf8');
+               const carFeatureCategoryData = await csvtojson().fromString(
+                    csvString
+               );
+
+               for (const data of carFeatureCategoryData) {
+                    await carFeatureService.createCarFeatureCategory(data);
+               }
+
+               res.status(201).json({
+                    message: 'Car feature categories added successfully',
+                    data: carFeatureCategoryData,
+               });
+          } catch (error) {
+               console.log(error);
+               res.status(400).json({ message: error.message });
+          }
+     }
+);
+
+// Route for uploading feature description CSV file
+router.post('/feature-description', upload.single('file'), async (req, res) => {
+     try {
+          let featureDescriptions = [];
+
+          if (!req.file || req.file.mimetype !== 'text/csv') {
+               return res.status(400).json({
+                    message: 'Invalid file format. Please upload a CSV file',
+               });
+          }
+
+          const csvString = req.file.buffer.toString('utf8');
+          const featureDescriptionData = await csvtojson().fromString(
+               csvString
+          );
+
+          for (let i = 0; i < featureDescriptionData.length; i++) {
+               const featureDescription =
+                    await carFeatureService.addFeatureDescription(
+                         featureDescriptionData[i]
+                    );
+               featureDescriptions.push(featureDescription);
           }
 
           res.status(201).json({
-               message: 'Car features added successfully',
-               data: carFeatures,
+               message: 'Feature descriptions added successfully',
+               data: featureDescriptionData,
           });
      } catch (error) {
           console.log(error);

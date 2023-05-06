@@ -1,8 +1,6 @@
-import carFeatureModel from '../models/carFeatures.js';
-import carDetailModel from '../models/carDetails.js';
-import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
+import { CarFeatureCategory, carFeatureModel } from '../models/carFeatures.js';
 
 const getAllCarFeature = async () => {
      const response = await carFeatureModel.find();
@@ -87,7 +85,7 @@ const deleteCarFeatures = async (id) => {
      }
 };
 
-/* const createCarFeautre = async (carDetailData) => {
+const createCarFeature = async (carDetailData) => {
      try {
           // Extract the exterior and interior features from the row
           const exteriorFeatures = [];
@@ -98,15 +96,30 @@ const deleteCarFeatures = async (id) => {
 
           Object.keys(carDetailData).forEach((key) => {
                if (key.startsWith('exterior_')) {
-                    exteriorFeatures.push(carDetailData[key]);
+                    exteriorFeatures.push({
+                         value: carDetailData[key],
+                         categoryCode: 1,
+                    });
                } else if (key.startsWith('interior_')) {
-                    interiorFeatures.push(carDetailData[key]);
+                    interiorFeatures.push({
+                         value: carDetailData[key],
+                         categoryCode: 2,
+                    });
                } else if (key.startsWith('safety_security_')) {
-                    safetySecurityFeatures.push(carDetailData[key]);
+                    safetySecurityFeatures.push({
+                         value: carDetailData[key],
+                         categoryCode: 3,
+                    });
                } else if (key.startsWith('comfort_convenience_')) {
-                    comfortConvenienceFeatures.push(carDetailData[key]);
+                    comfortConvenienceFeatures.push({
+                         value: carDetailData[key],
+                         categoryCode: 4,
+                    });
                } else if (key.startsWith('audio_entertainment_')) {
-                    audioEntertainmentFeatures.push(carDetailData[key]);
+                    audioEntertainmentFeatures.push({
+                         value: carDetailData[key],
+                         categoryCode: 5,
+                    });
                }
           });
 
@@ -125,17 +138,11 @@ const deleteCarFeatures = async (id) => {
                makeCode: carDetailData.makeCode,
                modelCode: carDetailData.modelCode,
                yearModel: carDetailData.yearModel,
-               exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
-               interiorFeatures: interiorFeatures ? interiorFeatures : [],
-               safetySecurityFeatures: safetySecurityFeatures
-                    ? safetySecurityFeatures
-                    : [],
-               comfortConvenienceFeatures: comfortConvenienceFeatures
-                    ? comfortConvenienceFeatures
-                    : [],
-               audioEntertainmentFeatures: audioEntertainmentFeatures
-                    ? audioEntertainmentFeatures
-                    : [],
+               exteriorFeatures: exteriorFeatures,
+               interiorFeatures: interiorFeatures,
+               safetySecurityFeatures: safetySecurityFeatures,
+               comfortConvenienceFeatures: comfortConvenienceFeatures,
+               audioEntertainmentFeatures: audioEntertainmentFeatures,
           });
 
           const savedCarFeature = await newCarFeature.save();
@@ -145,94 +152,178 @@ const deleteCarFeatures = async (id) => {
           console.log(error);
           throw new Error('Car features upload failed');
      }
-}; */
+};
+// const upsertCarFeature = async (carDetailData) => {
+//      try {
+//           // Extract the exterior and interior features from the row
+//           const exteriorFeatures = [];
+//           const interiorFeatures = [];
+//           const safetySecurityFeatures = [];
+//           const comfortConvenienceFeatures = [];
+//           const audioEntertainmentFeatures = [];
 
-const upsertCarFeature = async (carDetailData) => {
+//           Object.keys(carDetailData).forEach((key) => {
+//                if (key.startsWith('exterior_')) {
+//                     exteriorFeatures.push(carDetailData[key]);
+//                } else if (key.startsWith('interior_')) {
+//                     interiorFeatures.push(carDetailData[key]);
+//                } else if (key.startsWith('safety_security_')) {
+//                     safetySecurityFeatures.push(carDetailData[key]);
+//                } else if (key.startsWith('comfort_convenience_')) {
+//                     comfortConvenienceFeatures.push(carDetailData[key]);
+//                } else if (key.startsWith('audio_entertainment_')) {
+//                     audioEntertainmentFeatures.push(carDetailData[key]);
+//                }
+//           });
+
+//           // Query the database for matching carBrand and carSeries documents
+//           const carBrand = await carBrandModel.findOne({
+//                makeCode: carDetailData.makeCode,
+//           });
+//           const carSeries = await carSeriesModel.findOne({
+//                modelCode: carDetailData.modelCode,
+//           });
+
+//           // Query the database for an existing car feature entry
+//           let carFeature = await carFeatureModel.findOne({
+//                makeCode: carDetailData.makeCode,
+//                modelCode: carDetailData.modelCode,
+//                yearModel: carDetailData.yearModel,
+//           });
+
+//           // If an existing car feature entry is found, update it; otherwise, create a new entry
+//           if (carFeature) {
+//                carFeature.carBrand_id = carBrand ? carBrand._id : null;
+//                carFeature.carSeries_id = carSeries ? carSeries._id : null;
+//                carFeature.exteriorFeatures = exteriorFeatures
+//                     ? exteriorFeatures
+//                     : [];
+//                carFeature.interiorFeatures = interiorFeatures
+//                     ? interiorFeatures
+//                     : [];
+//                carFeature.safetySecurityFeatures = safetySecurityFeatures
+//                     ? safetySecurityFeatures
+//                     : [];
+//                carFeature.comfortConvenienceFeatures =
+//                     comfortConvenienceFeatures
+//                          ? comfortConvenienceFeatures
+//                          : [];
+//                carFeature.audioEntertainmentFeatures =
+//                     audioEntertainmentFeatures
+//                          ? audioEntertainmentFeatures
+//                          : [];
+//           } else {
+//                carFeature = new carFeatureModel({
+//                     carBrand_id: carBrand ? carBrand._id : null,
+//                     carSeries_id: carSeries ? carSeries._id : null,
+//                     makeCode: carDetailData.makeCode,
+//                     modelCode: carDetailData.modelCode,
+//                     yearModel: carDetailData.yearModel,
+//                     exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
+//                     interiorFeatures: interiorFeatures ? interiorFeatures : [],
+//                     safetySecurityFeatures: safetySecurityFeatures
+//                          ? safetySecurityFeatures
+//                          : [],
+//                     comfortConvenienceFeatures: comfortConvenienceFeatures
+//                          ? comfortConvenienceFeatures
+//                          : [],
+//                     audioEntertainmentFeatures: audioEntertainmentFeatures
+//                          ? audioEntertainmentFeatures
+//                          : [],
+//                });
+//           }
+
+//           const savedCarFeature = await carFeature.save();
+
+//           return savedCarFeature;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Car features upload failed');
+//      }
+// };
+
+const createCarFeatureCategory = async (carFeatureCategoryData) => {
      try {
-          // Extract the exterior and interior features from the row
-          const exteriorFeatures = [];
-          const interiorFeatures = [];
-          const safetySecurityFeatures = [];
-          const comfortConvenienceFeatures = [];
-          const audioEntertainmentFeatures = [];
+          const { makeCode, modelCode, categoryCode, categoryDescription } =
+               carFeatureCategoryData;
 
-          Object.keys(carDetailData).forEach((key) => {
-               if (key.startsWith('exterior_')) {
-                    exteriorFeatures.push(carDetailData[key]);
-               } else if (key.startsWith('interior_')) {
-                    interiorFeatures.push(carDetailData[key]);
-               } else if (key.startsWith('safety_security_')) {
-                    safetySecurityFeatures.push(carDetailData[key]);
-               } else if (key.startsWith('comfort_convenience_')) {
-                    comfortConvenienceFeatures.push(carDetailData[key]);
-               } else if (key.startsWith('audio_entertainment_')) {
-                    audioEntertainmentFeatures.push(carDetailData[key]);
-               }
+          // Find the car feature category document based on makeCode, modelCode, and categoryCode
+          let carFeatureCategory = await CarFeatureCategory.findOne({
+               makeCode,
+               modelCode,
+               categoryCode,
           });
 
-          // Query the database for matching carBrand and carSeries documents
-          const carBrand = await carBrandModel.findOne({
-               makeCode: carDetailData.makeCode,
-          });
-          const carSeries = await carSeriesModel.findOne({
-               modelCode: carDetailData.modelCode,
-          });
-
-          // Query the database for an existing car feature entry
-          let carFeature = await carFeatureModel.findOne({
-               makeCode: carDetailData.makeCode,
-               modelCode: carDetailData.modelCode,
-               yearModel: carDetailData.yearModel,
-          });
-
-          // If an existing car feature entry is found, update it; otherwise, create a new entry
-          if (carFeature) {
-               carFeature.carBrand_id = carBrand ? carBrand._id : null;
-               carFeature.carSeries_id = carSeries ? carSeries._id : null;
-               carFeature.exteriorFeatures = exteriorFeatures
-                    ? exteriorFeatures
-                    : [];
-               carFeature.interiorFeatures = interiorFeatures
-                    ? interiorFeatures
-                    : [];
-               carFeature.safetySecurityFeatures = safetySecurityFeatures
-                    ? safetySecurityFeatures
-                    : [];
-               carFeature.comfortConvenienceFeatures =
-                    comfortConvenienceFeatures
-                         ? comfortConvenienceFeatures
-                         : [];
-               carFeature.audioEntertainmentFeatures =
-                    audioEntertainmentFeatures
-                         ? audioEntertainmentFeatures
-                         : [];
+          // If the car feature category document already exists, update the categoryDescription
+          if (carFeatureCategory) {
+               carFeatureCategory.categoryDescription = categoryDescription;
           } else {
-               carFeature = new carFeatureModel({
-                    carBrand_id: carBrand ? carBrand._id : null,
-                    carSeries_id: carSeries ? carSeries._id : null,
-                    makeCode: carDetailData.makeCode,
-                    modelCode: carDetailData.modelCode,
-                    yearModel: carDetailData.yearModel,
-                    exteriorFeatures: exteriorFeatures ? exteriorFeatures : [],
-                    interiorFeatures: interiorFeatures ? interiorFeatures : [],
-                    safetySecurityFeatures: safetySecurityFeatures
-                         ? safetySecurityFeatures
-                         : [],
-                    comfortConvenienceFeatures: comfortConvenienceFeatures
-                         ? comfortConvenienceFeatures
-                         : [],
-                    audioEntertainmentFeatures: audioEntertainmentFeatures
-                         ? audioEntertainmentFeatures
-                         : [],
+               // Otherwise, create a new car feature category document
+               carFeatureCategory = new CarFeatureCategory({
+                    makeCode,
+                    modelCode,
+                    categoryCode,
+                    categoryDescription,
                });
           }
 
-          const savedCarFeature = await carFeature.save();
+          await carFeatureCategory.save();
 
-          return savedCarFeature;
+          return carFeatureCategory;
      } catch (error) {
           console.log(error);
-          throw new Error('Car features upload failed');
+          throw new Error('Failed to create car feature category');
+     }
+};
+
+const addFeatureDescription = async (featureDescriptionData) => {
+     try {
+          const { makeCode, modelCode, categoryCode, featureDescription } =
+               featureDescriptionData;
+
+          // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
+          let carFeature = await carFeatureModel.findOne({
+               makeCode,
+               modelCode,
+          });
+
+          if (!carFeature) {
+               // If the carFeature document does not exist, create a new one
+               carFeature = new carFeatureModel({
+                    makeCode,
+                    modelCode,
+                    categories: [],
+               });
+          }
+
+          // Find the corresponding category within the carFeature document based on categoryCode
+          const category = carFeature.categories.find(
+               (cat) => cat.categoryCode === categoryCode
+          );
+
+          if (category) {
+               // Check if the featureDescription already exists in the features array
+               const existingFeature = category.features.find(
+                    (feature) => feature === featureDescription
+               );
+
+               if (!existingFeature) {
+                    // Push the featureDescription into the features array of the category
+                    category.features.push(featureDescription);
+               }
+          } else {
+               // If the category does not exist, create a new one and add the featureDescription
+               carFeature.categories.push({
+                    categoryCode,
+                    features: [featureDescription],
+               });
+          }
+
+          await carFeature.save();
+          return carFeature;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Failed to add feature description');
      }
 };
 
@@ -242,5 +333,8 @@ export const carFeatureService = {
      getSingleCarFeature,
      deleteCarFeatures,
      updateCarFeatures,
-     upsertCarFeature,
+     // upsertCarFeature,
+     createCarFeature,
+     createCarFeatureCategory,
+     addFeatureDescription,
 };

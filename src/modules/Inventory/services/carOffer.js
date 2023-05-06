@@ -3,7 +3,7 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 import carDetailsModel from '../models/carDetails.js';
-import carFeaturesModel from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
 
 // const createCarOffer = async (carOfferData) => {
 //      try {
@@ -646,7 +646,7 @@ const updateCar = async (
                }
           }
 
-          const updatedCarFeatures = await carFeaturesModel.findOneAndUpdate(
+          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
                filter,
                updateFields,
                { new: true }

@@ -276,10 +276,75 @@ const createCarFeatureCategory = async (carFeatureCategoryData) => {
      }
 };
 
+// const addFeatureDescription = async (featureDescriptionData) => {
+//      try {
+//           const { makeCode, modelCode, categoryCode, featureDescription } =
+//                featureDescriptionData;
+
+//           // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
+//           let carFeature = await carFeatureModel.findOne({
+//                makeCode,
+//                modelCode,
+//           });
+
+//           if (!carFeature) {
+//                // If the carFeature document does not exist, create a new one
+//                carFeature = new carFeatureModel({
+//                     makeCode,
+//                     modelCode,
+//                     categories: [],
+//                });
+//           }
+
+//           // Find the corresponding category within the carFeature document based on categoryCode
+//           const category = carFeature.categories.find(
+//                (cat) => cat.categoryCode === categoryCode
+//           );
+
+//           if (category) {
+//                // Check if the featureDescription already exists in the features array
+//                const existingFeature = category.features.find(
+//                     (feature) => feature === featureDescription
+//                );
+
+//                if (!existingFeature) {
+//                     // Push the featureDescription into the features array of the category
+//                     category.features.push(featureDescription);
+//                }
+//           } else {
+//                // If the category does not exist, create a new one and add the featureDescription
+//                carFeature.categories.push({
+//                     categoryCode,
+//                     features: [featureDescription],
+//                });
+//           }
+
+//           await carFeature.save();
+//           return carFeature;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Failed to add feature description');
+//      }
+// };
+
 const addFeatureDescription = async (featureDescriptionData) => {
      try {
           const { makeCode, modelCode, categoryCode, featureDescription } =
                featureDescriptionData;
+
+          // Find the corresponding carBrand document based on makeCode
+          const carBrand = await carBrandModel.findOne({ makeCode });
+
+          if (!carBrand) {
+               throw new Error('Invalid makeCode. Car brand not found.');
+          }
+
+          // Find the corresponding carSeries document based on modelCode
+          const carSeries = await carSeriesModel.findOne({ modelCode });
+
+          if (!carSeries) {
+               throw new Error('Invalid modelCode. Car series not found.');
+          }
 
           // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
           let carFeature = await carFeatureModel.findOne({
@@ -290,8 +355,10 @@ const addFeatureDescription = async (featureDescriptionData) => {
           if (!carFeature) {
                // If the carFeature document does not exist, create a new one
                carFeature = new carFeatureModel({
-                    makeCode,
+                    carSeries_id: carSeries._id,
+                    carBrand_id: carBrand._id,
                     modelCode,
+                    makeCode,
                     categories: [],
                });
           }

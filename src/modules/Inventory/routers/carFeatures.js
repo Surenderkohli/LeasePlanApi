@@ -174,7 +174,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
 
           res.status(201).json({
                message: 'Feature descriptions added successfully',
-               data: featureDescriptionData,
+               data: featureDescriptions,
           });
      } catch (error) {
           console.log(error);

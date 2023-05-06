@@ -425,12 +425,12 @@ const getSingleCars = async (id, leaseTypeId) => {
           const carFeatures = await carFeatureModel.findOne({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
+               // yearModel: car.yearModel,
           });
           let clause = {
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
+               // yearModel: car.yearModel,
           };
           if (leaseTypeId) {
                clause.leaseType_id = leaseTypeId;

@@ -1004,3 +1004,74 @@ const createCarFeautre = async (carDetailData) => {
 //           throw error;
 //      }
 // };
+const addFeatureDescription = async (featureDescriptionData) => {
+     try {
+          const { makeCode, modelCode, categoryCode, featureDescription } =
+               featureDescriptionData;
+
+          // Find the corresponding carBrand document based on makeCode
+          const carBrand = await carBrandModel.findOne({ makeCode });
+
+          if (!carBrand) {
+               throw new Error('Invalid makeCode. Car brand not found.');
+          }
+
+          // Find the corresponding carSeries document based on modelCode
+          const carSeries = await carSeriesModel.findOne({ modelCode });
+
+          if (!carSeries) {
+               throw new Error('Invalid modelCode. Car series not found.');
+          }
+
+          // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
+          let carFeature = await carFeatureModel.findOne({
+               makeCode,
+               modelCode,
+          });
+
+          if (!carFeature) {
+               // If the carFeature document does not exist, create a new one
+               carFeature = new carFeatureModel({
+                    carSeries_id: carSeries._id,
+                    carBrand_id: carBrand._id,
+                    modelCode,
+                    makeCode,
+                    categories: [],
+               });
+          }
+
+          // Find the corresponding category in CarFeatureCategory based on categoryCode
+          const carFeatureCategory = await CarFeatureCategory.findOne({
+               categoryCode,
+          });
+
+          if (!carFeatureCategory) {
+               throw new Error(
+                    `Invalid categoryCode. Category not found: ${categoryCode}`
+               );
+          }
+
+          // Check if the category already exists in the carFeature document
+          const category = carFeature.categories.find(
+               (cat) => cat.categoryCode === categoryCode
+          );
+
+          if (category) {
+               // Category already exists, update the features array
+               category.features.push(featureDescription);
+          } else {
+               // Category does not exist, create a new one
+               carFeature.categories.push({
+                    categoryCode,
+                    categoryDescription: carFeatureCategory.categoryDescription,
+                    features: [featureDescription],
+               });
+          }
+
+          await carFeature.save();
+          return carFeature;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Failed to add feature description');
+     }
+};

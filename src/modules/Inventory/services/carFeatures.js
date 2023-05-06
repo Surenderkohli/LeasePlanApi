@@ -276,57 +276,6 @@ const createCarFeatureCategory = async (carFeatureCategoryData) => {
      }
 };
 
-// const addFeatureDescription = async (featureDescriptionData) => {
-//      try {
-//           const { makeCode, modelCode, categoryCode, featureDescription } =
-//                featureDescriptionData;
-
-//           // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
-//           let carFeature = await carFeatureModel.findOne({
-//                makeCode,
-//                modelCode,
-//           });
-
-//           if (!carFeature) {
-//                // If the carFeature document does not exist, create a new one
-//                carFeature = new carFeatureModel({
-//                     makeCode,
-//                     modelCode,
-//                     categories: [],
-//                });
-//           }
-
-//           // Find the corresponding category within the carFeature document based on categoryCode
-//           const category = carFeature.categories.find(
-//                (cat) => cat.categoryCode === categoryCode
-//           );
-
-//           if (category) {
-//                // Check if the featureDescription already exists in the features array
-//                const existingFeature = category.features.find(
-//                     (feature) => feature === featureDescription
-//                );
-
-//                if (!existingFeature) {
-//                     // Push the featureDescription into the features array of the category
-//                     category.features.push(featureDescription);
-//                }
-//           } else {
-//                // If the category does not exist, create a new one and add the featureDescription
-//                carFeature.categories.push({
-//                     categoryCode,
-//                     features: [featureDescription],
-//                });
-//           }
-
-//           await carFeature.save();
-//           return carFeature;
-//      } catch (error) {
-//           console.log(error);
-//           throw new Error('Failed to add feature description');
-//      }
-// };
-
 const addFeatureDescription = async (featureDescriptionData) => {
      try {
           const { makeCode, modelCode, categoryCode, featureDescription } =
@@ -363,25 +312,30 @@ const addFeatureDescription = async (featureDescriptionData) => {
                });
           }
 
-          // Find the corresponding category within the carFeature document based on categoryCode
+          // Find the corresponding category in CarFeatureCategory based on categoryCode
+          const carFeatureCategory = await CarFeatureCategory.findOne({
+               categoryCode,
+          });
+
+          if (!carFeatureCategory) {
+               throw new Error(
+                    `Invalid categoryCode. Category not found: ${categoryCode}`
+               );
+          }
+
+          // Check if the category already exists in the carFeature document
           const category = carFeature.categories.find(
                (cat) => cat.categoryCode === categoryCode
           );
 
           if (category) {
-               // Check if the featureDescription already exists in the features array
-               const existingFeature = category.features.find(
-                    (feature) => feature === featureDescription
-               );
-
-               if (!existingFeature) {
-                    // Push the featureDescription into the features array of the category
-                    category.features.push(featureDescription);
-               }
+               // Category already exists, update the features array
+               category.features.push(featureDescription);
           } else {
-               // If the category does not exist, create a new one and add the featureDescription
+               // Category does not exist, create a new one
                carFeature.categories.push({
                     categoryCode,
+                    categoryDescription: carFeatureCategory.categoryDescription,
                     features: [featureDescription],
                });
           }

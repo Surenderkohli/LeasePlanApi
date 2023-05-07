@@ -19,7 +19,7 @@ const carOfferSchema = new mongoose.Schema(
                     term: {
                          type: String,
                          enum: ['Short Term', 'Long Term'],
-                         required: true,
+                         required: false,
                     },
                },
           ],

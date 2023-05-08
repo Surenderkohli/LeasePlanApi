@@ -747,13 +747,38 @@ const updateCar = async (
      }
 };
 
+// const getDeals = async (query) => {
+//      try {
+//           const carOffers = await carOfferModel
+//                .find({
+//                     'offers.bestDeals': 'Yes',
+//                     ...query,
+//                })
+//                .populate(['carBrand_id', 'carSeries_id']);
+
+//           const result = {
+//                carOffers,
+//           };
+
+//           return result;
+//      } catch (error) {
+//           throw new Error(error.message);
+//      }
+// };
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
-               .find({
-                    'offers.bestDeals': 'Yes',
-                    ...query,
-               })
+               .find(
+                    {
+                         'offers.bestDeals': 'Yes',
+                         ...query,
+                    },
+                    {
+                         'offers.$': 1,
+                         carBrand_id: 1,
+                         carSeries_id: 1,
+                    }
+               )
                .populate(['carBrand_id', 'carSeries_id']);
 
           const result = {

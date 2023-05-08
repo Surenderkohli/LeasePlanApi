@@ -256,7 +256,11 @@ const addNewCar = async (
           });
 
           // Create car in CarFeatures collection
-          const newCarFeatures = await carFeatureModel.create(carFeaturesData);
+          const newCarFeatures = await carFeatureModel.create({
+               ...carFeaturesData,
+               // categories: [...carFeaturesData.categories],
+          });
+
           // Find or create a carBrand entry in the carBrandModel collection
 
           let carBrand = await carBrandModel

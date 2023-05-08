@@ -101,19 +101,33 @@ router.post(
                const carDetailsData = req.body;
                const files = req.files; // Get the image files from the request
 
+               // const carFeaturesData = {
+               //      carSeries_id: carDetailsData.carSeries_id,
+               //      carBrand_id: carDetailsData.carBrand_id,
+               //      modelCode: carDetailsData.modelCode,
+               //      makeCode: carDetailsData.makeCode,
+               //      yearModel: carDetailsData.yearModel,
+               //      exteriorFeatures: req.body.exteriorFeatures,
+               //      interiorFeatures: req.body.interiorFeatures,
+               //      safetySecurityFeatures: req.body.safetySecurityFeatures,
+               //      comfortConvenienceFeatures:
+               //           req.body.comfortConvenienceFeatures,
+               //      audioEntertainmentFeatures:
+               //           req.body.audioEntertainmentFeatures,
+               // };
+
+               const categories = req.body.categories.map((category) => ({
+                    categoryCode: category.categoryCode,
+                    categoryDescription: category.categoryDescription,
+                    features: [...category.features],
+               }));
+
                const carFeaturesData = {
                     carSeries_id: carDetailsData.carSeries_id,
                     carBrand_id: carDetailsData.carBrand_id,
                     modelCode: carDetailsData.modelCode,
                     makeCode: carDetailsData.makeCode,
-                    yearModel: carDetailsData.yearModel,
-                    exteriorFeatures: req.body.exteriorFeatures,
-                    interiorFeatures: req.body.interiorFeatures,
-                    safetySecurityFeatures: req.body.safetySecurityFeatures,
-                    comfortConvenienceFeatures:
-                         req.body.comfortConvenienceFeatures,
-                    audioEntertainmentFeatures:
-                         req.body.audioEntertainmentFeatures,
+                    categories,
                };
 
                // Extract leaseTypes data from the req body

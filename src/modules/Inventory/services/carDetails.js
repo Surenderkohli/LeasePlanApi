@@ -262,7 +262,6 @@ const addNewCar = async (
           });
 
           // Find or create a carBrand entry in the carBrandModel collection
-
           let carBrand = await carBrandModel
                .findOne({
                     _id: carDetailsData.carBrand_id,
@@ -270,34 +269,38 @@ const addNewCar = async (
                .populate('leaseType_id');
 
           if (!carBrand) {
+               // Create new carBrand if not found
                carBrand = await carBrandModel.create({
-                    companyName: carDetailsData.companyName,
+                    //companyName: carDetailsData.companyName,
                     makeCode: carDetailsData.makeCode,
                     leaseType_id: carOffersData.leaseType_id,
                });
           } else {
-               const existingLeaseTypes = new Set(
-                    carBrand.leaseType_id.map((leaseType) =>
-                         String(leaseType._id)
-                    )
-               );
-               const leaseTypesToAdd = carOffersData.leaseType_id.filter(
-                    (leaseType) =>
-                         !existingLeaseTypes.has(String(leaseType._id))
-               );
+               // Check if leaseType already exists in leaseType collection
+               let leaseType = await leaseTypeModel.findOne({
+                    leaseType: carOffersData.leaseType_id[0].leaseType,
+                    term: carOffersData.leaseType_id[0].term,
+               });
 
-               if (leaseTypesToAdd.length > 0) {
-                    const newLeaseTypes = await leaseTypeModel.create(
-                         leaseTypesToAdd
-                    );
-                    carBrand.leaseType_id = [
-                         ...carBrand.leaseType_id,
-                         ...newLeaseTypes,
-                    ];
+               if (!leaseType) {
+                    // Create new leaseType if not found
+                    leaseType = await leaseTypeModel.create({
+                         leaseType: carOffersData.leaseType_id[0].leaseType,
+                         term: carOffersData.leaseType_id[0].term,
+                    });
+               }
+               // Update carOffersData with existing or new leaseType _id
+               carOffersData.leaseType_id[0]._id = leaseType._id;
+
+               // Add new leaseType to carBrand if it doesn't already exist
+               const existingLeaseTypeIds = carBrand.leaseType_id.map((lt) =>
+                    String(lt._id)
+               );
+               if (!existingLeaseTypeIds.includes(String(leaseType._id))) {
+                    carBrand.leaseType_id.push(leaseType._id);
                     await carBrand.save();
                }
           }
-
           const carOffer = await carOfferModel.create({
                ...carOffersData,
                carBrand_id: carBrand._id,

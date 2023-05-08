@@ -747,42 +747,29 @@ const updateCar = async (
      }
 };
 
-// const getDeals = async (query) => {
-//      try {
-//           const carOffers = await carOfferModel
-//                .find({
-//                     'offers.bestDeals': 'Yes',
-//                     ...query,
-//                })
-//                .populate(['carBrand_id', 'carSeries_id']);
-
-//           const result = {
-//                carOffers,
-//           };
-
-//           return result;
-//      } catch (error) {
-//           throw new Error(error.message);
-//      }
-// };
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
-               .find(
-                    {
-                         'offers.bestDeals': 'Yes',
-                         ...query,
-                    },
-                    {
-                         'offers.$': 1,
-                         carBrand_id: 1,
-                         carSeries_id: 1,
-                    }
-               )
+               .find({
+                    'offers.bestDeals': 'Yes',
+                    ...query,
+               })
                .populate(['carBrand_id', 'carSeries_id']);
 
+          const offersWithBestDeals = carOffers
+               .map((carOffer) => {
+                    const offers = carOffer.offers.filter(
+                         (offer) => offer.bestDeals === 'Yes'
+                    );
+                    return {
+                         ...carOffer.toObject(),
+                         offers,
+                    };
+               })
+               .filter((carOffer) => carOffer.offers.length > 0);
+
           const result = {
-               carOffers,
+               carOffers: offersWithBestDeals,
           };
 
           return result;

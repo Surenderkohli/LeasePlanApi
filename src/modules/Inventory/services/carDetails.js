@@ -257,8 +257,47 @@ const addNewCar = async (
 
           // Create car in CarFeatures collection
           const newCarFeatures = await carFeatureModel.create(carFeaturesData);
+          // Find or create a carBrand entry in the carBrandModel collection
 
-          const carOffer = await carOfferModel.create(carOffersData);
+          let carBrand = await carBrandModel
+               .findOne({
+                    _id: carDetailsData.carBrand_id,
+               })
+               .populate('leaseType_id');
+
+          if (!carBrand) {
+               carBrand = await carBrandModel.create({
+                    companyName: carDetailsData.companyName,
+                    makeCode: carDetailsData.makeCode,
+                    leaseType_id: carOffersData.leaseType_id,
+               });
+          } else {
+               const existingLeaseTypes = new Set(
+                    carBrand.leaseType_id.map((leaseType) =>
+                         String(leaseType._id)
+                    )
+               );
+               const leaseTypesToAdd = carOffersData.leaseType_id.filter(
+                    (leaseType) =>
+                         !existingLeaseTypes.has(String(leaseType._id))
+               );
+
+               if (leaseTypesToAdd.length > 0) {
+                    const newLeaseTypes = await leaseTypeModel.create(
+                         leaseTypesToAdd
+                    );
+                    carBrand.leaseType_id = [
+                         ...carBrand.leaseType_id,
+                         ...newLeaseTypes,
+                    ];
+                    await carBrand.save();
+               }
+          }
+
+          const carOffer = await carOfferModel.create({
+               ...carOffersData,
+               carBrand_id: carBrand._id,
+          });
 
           // Update corresponding car brand's leaseType_id array
           // const carBrand = await carBrandModel.findOneAndUpdate(

@@ -132,7 +132,6 @@ router.post(
                     offers: [],
                     deals: req.body.deals,
                };
-               
 
                for (let i = 1; i <= 20; i++) {
                     const duration = req.body[`duration${i}`];

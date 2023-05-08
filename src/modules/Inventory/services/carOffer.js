@@ -746,6 +746,26 @@ const updateCar = async (
           throw new Error(error.message);
      }
 };
+
+const getDeals = async (query) => {
+     try {
+          const carOffers = await carOfferModel
+               .find({
+                    'offers.bestDeals': 'Yes',
+                    ...query,
+               })
+               .populate(['carBrand_id', 'carSeries_id']);
+
+          const result = {
+               carOffers,
+          };
+
+          return result;
+     } catch (error) {
+          throw new Error(error.message);
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -753,4 +773,5 @@ export const carOfferService = {
      getAllCarWithOffers,
      getSingleCar,
      updateCar,
+     getDeals,
 };

@@ -12,8 +12,15 @@ const carOfferSchema = new mongoose.Schema(
           },
           leaseType_id: [
                {
-                    type: mongoose.Schema.ObjectId,
-                    ref: 'leaseType',
+                    leaseType: {
+                         type: String,
+                         required: true,
+                    },
+                    term: {
+                         type: String,
+                         enum: ['Short Term', 'Long Term'],
+                         required: false,
+                    },
                },
           ],
           yearModel: {

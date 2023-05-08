@@ -1,12 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const carFeatureSchema = new mongoose.Schema({
+const carFeatureCategorySchema = new Schema({
+     makeCode: String,
+     modelCode: String,
+     categoryCode: String,
+     categoryDescription: String,
+});
+
+const carFeatureSchema = new Schema({
      carSeries_id: {
-          type: mongoose.Schema.ObjectId,
+          type: Schema.ObjectId,
           ref: 'carSeries',
      },
      carBrand_id: {
-          type: mongoose.Schema.ObjectId,
+          type: Schema.ObjectId,
           ref: 'carBrand',
      },
      modelCode: String,
@@ -15,15 +22,22 @@ const carFeatureSchema = new mongoose.Schema({
           type: Number,
           required: false,
      },
-     exteriorFeatures: [String],
-     interiorFeatures: [String],
-     safetySecurityFeatures: [String],
-     comfortConvenienceFeatures: [String],
-     audioEntertainmentFeatures: [String],
+     categories: [
+          {
+               categoryCode: String,
+               categoryDescription: String,
+               features: [String],
+          },
+     ],
      isDeleted: {
           type: Boolean,
           default: false,
      },
 });
 
-export default mongoose.model('carFeature', carFeatureSchema);
+export const CarFeatureCategory = mongoose.model(
+     'CarFeatureCategory',
+     carFeatureCategorySchema
+);
+
+export const carFeatureModel = mongoose.model('carFeature', carFeatureSchema);

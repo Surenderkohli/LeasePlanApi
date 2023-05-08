@@ -2,7 +2,7 @@ import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import carFeatureModel from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
 import carOfferModel from '../models/carOffer.js';
 
 const getAllCar = async (
@@ -109,14 +109,14 @@ const getAllCar = async (
                                         },
                                    },
                               },
-                              {
-                                   $lookup: {
-                                        from: 'leasetypes',
-                                        localField: 'leaseType_id',
-                                        foreignField: '_id',
-                                        as: 'leaseType',
-                                   },
-                              },
+                              // {
+                              //      $lookup: {
+                              //           from: 'leasetypes',
+                              //           localField: 'leaseType_id',
+                              //           foreignField: '_id',
+                              //           as: 'leaseType',
+                              //      },
+                              // },
                          ],
                          as: 'offers',
                     },
@@ -425,12 +425,12 @@ const getSingleCars = async (id, leaseTypeId) => {
           const carFeatures = await carFeatureModel.findOne({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
+               // yearModel: car.yearModel,
           });
           let clause = {
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
+               // yearModel: car.yearModel,
           };
           if (leaseTypeId) {
                clause.leaseType_id = leaseTypeId;

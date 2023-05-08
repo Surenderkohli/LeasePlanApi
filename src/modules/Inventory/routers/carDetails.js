@@ -116,12 +116,19 @@ router.post(
                          req.body.audioEntertainmentFeatures,
                };
 
+               const leaseType_id = Array.isArray(carDetailsData.leaseType_id)
+                    ? carDetailsData.leaseType_id
+                    : [];
+
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
                     carSeries_id: carDetailsData.carSeries_id,
                     yearModel: carDetailsData.yearModel,
-                    //leaseType_id: leaseTypes.map((leaseType) => leaseType._id),
-                    leaseType_id: carDetailsData.leaseType_id,
+                    // leaseType_id: carDetailsData.leaseType_id,
+                    leaseType_id: leaseType_id.map((leaseType) => ({
+                         leaseType: leaseType.leaseType,
+                         term: leaseType.term,
+                    })),
                     offers: [],
                     deals: req.body.deals,
                };
@@ -181,7 +188,7 @@ router.post(
                     carFeaturesData,
                     carOffersData
                );
-               res.send(result);
+               res.status(200).json({ success: true, data: result });
           } catch (error) {
                console.log(error);
                console.error('Error in adding new carDetails:', error);
@@ -333,6 +340,7 @@ router.get('/fetch-singles/:id', async (req, res) => {
 
 //get all cars by brand, series and lease type but different yearModel
 router.get('/list', async (req, res) => {
+     g;
      const { carBrand_id, carSeries_id } = req.query;
      try {
           const cars = await CarServices.getCarsByBrandSeriesLeaseType(

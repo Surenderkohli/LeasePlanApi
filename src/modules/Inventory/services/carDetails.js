@@ -69,7 +69,7 @@ const getAllCar = async (
                               carBrandId: '$carBrand_id',
                               carSeriesId: '$carSeries_id',
                               leaseTypeId: '$leaseType_id',
-                              yearModel: '$yearModel',
+                              // yearModel: '$yearModel',
                          },
                          pipeline: [
                               {
@@ -99,12 +99,12 @@ const getAllCar = async (
                                                   //           '$$leaseTypeId',
                                                   //      ],
                                                   // },
-                                                  {
-                                                       $eq: [
-                                                            '$yearModel',
-                                                            '$$yearModel',
-                                                       ],
-                                                  },
+                                                  // {
+                                                  //      $eq: [
+                                                  //           '$yearModel',
+                                                  //           '$$yearModel',
+                                                  //      ],
+                                                  // },
                                              ],
                                         },
                                    },

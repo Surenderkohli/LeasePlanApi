@@ -261,18 +261,18 @@ const addNewCar = async (
           const carOffer = await carOfferModel.create(carOffersData);
 
           // Update corresponding car brand's leaseType_id array
-          const carBrand = await carBrandModel.findOneAndUpdate(
-               { _id: carDetailsData.carBrand_id },
-               { $addToSet: { leaseType_id: carOffersData.leaseType_id } },
-               { new: true }
-          );
+          // const carBrand = await carBrandModel.findOneAndUpdate(
+          //      { _id: carDetailsData.carBrand_id },
+          //      { $addToSet: { leaseType_id: carOffersData.leaseType_id } },
+          //      { new: true }
+          // );
 
           // Return the new car object
           return {
                carDetails: newCarDetails,
                carFeatures: newCarFeatures,
                carOffers: carOffer,
-               carBrand: carBrand,
+               // carBrand: carBrand,
           };
      } catch (error) {
           console.log(error);

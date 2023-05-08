@@ -8,6 +8,7 @@ const getAllLeaseType = async () => {
 const addLeaseType = async (data) => {
      const response = await leaseTypeModel.create({
           leaseType: data.leaseType,
+          term: data.term,
      });
      return response;
 };

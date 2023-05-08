@@ -116,22 +116,23 @@ router.post(
                          req.body.audioEntertainmentFeatures,
                };
 
-               const leaseType_id = Array.isArray(carDetailsData.leaseType_id)
-                    ? carDetailsData.leaseType_id
-                    : [];
+               // Extract leaseTypes data from the req body
+               const leaseType = req.body.leaseType_id.leaseType;
+               const term = req.body.leaseType_id.term;
 
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
                     carSeries_id: carDetailsData.carSeries_id,
-                    yearModel: carDetailsData.yearModel,
-                    // leaseType_id: carDetailsData.leaseType_id,
-                    leaseType_id: leaseType_id.map((leaseType) => ({
-                         leaseType: leaseType.leaseType,
-                         term: leaseType.term,
-                    })),
+                    leaseType_id: [
+                         {
+                              leaseType: leaseType,
+                              term: term,
+                         },
+                    ],
                     offers: [],
                     deals: req.body.deals,
                };
+               
 
                for (let i = 1; i <= 20; i++) {
                     const duration = req.body[`duration${i}`];

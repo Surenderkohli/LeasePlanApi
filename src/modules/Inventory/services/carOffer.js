@@ -242,6 +242,9 @@ const createCarOffer = async (carOfferData) => {
                     existingOffer.duration = carOfferData.duration;
                     existingOffer.annualMileage = carOfferData.annualMileage;
                     existingOffer.monthlyCost = carOfferData.monthlyCost;
+                    existingOffer.bestDeals = carOfferData.bestDeals
+                         ? carOfferData.bestDeals
+                         : 'No';
                } else {
                     // add a new offer object with the same calculationNo
                     existingCarOffer.offers.push({
@@ -249,6 +252,9 @@ const createCarOffer = async (carOfferData) => {
                          annualMileage: carOfferData.annualMileage,
                          monthlyCost: carOfferData.monthlyCost,
                          calculationNo: carOfferData.calculationNo,
+                         bestDeals: carOfferData.bestDeals
+                              ? carOfferData.bestDeals
+                              : 'No',
                     });
                }
 
@@ -270,9 +276,11 @@ const createCarOffer = async (carOfferData) => {
                               annualMileage: carOfferData.annualMileage,
                               monthlyCost: carOfferData.monthlyCost,
                               calculationNo: carOfferData.calculationNo,
+                              bestDeals: carOfferData.bestDeals
+                                   ? carOfferData.bestDeals
+                                   : 'No',
                          },
                     ],
-                    deals: carOfferData.deals,
                     validFrom: carOfferData.validFrom,
                     validTo: carOfferData.validTo,
                });

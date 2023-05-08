@@ -242,6 +242,9 @@ const createCarOffer = async (carOfferData) => {
                     existingOffer.duration = carOfferData.duration;
                     existingOffer.annualMileage = carOfferData.annualMileage;
                     existingOffer.monthlyCost = carOfferData.monthlyCost;
+                    existingOffer.bestDeals = carOfferData.bestDeals
+                         ? carOfferData.bestDeals
+                         : 'No';
                } else {
                     // add a new offer object with the same calculationNo
                     existingCarOffer.offers.push({
@@ -249,6 +252,9 @@ const createCarOffer = async (carOfferData) => {
                          annualMileage: carOfferData.annualMileage,
                          monthlyCost: carOfferData.monthlyCost,
                          calculationNo: carOfferData.calculationNo,
+                         bestDeals: carOfferData.bestDeals
+                              ? carOfferData.bestDeals
+                              : 'No',
                     });
                }
 
@@ -270,9 +276,11 @@ const createCarOffer = async (carOfferData) => {
                               annualMileage: carOfferData.annualMileage,
                               monthlyCost: carOfferData.monthlyCost,
                               calculationNo: carOfferData.calculationNo,
+                              bestDeals: carOfferData.bestDeals
+                                   ? carOfferData.bestDeals
+                                   : 'No',
                          },
                     ],
-                    deals: carOfferData.deals,
                     validFrom: carOfferData.validFrom,
                     validTo: carOfferData.validTo,
                });
@@ -738,6 +746,38 @@ const updateCar = async (
           throw new Error(error.message);
      }
 };
+
+const getDeals = async (query) => {
+     try {
+          const carOffers = await carOfferModel
+               .find({
+                    'offers.bestDeals': 'Yes',
+                    ...query,
+               })
+               .populate(['carBrand_id', 'carSeries_id']);
+
+          const offersWithBestDeals = carOffers
+               .map((carOffer) => {
+                    const offers = carOffer.offers.filter(
+                         (offer) => offer.bestDeals === 'Yes'
+                    );
+                    return {
+                         ...carOffer.toObject(),
+                         offers,
+                    };
+               })
+               .filter((carOffer) => carOffer.offers.length > 0);
+
+          const result = {
+               carOffers: offersWithBestDeals,
+          };
+
+          return result;
+     } catch (error) {
+          throw new Error(error.message);
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -745,4 +785,5 @@ export const carOfferService = {
      getAllCarWithOffers,
      getSingleCar,
      updateCar,
+     getDeals,
 };

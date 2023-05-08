@@ -33,6 +33,11 @@ const carOfferSchema = new mongoose.Schema(
                     annualMileage: Number,
                     monthlyCost: Number,
                     calculationNo: Number,
+                    bestDeals: {
+                         type: String,
+                         enum: ['Yes', 'No'],
+                         default: 'No',
+                    },
                },
           ],
           validFrom: {
@@ -47,11 +52,11 @@ const carOfferSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
-          deals: {
-               type: String,
-               enum: ['active', 'inactive'],
-               default: 'inactive',
-          },
+          // deals: {
+          //      type: String,
+          //      enum: ['active', 'inactive'],
+          //      default: 'inactive',
+          // },
      },
 
      { timestamps: true }

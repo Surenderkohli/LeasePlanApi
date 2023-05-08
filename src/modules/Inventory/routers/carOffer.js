@@ -292,4 +292,26 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
      }
 });
 
+router.get('/best-deal', async (req, res) => {
+     try {
+          const { limit = 5, skip = 0 } = req.query;
+          const result = await carOfferService.getDeals(
+               parseInt(limit),
+               parseInt(skip)
+          );
+
+          if (result) {
+               res.status(200).json({ success: true, data: result });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'Not found any best deals',
+                    data: [],
+               });
+          }
+     } catch (error) {
+          res.send({ status: 400, success: false, msg: error.message });
+     }
+});
+
 export default router;

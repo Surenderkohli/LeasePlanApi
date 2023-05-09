@@ -575,6 +575,15 @@ const getCount = async () => {
           }
           
      });
+
+     if (countObject.businessLeaseCount.total === 0) {
+          countObject.businessLeaseCount = {
+               shortTerm: 0,
+               longTerm: 0,
+               total:0
+          };
+     }
+
      totalInventoryCount  = countObject.privateLeaseCount.total + countObject.businessLeaseCount.total;
 
      return {

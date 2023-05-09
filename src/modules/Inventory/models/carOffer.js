@@ -23,10 +23,10 @@ const carOfferSchema = new mongoose.Schema(
                     },
                },
           ],
-          yearModel: {
-               type: Number,
-               required: false,
-          },
+          // yearModel: {
+          //      type: Number,
+          //      required: false,
+          // },
           offers: [
                {
                     duration: Number,

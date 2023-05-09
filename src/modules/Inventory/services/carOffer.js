@@ -221,13 +221,13 @@ const createCarOffer = async (carOfferData) => {
                );
           }
 
-          const yearModel = carOfferData.yearModel;
+         // const yearModel = carOfferData.yearModel;
 
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
-               yearModel: yearModel,
+               //yearModel: yearModel,
           });
 
           if (existingCarOffer) {
@@ -269,7 +269,7 @@ const createCarOffer = async (carOfferData) => {
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
                     leaseType_id: leaseTypes,
-                    yearModel: yearModel,
+                   // yearModel: yearModel,
                     offers: [
                          {
                               duration: carOfferData.duration,
@@ -287,7 +287,7 @@ const createCarOffer = async (carOfferData) => {
                return newCarOffer;
           }
      } catch (error) {
-          console.log(error);
+          console.log(error);g
           throw new Error('Failed to create/update car offer.');
      }
 };

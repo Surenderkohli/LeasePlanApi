@@ -539,35 +539,48 @@ const getCount = async () => {
           },
      ]);
 
+    let totalInventoryCount = 0;
+     
      const countObject = {
           privateLeaseCount: {
                shortTerm: 0,
                longTerm: 0,
+               total:0
           },
 
           businessLeaseCount: {
                shortTerm: 0,
                longTerm: 0,
-          },
+               total:0
+          },  
      };
 
      counts.forEach((count) => {
           if (count._id.leaseType === 'Private Lease') {
                if (count._id.term === 'Short Term') {
                     countObject.privateLeaseCount.shortTerm += count.count;
+                    countObject.privateLeaseCount.total += count.count;
                } else if (count._id.term === 'Long Term') {
                     countObject.privateLeaseCount.longTerm += count.count;
+                    countObject.privateLeaseCount.total += count.count;
                }
           } else if (count._id.leaseType === 'Business Lease') {
                if (count._id.term === 'Short Term') {
                     countObject.businessLeaseCount.shortTerm += count.count;
+                    countObject.businessLeaseCount.total += count.count;
                } else if (count._id.term === 'Long Term') {
                     countObject.businessLeaseCount.longTerm += count.count;
+                    countObject.businessLeaseCount.total += count.count;
                }
           }
+          
      });
+     totalInventoryCount  = countObject.privateLeaseCount.total + countObject.businessLeaseCount.total;
 
-     return countObject;
+     return {
+          ...countObject,
+          totalInventoryCount
+     };
 };
 
 const getSingleCar = async (id) => {

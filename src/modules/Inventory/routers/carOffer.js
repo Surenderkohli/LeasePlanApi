@@ -167,6 +167,7 @@ router.get('/counts', async (req, res) => {
                success: true,
                privateLeaseCount: counts.privateLeaseCount,
                businessLeaseCount: counts.businessLeaseCount,
+               totalInventoryCount: counts.totalInventoryCount,
           });
      } catch (error) {
           res.status(400).json({ success: false, error: error.message });

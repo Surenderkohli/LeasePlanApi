@@ -3,7 +3,7 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 import carDetailsModel from '../models/carDetails.js';
-import { carFeatureModel } from '../models/carFeatures.js';
+import { carFeatureModel ,CarFeatureCategory} from '../models/carFeatures.js';
 
 // const createCarOffer = async (carOfferData) => {
 //      try {
@@ -320,14 +320,14 @@ const getAllCarWithOffers = async (
                          as: 'carBrand',
                     },
                },
-               {
-                    $lookup: {
-                         from: 'leasetypes',
-                         localField: 'leaseType_id',
-                         foreignField: '_id',
-                         as: 'leaseType',
-                    },
-               },
+               // {
+               //      $lookup: {
+               //           from: 'leasetypes',
+               //           localField: 'leaseType_id',
+               //           foreignField: '_id',
+               //           as: 'leaseType',
+               //      },
+               // },
                {
                     $lookup: {
                          from: 'carseries',
@@ -342,7 +342,7 @@ const getAllCarWithOffers = async (
                          let: {
                               carBrandId: '$carBrand_id',
                               carSeriesId: '$carSeries_id',
-                              yearModel: '$yearModel',
+                             // yearModel: '$yearModel',
                          },
                          pipeline: [
                               {
@@ -361,16 +361,17 @@ const getAllCarWithOffers = async (
                                                             '$$carSeriesId',
                                                        ],
                                                   },
-                                                  {
-                                                       $eq: [
-                                                            '$yearModel',
-                                                            '$$yearModel',
-                                                       ],
-                                                  },
+                                                  // {
+                                                  //      $eq: [
+                                                  //           '$yearModel',
+                                                  //           '$$yearModel',
+                                                  //      ],
+                                                  // },
                                              ],
                                         },
                                    },
                               },
+                             
                          ],
                          as: 'details',
                     },
@@ -611,16 +612,16 @@ const getSingleCar = async (id) => {
           //      isDeleted: false,
           // });
 
-          const carFeatures = await carFeaturesModel.findOne({
+          const carFeatures = await carFeatureModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
-               yearModel: carOffer.yearModel,
+               //yearModel: carOffer.yearModel,
           });
 
           const carDetails = await carDetailsModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
-               yearModel: carOffer.yearModel,
+              // yearModel: carOffer.yearModel,
           });
 
           const result = {

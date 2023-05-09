@@ -764,12 +764,16 @@ const getDeals = async (query) => {
                     return {
                          ...carOffer.toObject(),
                          offers,
+                         totalBestDeals: offers.length,
                     };
                })
                .filter((carOffer) => carOffer.offers.length > 0);
 
+               const totalBestDeals = offersWithBestDeals.reduce((acc, carOffer) => acc + carOffer.totalBestDeals, 0);
+
           const result = {
                carOffers: offersWithBestDeals,
+               totalBestDeals,
           };
 
           return result;

@@ -247,29 +247,36 @@ const createCarFeatureCategory = async (carFeatureCategoryData) => {
           const { makeCode, modelCode, categoryCode, categoryDescription } =
                carFeatureCategoryData;
 
-          // Find the car feature category document based on makeCode, modelCode, and categoryCode
-          let carFeatureCategory = await CarFeatureCategory.findOne({
+          // Find all car feature category documents based on makeCode, modelCode, and categoryCode
+          let carFeatureCategories = await CarFeatureCategory.find({
                makeCode,
                modelCode,
                categoryCode,
           });
 
-          // If the car feature category document already exists, update the categoryDescription
-          if (carFeatureCategory) {
-               carFeatureCategory.categoryDescription = categoryDescription;
-          } else {
-               // Otherwise, create a new car feature category document
-               carFeatureCategory = new CarFeatureCategory({
+          // Update the categoryDescription for all matching car feature category documents
+          carFeatureCategories = carFeatureCategories.map((category) => {
+               category.categoryDescription = categoryDescription;
+               return category;
+          });
+
+          // If no matching car feature category documents found, create a new one
+          if (carFeatureCategories.length === 0) {
+               const carFeatureCategory = new CarFeatureCategory({
                     makeCode,
                     modelCode,
                     categoryCode,
                     categoryDescription,
                });
+               carFeatureCategories.push(carFeatureCategory);
           }
 
-          await carFeatureCategory.save();
+          // Save all car feature category documents
+          await Promise.all(
+               carFeatureCategories.map((category) => category.save())
+          );
 
-          return carFeatureCategory;
+          return carFeatureCategories;
      } catch (error) {
           console.log(error);
           throw new Error('Failed to create car feature category');

@@ -45,7 +45,7 @@ router.post(
                     const carDetails = await carDetailModel.findOne({
                          carBrand_id: carBrand_id,
                          carSeries_id: carSeries_id,
-                         yearModel: yearModel,
+                         //yearModel: yearModel,
                     });
 
                     const { fuelType, gears } = carDetails;
@@ -168,6 +168,7 @@ router.get(
                const pdfBuffer = await page.pdf({
                     format: 'A4',
                     printBackground: true,
+                    scale: 0.75, // Adjust the scale factor to fit more content onto a single page
                });
 
                await browser.close();

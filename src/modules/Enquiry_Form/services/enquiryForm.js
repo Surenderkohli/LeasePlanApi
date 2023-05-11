@@ -131,6 +131,14 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                         <th>Lease Type:</th>
                                         <td>${enquiryData.leaseTypeValues}</td>
                                    </tr>
+
+                                    <tr  class="detail"
+                                   style="
+                                   text-align: left;
+                               ">
+                                        <th>Lease Term:</th>
+                                        <td>${enquiryData.terms}</td>
+                                   </tr>
                                    <tr class="detail"
                                    style="
                                    text-align: left;

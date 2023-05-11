@@ -41,6 +41,9 @@ router.post(
                          (type) => type.leaseType
                     );
 
+                    const term = carOffers.leaseType_id;
+                    let terms = term.map((type) => type.term);
+
                     // Use find() method to retrieve the matching carOffers document with populated leaseType data
                     const carDetails = await carDetailModel.findOne({
                          carBrand_id: carBrand_id,
@@ -71,6 +74,7 @@ router.post(
                          fuelType,
                          gears,
                          leaseTypeValues,
+                         terms,
                          companyName,
                          duration: req.query.duration,
                          annualMileage: req.query.annualMileage,

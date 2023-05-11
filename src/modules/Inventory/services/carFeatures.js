@@ -283,6 +283,18 @@ const createCarFeatureCategory = async (carFeatureCategoryData) => {
      }
 };
 
+const deleteAllCarFeaturesDescription = async () => {
+     try {
+          await carFeatureModel.deleteMany({});
+          console.log(
+               'Existing car features description deleted successfully.'
+          );
+     } catch (error) {
+          console.log(`Error deleting car features description: ${error}`);
+          throw error;
+     }
+};
+
 const addFeatureDescription = async (featureDescriptionData) => {
      try {
           const { makeCode, modelCode, categoryCode, featureDescription } =
@@ -365,4 +377,5 @@ export const carFeatureService = {
      createCarFeature,
      createCarFeatureCategory,
      addFeatureDescription,
+     deleteAllCarFeaturesDescription,
 };

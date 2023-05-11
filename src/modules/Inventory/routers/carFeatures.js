@@ -3,6 +3,7 @@ import { httpHandler } from '../../../helpers/error-handler.js';
 import { carFeatureService } from '../services/carFeatures.js';
 import multer from 'multer';
 import csvtojson from 'csvtojson';
+import { carFeatureModel } from '../models/carFeatures.js';
 
 const router = Router();
 
@@ -163,6 +164,13 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           const featureDescriptionData = await csvtojson().fromString(
                csvString
           );
+
+          const existingFeatures = await carFeatureModel.find({});
+
+          // Delete existing car features only if they exist
+          if (existingFeatures.length > 0) {
+               await carFeatureService.deleteAllCarFeaturesDescription();
+          }
 
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =

@@ -567,14 +567,12 @@ const deletedCar = async (id) => {
           await carOfferModel.deleteMany({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
           });
 
           // Delete associated car features
           await carFeatureModel.deleteMany({
                carBrand_id: car.carBrand_id,
                carSeries_id: car.carSeries_id,
-               yearModel: car.yearModel,
           });
 
           car.isDeleted = true;

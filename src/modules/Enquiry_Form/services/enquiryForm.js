@@ -189,16 +189,23 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                          >
                               <h2>Thank you for your enquiry!</h2>
                               <p style="font-size: 20px; line-height: 1.5">
+                              <p id="download-date"></p>
                               We appreciate your interest in our car lease services.
                               Our team will get back to you shortly with more
                               information.
                               </p>
                          </div>
                     </div>
+                    <script>
+                      var today = new Date();
+                      var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                      var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                      var dateTime = date+' '+time;
+                      document.getElementById("download-date").innerHTML = "PDF downloaded on: " + dateTime;
+                   </script>
                </body>
           </html>
 
-     
         `;
 
           let mailOptions = {

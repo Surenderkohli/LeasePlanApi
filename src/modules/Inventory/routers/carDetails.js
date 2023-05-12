@@ -116,18 +116,12 @@ router.post(
                //           req.body.audioEntertainmentFeatures,
                // };
 
-               const categories = req.body.categories.map((category) => ({
-                    categoryCode: category.categoryCode,
-                    categoryDescription: category.categoryDescription,
-                    features: [...category.features],
-               }));
-
                const carFeaturesData = {
                     carSeries_id: carDetailsData.carSeries_id,
                     carBrand_id: carDetailsData.carBrand_id,
                     modelCode: carDetailsData.modelCode,
                     makeCode: carDetailsData.makeCode,
-                    categories,
+                    categories: carDetailsData.categories,
                };
                // Extract leaseTypes data from the req body
                const leaseType = req.body.leaseType_id.leaseType;

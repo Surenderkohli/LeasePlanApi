@@ -255,14 +255,24 @@ const addNewCar = async (
                image: images,
           });
 
-          // Create carFeatureCategory in CarFeatureCategory collection
-          const newCarFeatureCategory = await CarFeatureCategory.create({
-               makeCode: carFeaturesData.makeCode,
-               modelCode: carFeaturesData.modelCode,
-               categoryCode: carFeaturesData.categories[0].categoryCode, // Assuming only one category is added at a time
-               categoryDescription:
-                    carFeaturesData.categories[0].categoryDescription, // Assuming only one category is added at a time
-          });
+          const categoriesData = [];
+          for (const category of carFeaturesData.categories) {
+               const categoryData = await CarFeatureCategory.findOne({
+                    makeCode: carFeaturesData.makeCode,
+                    modelCode: carFeaturesData.modelCode,
+                    categoryCode: category.categoryCode,
+               });
+
+               if (!categoryData) {
+                    throw new Error('Category not found in CarFeatureCategory');
+               }
+
+               categoriesData.push({
+                    categoryCode: categoryData.categoryCode,
+                    categoryDescription: categoryData.categoryDescription,
+                    features: category.features,
+               });
+          }
 
           // Create carFeatureModel in CarFeatureModel collection
           const newCarFeatures = await carFeatureModel.create({
@@ -270,15 +280,7 @@ const addNewCar = async (
                carBrand_id: carFeaturesData.carBrand_id,
                modelCode: carFeaturesData.modelCode,
                makeCode: carFeaturesData.makeCode,
-               categories: [
-                    {
-                         categoryCode:
-                              carFeaturesData.categories[0].categoryCode, // Assuming only one category is added at a time
-                         categoryDescription:
-                              carFeaturesData.categories[0].categoryDescription, // Assuming only one category is added at a time
-                         features: carFeaturesData.categories[0].features,
-                    },
-               ],
+               categories: categoriesData,
           });
 
           // Find or create a carBrand entry in the carBrandModel collection
@@ -336,7 +338,6 @@ const addNewCar = async (
           // Return the new car object
           return {
                carDetails: newCarDetails,
-               carFeatureCategory: newCarFeatureCategory,
                carFeatures: newCarFeatures,
                carOffers: carOffer,
                // carBrand: carBrand,

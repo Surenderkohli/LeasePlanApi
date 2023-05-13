@@ -13,6 +13,13 @@ router.post(
      httpHandler(async (req, res) => {
           try {
                try {
+                    /* 
+                    - Need to add the following fields to the enquiryForm collection:
+                         -  name : firstName + lastName
+                         -  mobileNumber : mobileNumber
+                         -  emailAddress : emailAddress
+                    */
+
                     // Retrieve car offers using relevant query and criteria
                     const { carOffers_id } = req.body;
 

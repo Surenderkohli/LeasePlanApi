@@ -300,11 +300,11 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                //await CarServices.deleteAllCarDetails();
 
                // Check if the CSV data is valid
-               // if (!isValidCarDetailData(carDetailData)) {
-               //      throw new Error(
-               //           'Invalid CSV format. Please upload a valid CSV file.'
-               //      );
-               // }
+               if (!isValidCarDetailData(carDetailData)) {
+                    throw new Error(
+                         'Invalid CSV format. Please upload a valid CSV file.'
+                    );
+               }
 
                for (let i = 0; i < carDetailData.length; i++) {
                     const carDetail =
@@ -384,81 +384,84 @@ router.delete(
 );
 
 // Helper function to validate the CSV data for car details
-// function isValidCarDetailData(carDetailData) {
-//      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
-//           return false;
-//      }
+function isValidCarDetailData(carDetailData) {
+     if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
+          return false;
+     }
 
-//      // Iterate over each car detail record and validate the fields
-//      for (let i = 0; i < carDetailData.length; i++) {
-//           const carDetail = carDetailData[i];
+     // Iterate over each car detail record and validate the fields
+     for (let i = 0; i < carDetailData.length; i++) {
+          const carDetail = carDetailData[i];
 
-//           // Check if required fields exist
-//           if (
-//                !carDetail.carSeries_id ||
-//                !carDetail.carBrand_id ||
-//                !carDetail.bodyType ||
-//                !carDetail.fuelType ||
-//                !carDetail.transmission
-//           ) {
-//                return false;
-//           }
+          // Check if required fields exist
+          if (
+               !carDetail.modelCode ||
+               !carDetail.makeCode ||
+               !carDetail.companyName ||
+               !carDetail.seriesName ||
+               !carDetail.yearModel ||
+               !carDetail.tankCapacity ||
+               !carDetail.fuelType ||
+               !carDetail.transmission
+          ) {
+               return false;
+          }
 
-//           // Validate the enum values
-//           if (
-//                ![
-//                     'city-car',
-//                     'coupe',
-//                     'estate',
-//                     'sedan',
-//                     'hatchback',
-//                     'mpv',
-//                     'saloon',
-//                     'sports',
-//                ].includes(carDetail.bodyType)
-//           ) {
-//                return false;
-//           }
+          // Validate the enum values
+          if (
+               ![
+                    'city-car',
+                    'coupe',
+                    'estate',
+                    'sedan',
+                    'hatchback',
+                    'mpv',
+                    'saloon',
+                    'sports',
+               ].includes(carDetail.bodyType)
+          ) {
+               return false;
+          }
 
-//           if (
-//                !['petrol', 'diesel', 'hybrid', 'electric'].includes(
-//                     carDetail.fuelType
-//                )
-//           ) {
-//                return false;
-//           }
+          // if (
+          //      !['petrol', 'diesel', 'hybrid', 'electric'].includes(
+          //           carDetail.fuelType
+          //      )
+          // ) {
+          //      return false;
+          // }
 
-//           if (!['automatic', 'manual'].includes(carDetail.transmission)) {
-//                return false;
-//           }
+          // if (!['automatic', 'manual'].includes(carDetail.transmission)) {
+          //      return false;
+          // }
 
-//           // Additional validation checks for other fields if needed
+          // // Additional validation checks for other fields if needed
 
-//           // Example validation for numeric fields
-//           if (carDetail.yearModel && typeof carDetail.yearModel !== 'number') {
-//                return false;
-//           }
+          // // Example validation for numeric fields
+          // if (carDetail.yearModel && typeof carDetail.yearModel !== 'number') {
+          //      return false;
+          // }
 
-//           if (carDetail.door && typeof carDetail.door !== 'number') {
-//                return false;
-//           }
+          // if (carDetail.door && typeof carDetail.door !== 'number') {
+          //      return false;
+          // }
 
-//           if (carDetail.seat && typeof carDetail.seat !== 'number') {
-//                return false;
-//           }
+          // if (carDetail.seat && typeof carDetail.seat !== 'number') {
+          //      return false;
+          // }
 
-//           // Example validation for string fields
-//           if (
-//                carDetail.acceleration &&
-//                typeof carDetail.acceleration !== 'string'
-//           ) {
-//                return false;
-//           }
+          // // Example validation for string fields
+          // if (
+          //      carDetail.acceleration &&
+          //      typeof carDetail.acceleration !== 'string'
+          // ) {
+          //      return false;
+          // }
 
-//           // Add more validation checks as per your requirements
-//      }
+          // Add more validation checks as per your requirements
+     }
 
-//      return true;
-// }
+     return true;
+}
 
 export default router;

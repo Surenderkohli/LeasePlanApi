@@ -423,40 +423,26 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
-          // if (
-          //      !['petrol', 'diesel', 'hybrid', 'electric'].includes(
-          //           carDetail.fuelType
-          //      )
-          // ) {
-          //      return false;
-          // }
-
-          // if (!['automatic', 'manual'].includes(carDetail.transmission)) {
-          //      return false;
-          // }
-
-          // // Additional validation checks for other fields if needed
-
           // // Example validation for numeric fields
-          // if (carDetail.yearModel && typeof carDetail.yearModel !== 'number') {
-          //      return false;
-          // }
+          if (carDetail.yearModel && typeof carDetail.yearModel !== 'string') {
+               return false;
+          }
 
-          // if (carDetail.door && typeof carDetail.door !== 'number') {
-          //      return false;
-          // }
+          if (carDetail.door && typeof carDetail.door !== 'string') {
+               return false;
+          }
 
-          // if (carDetail.seat && typeof carDetail.seat !== 'number') {
-          //      return false;
-          // }
+          if (carDetail.seat && typeof carDetail.seat !== 'string') {
+               return false;
+          }
 
           // // Example validation for string fields
-          // if (
-          //      carDetail.acceleration &&
-          //      typeof carDetail.acceleration !== 'string'
-          // ) {
-          //      return false;
-          // }
+          if (
+               carDetail.acceleration &&
+               typeof carDetail.acceleration !== 'string'
+          ) {
+               return false;
+          }
 
           // Add more validation checks as per your requirements
      }

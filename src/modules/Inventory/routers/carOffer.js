@@ -81,6 +81,12 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                const csvString = req.file.buffer.toString('utf8');
                const carOfferData = await csvtojson().fromString(csvString);
 
+               // Validate the CSV data for car offers
+               const validation = isValidCarOfferData(carOfferData);
+               if (!validation.isValid) {
+                    throw new Error(`Invalid CSV format. ${validation.error}`);
+               }
+
                // delete existing car offers from database
                // await carOfferService.deleteAllCarOffers();
 
@@ -314,5 +320,72 @@ router.get('/best-deal', async (req, res) => {
           res.send({ status: 400, success: false, msg: error.message });
      }
 });
+
+// Helper function to validate the CSV data for car offers
+function isValidCarOfferData(carOfferData) {
+     if (!Array.isArray(carOfferData) || carOfferData.length === 0) {
+          return {
+               isValid: false,
+               error: 'No car offer data provided',
+          };
+     }
+
+     const validationErrors = [];
+
+     for (let i = 0; i < carOfferData.length; i++) {
+          const carOffer = carOfferData[i];
+
+          if (!carOffer.calculationNo) {
+               validationErrors.push('Missing calculationNo');
+          }
+
+          if (!carOffer.duration) {
+               validationErrors.push('Missing duration');
+          }
+
+          if (!carOffer.annualMileage) {
+               validationErrors.push('Missing annualMileage');
+          }
+
+          if (!carOffer.monthlyCost) {
+               validationErrors.push('Missing monthlyCost');
+          }
+
+          if (
+               typeof carOffer.duration !== 'string' ||
+               isNaN(Number(carOffer.duration)) ||
+               Number(carOffer.duration) <= 0
+          ) {
+               validationErrors.push('Invalid duration');
+          }
+
+          if (
+               typeof carOffer.annualMileage !== 'string' ||
+               isNaN(Number(carOffer.annualMileage)) ||
+               Number(carOffer.annualMileage) <= 0
+          ) {
+               validationErrors.push('Invalid annualMileage');
+          }
+
+          if (
+               typeof carOffer.monthlyCost !== 'string' ||
+               isNaN(Number(carOffer.monthlyCost)) ||
+               Number(carOffer.monthlyCost) <= 0
+          ) {
+               validationErrors.push('Invalid monthlyCost');
+          }
+     }
+
+     if (validationErrors.length > 0) {
+          return {
+               isValid: false,
+               error: 'Invalid car offer data',
+          };
+     }
+
+     return {
+          isValid: true,
+     };
+}
 
 export default router;

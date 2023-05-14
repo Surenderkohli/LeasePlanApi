@@ -176,14 +176,14 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           );
 
           // Validate the CSV data for car features
-          // const validation = isValidFeatureDescriptionData(
-          //      featureDescriptionData
-          // );
-          // if (!validation.isValid) {
-          //      return res.status(400).json({
-          //           message: `Invalid CSV format. ${validation.error}`,
-          //      });
-          // }
+          const validation = isValidFeatureDescriptionData(
+               featureDescriptionData
+          );
+          if (!validation.isValid) {
+               return res.status(400).json({
+                    message: `Invalid CSV format. ${validation.error}`,
+               });
+          }
 
           const existingFeatures = await carFeatureModel.find({});
 
@@ -269,28 +269,33 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
           };
      }
 
-     const validationErrors = [];
+     const missingFields = new Set();
 
-     // Iterate over each feature description record and validate the fields
      for (let i = 0; i < featureDescriptionData.length; i++) {
           const featureDescription = featureDescriptionData[i];
 
-          // Check if required fields exist
           if (!featureDescription.makeCode) {
-               validationErrors.push(`Missing makeCode at index ${i}`);
+               missingFields.add('makeCode');
           }
 
           if (!featureDescription.modelCode) {
-               validationErrors.push(`Missing modelCode at index ${i}`);
+               missingFields.add('modelCode');
           }
 
-          // Add more validation checks as per your requirements
+          if (!featureDescription.categoryCode) {
+               missingFields.add('categoryCode');
+          }
+
+          if (!featureDescription.featureDescription) {
+               missingFields.add('featureDescription');
+          }
      }
 
-     if (validationErrors.length > 0) {
+     if (missingFields.size > 0) {
+          const missingFieldsList = Array.from(missingFields).join(', ');
           return {
                isValid: false,
-               error: validationErrors.join(', '),
+               error: `Missing or invalid fields: ${missingFieldsList}`,
           };
      }
 

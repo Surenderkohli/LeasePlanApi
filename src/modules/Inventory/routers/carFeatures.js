@@ -134,6 +134,16 @@ router.post(
                     csvString
                );
 
+               // Validate the CSV data for car feature categories
+               const validation = isValidCarFeatureCategoryData(
+                    carFeatureCategoryData
+               );
+               if (!validation.isValid) {
+                    return res.status(400).json({
+                         message: `Invalid CSV format. ${validation.error}`,
+                    });
+               }
+
                for (const data of carFeatureCategoryData) {
                     await carFeatureService.createCarFeatureCategory(data);
                }
@@ -165,6 +175,16 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                csvString
           );
 
+          // Validate the CSV data for car features
+          // const validation = isValidFeatureDescriptionData(
+          //      featureDescriptionData
+          // );
+          // if (!validation.isValid) {
+          //      return res.status(400).json({
+          //           message: `Invalid CSV format. ${validation.error}`,
+          //      });
+          // }
+
           const existingFeatures = await carFeatureModel.find({});
 
           // Delete existing car features only if they exist
@@ -189,5 +209,94 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           res.status(400).json({ message: error.message });
      }
 });
+
+// Helper function to validate the CSV data for car feature categories
+function isValidCarFeatureCategoryData(carFeatureCategoryData) {
+     if (
+          !Array.isArray(carFeatureCategoryData) ||
+          carFeatureCategoryData.length === 0
+     ) {
+          return {
+               isValid: false,
+               error: 'No car feature category data provided',
+          };
+     }
+
+     const missingFields = new Set();
+
+     for (let i = 0; i < carFeatureCategoryData.length; i++) {
+          const carFeatureCategory = carFeatureCategoryData[i];
+
+          if (!carFeatureCategory.makeCode) {
+               missingFields.add('makeCode');
+          }
+
+          if (!carFeatureCategory.modelCode) {
+               missingFields.add('modelCode');
+          }
+
+          if (!carFeatureCategory.categoryCode) {
+               missingFields.add('categoryCode');
+          }
+
+          if (!carFeatureCategory.categoryDescription) {
+               missingFields.add('categoryDescription');
+          }
+     }
+
+     if (missingFields.size > 0) {
+          const missingFieldsList = Array.from(missingFields).join(', ');
+          return {
+               isValid: false,
+               error: `Missing or invalid fields: ${missingFieldsList}`,
+          };
+     }
+
+     return {
+          isValid: true,
+     };
+}
+
+// Helper function to validate the CSV data for feature descriptions
+function isValidFeatureDescriptionData(featureDescriptionData) {
+     if (
+          !Array.isArray(featureDescriptionData) ||
+          featureDescriptionData.length === 0
+     ) {
+          return {
+               isValid: false,
+               error: 'No feature description data provided',
+          };
+     }
+
+     const validationErrors = [];
+
+     // Iterate over each feature description record and validate the fields
+     for (let i = 0; i < featureDescriptionData.length; i++) {
+          const featureDescription = featureDescriptionData[i];
+
+          // Check if required fields exist
+          if (!featureDescription.makeCode) {
+               validationErrors.push(`Missing makeCode at index ${i}`);
+          }
+
+          if (!featureDescription.modelCode) {
+               validationErrors.push(`Missing modelCode at index ${i}`);
+          }
+
+          // Add more validation checks as per your requirements
+     }
+
+     if (validationErrors.length > 0) {
+          return {
+               isValid: false,
+               error: validationErrors.join(', '),
+          };
+     }
+
+     return {
+          isValid: true,
+     };
+}
 
 export default router;

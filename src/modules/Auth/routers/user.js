@@ -325,21 +325,27 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.delete('/delete-multiple-collections', async (req, res) => {
-     const collectionsToDelete = req.query.collections.split(','); //['caroffers', 'cardetails', 'carfeatures']
-     const promises = collectionsToDelete.map((collectionName) =>
-          mongoose.connection.dropCollection(collectionName)
-     );
-     await Promise.all(promises);
-     res.status(200).json({ message: 'Collections deleted successfully' });
-});
+     try {
+          const collectionsToDelete =
+               typeof req.query.collections === 'string'
+                    ? req.query.collections.split(',')
+                    : [];
 
-// router.delete('/delete-multiple-collections/:collections', async (req, res) => {
-//      const collectionsToDelete = req.query.collections.split(',');
-//      const promises = collectionsToDelete.map((collectionName) =>
-//           mongoose.connection.dropCollection(collectionName.trim())
-//      );
-//      await Promise.all(promises);
-//      res.status(200).json({ message: 'Collections deleted successfully' });
-// });
+          if (collectionsToDelete.length === 0) {
+               return res
+                    .status(400)
+                    .json({ message: 'No collections provided' });
+          } //['caroffers', 'cardetails', 'carfeatures']
+
+          const promises = collectionsToDelete.map((collectionName) =>
+               mongoose.connection.dropCollection(collectionName)
+          );
+          await Promise.all(promises);
+
+          res.status(200).json({ message: 'Collections deleted successfully' });
+     } catch (error) {
+          res.status(500).json({ error: 'Failed to delete collections' });
+     }
+});
 
 export default router;

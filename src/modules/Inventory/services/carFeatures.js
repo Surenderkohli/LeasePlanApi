@@ -1,6 +1,7 @@
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import { CarFeatureCategory, carFeatureModel } from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
+// import { CarFeatureCategory, carFeatureModel } from '../models/carFeatures.js';
 
 const getAllCarFeature = async () => {
      const response = await carFeatureModel.find();

@@ -2,7 +2,7 @@ import carDetailModel from '../models/carDetails.js';
 import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import { carFeatureModel, CarFeatureCategory } from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
 import carOfferModel from '../models/carOffer.js';
 
 const getAllCar = async (

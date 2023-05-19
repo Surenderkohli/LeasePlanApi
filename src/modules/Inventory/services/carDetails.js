@@ -254,33 +254,27 @@ const addNewCar = async (
                ...carDetailsData,
                image: images,
           });
+          // Extract categories data from carFeaturesData
+          const { categories } = carFeaturesData;
 
-          const categoriesData = [];
-          for (const category of carFeaturesData.categories) {
-               const categoryData = await carFeatureModel.find({
-                    makeCode: carFeaturesData.makeCode,
-                    modelCode: carFeaturesData.modelCode,
+          // Create an array to store the modified categories data
+          const modifiedCategories = [];
+
+          // Iterate over the categories and push the required fields to modifiedCategories array
+          for (const category of categories) {
+               modifiedCategories.push({
                     categoryCode: category.categoryCode,
-               });
-
-               // if (!categoryData) {
-               //      throw new Error('Category not found in carFeaturesModel');
-               // }
-
-               categoriesData.push({
-                    categoryCode: categoryData.categoryCode,
-                    categoryDescription: categoryData.categoryDescription,
+                    categoryDescription: category.categoryDescription,
                     features: category.features,
                });
           }
 
+          // Update carFeaturesData with modified categories
+          carFeaturesData.categories = modifiedCategories;
+
           // Create carFeatureModel in CarFeatureModel collection
           const newCarFeatures = await carFeatureModel.create({
-               carSeries_id: carFeaturesData.carSeries_id,
-               carBrand_id: carFeaturesData.carBrand_id,
-               modelCode: carFeaturesData.modelCode,
-               makeCode: carFeaturesData.makeCode,
-               categories: categoriesData,
+               ...carFeaturesData,
           });
 
           // Find or create a carBrand entry in the carBrandModel collection

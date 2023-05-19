@@ -257,14 +257,14 @@ const addNewCar = async (
 
           const categoriesData = [];
           for (const category of carFeaturesData.categories) {
-               const categoryData = await CarFeatureCategory.findOne({
+               const categoryData = await carFeatureModel.findOne({
                     makeCode: carFeaturesData.makeCode,
                     modelCode: carFeaturesData.modelCode,
                     categoryCode: category.categoryCode,
                });
 
                if (!categoryData) {
-                    throw new Error('Category not found in CarFeatureCategory');
+                    throw new Error('Category not found in carFeaturesModel');
                }
 
                categoriesData.push({

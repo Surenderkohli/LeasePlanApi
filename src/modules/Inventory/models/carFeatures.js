@@ -1,11 +1,11 @@
 import mongoose, { Schema } from 'mongoose';
 
-const carFeatureCategorySchema = new Schema({
-     makeCode: String,
-     modelCode: String,
-     categoryCode: String,
-     categoryDescription: String,
-});
+// const carFeatureCategorySchema = new Schema({
+//      makeCode: String,
+//      modelCode: String,
+//      categoryCode: String,
+//      categoryDescription: String,
+// });
 
 const carFeatureSchema = new Schema({
      carSeries_id: {
@@ -35,9 +35,9 @@ const carFeatureSchema = new Schema({
      },
 });
 
-export const CarFeatureCategory = mongoose.model(
-     'CarFeatureCategory',
-     carFeatureCategorySchema
-);
+// export const CarFeatureCategory = mongoose.model(
+//      'CarFeatureCategory',
+//      carFeatureCategorySchema
+// );
 
 export const carFeatureModel = mongoose.model('carFeature', carFeatureSchema);

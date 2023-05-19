@@ -1,6 +1,7 @@
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import { CarFeatureCategory, carFeatureModel } from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
+// import { CarFeatureCategory, carFeatureModel } from '../models/carFeatures.js';
 
 const getAllCarFeature = async () => {
      const response = await carFeatureModel.find();
@@ -297,8 +298,13 @@ const deleteAllCarFeaturesDescription = async () => {
 
 const addFeatureDescription = async (featureDescriptionData) => {
      try {
-          const { makeCode, modelCode, categoryCode, featureDescription } =
-               featureDescriptionData;
+          const {
+               makeCode,
+               modelCode,
+               categoryCode,
+               categoryDescription,
+               featureDescription,
+          } = featureDescriptionData;
 
           // Find the corresponding carBrand document based on makeCode
           const carBrand = await carBrandModel.findOne({ makeCode });
@@ -327,36 +333,35 @@ const addFeatureDescription = async (featureDescriptionData) => {
                     carBrand_id: carBrand._id,
                     modelCode,
                     makeCode,
-                    categories: [],
+                    categories: [
+                         {
+                              categoryCode,
+                              categoryDescription,
+                              features: [featureDescription],
+                         },
+                    ],
                });
-          }
-
-          // Find the corresponding category in CarFeatureCategory based on categoryCode
-          const carFeatureCategory = await CarFeatureCategory.findOne({
-               categoryCode,
-          });
-
-          if (!carFeatureCategory) {
-               throw new Error(
-                    `Invalid categoryCode. Category not found: ${categoryCode}`
-               );
-          }
-
-          // Check if the category already exists in the carFeature document
-          const category = carFeature.categories.find(
-               (cat) => cat.categoryCode === categoryCode
-          );
-
-          if (category) {
-               // Category already exists, update the features array
-               category.features.push(featureDescription);
           } else {
-               // Category does not exist, create a new one
-               carFeature.categories.push({
-                    categoryCode,
-                    categoryDescription: carFeatureCategory.categoryDescription,
-                    features: [featureDescription],
+               // If the carFeature document exists, find the category based on categoryCode and categoryDescription
+               let category = carFeature.categories.find((category) => {
+                    return (
+                         category.categoryCode === categoryCode &&
+                         category.categoryDescription === categoryDescription
+                    );
                });
+
+               if (!category) {
+                    // If the category does not exist, create a new one
+                    category = {
+                         categoryCode,
+                         categoryDescription,
+                         features: [featureDescription],
+                    };
+                    carFeature.categories.push(category);
+               } else {
+                    // If the category exists, push the featureDescription into the features array
+                    category.features.push(featureDescription);
+               }
           }
 
           await carFeature.save();

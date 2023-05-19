@@ -3,7 +3,7 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 import carDetailsModel from '../models/carDetails.js';
-import { carFeatureModel ,CarFeatureCategory} from '../models/carFeatures.js';
+import { carFeatureModel } from '../models/carFeatures.js';
 
 // const createCarOffer = async (carOfferData) => {
 //      try {
@@ -221,7 +221,7 @@ const createCarOffer = async (carOfferData) => {
                );
           }
 
-         // const yearModel = carOfferData.yearModel;
+          // const yearModel = carOfferData.yearModel;
 
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseTypes,
@@ -269,7 +269,7 @@ const createCarOffer = async (carOfferData) => {
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
                     leaseType_id: leaseTypes,
-                   // yearModel: yearModel,
+                    // yearModel: yearModel,
                     offers: [
                          {
                               duration: carOfferData.duration,
@@ -287,7 +287,8 @@ const createCarOffer = async (carOfferData) => {
                return newCarOffer;
           }
      } catch (error) {
-          console.log(error);g
+          console.log(error);
+          g;
           throw new Error('Failed to create/update car offer.');
      }
 };
@@ -342,7 +343,7 @@ const getAllCarWithOffers = async (
                          let: {
                               carBrandId: '$carBrand_id',
                               carSeriesId: '$carSeries_id',
-                             // yearModel: '$yearModel',
+                              // yearModel: '$yearModel',
                          },
                          pipeline: [
                               {
@@ -371,7 +372,6 @@ const getAllCarWithOffers = async (
                                         },
                                    },
                               },
-                             
                          ],
                          as: 'details',
                     },
@@ -540,20 +540,20 @@ const getCount = async () => {
           },
      ]);
 
-    let totalInventoryCount = 0;
-     
+     let totalInventoryCount = 0;
+
      const countObject = {
           privateLeaseCount: {
                shortTerm: 0,
                longTerm: 0,
-               total:0
+               total: 0,
           },
 
           businessLeaseCount: {
                shortTerm: 0,
                longTerm: 0,
-               total:0
-          },  
+               total: 0,
+          },
      };
 
      counts.forEach((count) => {
@@ -574,22 +574,23 @@ const getCount = async () => {
                     countObject.businessLeaseCount.total += count.count;
                }
           }
-          
      });
 
      if (countObject.businessLeaseCount.total === 0) {
           countObject.businessLeaseCount = {
                shortTerm: 0,
                longTerm: 0,
-               total:0
+               total: 0,
           };
      }
 
-     totalInventoryCount  = countObject.privateLeaseCount.total + countObject.businessLeaseCount.total;
+     totalInventoryCount =
+          countObject.privateLeaseCount.total +
+          countObject.businessLeaseCount.total;
 
      return {
           ...countObject,
-          totalInventoryCount
+          totalInventoryCount,
      };
 };
 
@@ -621,7 +622,7 @@ const getSingleCar = async (id) => {
           const carDetails = await carDetailsModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
-              // yearModel: carOffer.yearModel,
+               // yearModel: carOffer.yearModel,
           });
 
           const result = {
@@ -792,7 +793,10 @@ const getDeals = async (query) => {
                })
                .filter((carOffer) => carOffer.offers.length > 0);
 
-               const totalBestDeals = offersWithBestDeals.reduce((acc, carOffer) => acc + carOffer.totalBestDeals, 0);
+          const totalBestDeals = offersWithBestDeals.reduce(
+               (acc, carOffer) => acc + carOffer.totalBestDeals,
+               0
+          );
 
           const result = {
                carOffers: offersWithBestDeals,

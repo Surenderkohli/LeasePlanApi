@@ -683,26 +683,28 @@ const updateCar = async (
           //////////////////////////////// Update inventory
           const updatedCarOffers = [];
 
-          for (const offer of carOffersData.offers) {
-               const offerFilter = {
-                    _id: id,
-                    'offers.calculationNo': offer.calculationNo,
-               };
+          if (carOffersData.offers) {
+               for (const offer of carOffersData.offers) {
+                    const offerFilter = {
+                         _id: id,
+                         'offers.calculationNo': offer.calculationNo,
+                    };
 
-               const offerUpdate = {
-                    $set: {
-                         'offers.$.duration': offer.duration,
-                         'offers.$.annualMileage': offer.annualMileage,
-                         'offers.$.monthlyCost': offer.monthlyCost,
-                    },
-               };
+                    const offerUpdate = {
+                         $set: {
+                              'offers.$.duration': offer.duration,
+                              'offers.$.annualMileage': offer.annualMileage,
+                              'offers.$.monthlyCost': offer.monthlyCost,
+                         },
+                    };
 
-               const updatedOffer = await carOfferModel.findOneAndUpdate(
-                    offerFilter,
-                    offerUpdate,
-                    { new: true }
-               );
-               updatedCarOffers.push(updatedOffer);
+                    const updatedOffer = await carOfferModel.findOneAndUpdate(
+                         offerFilter,
+                         offerUpdate,
+                         { new: true }
+                    );
+                    updatedCarOffers.push(updatedOffer);
+               }
           }
 
           // Return the updated car object

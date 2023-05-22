@@ -656,12 +656,12 @@ const updateCar = async (
           // Update car in CarFeatures collection
           const carDetails = await carOfferModel.findById(id);
 
-          const { carBrand_id, carSeries_id, yearModel } = carDetails;
+          const { carBrand_id, carSeries_id } = carDetails;
 
           const filter = {
                carBrand_id,
                carSeries_id,
-               yearModel,
+               //yearModel,
           };
 
           const updateFields = {};
@@ -687,33 +687,33 @@ const updateCar = async (
           // update the car in the CarOffers collection
           const updatedInventoryData = await carDetailsModel.findOneAndUpdate(
                filter,
-               inventoryData,
+               { ...inventoryData },
                { new: true }
           );
 
           const updatedCarOffers = [];
 
-          for (const offer of carOffersData.offers) {
-               const filter = {
-                    _id: id,
-                    'offers.calculationNo': offer.calculationNo,
-               };
+          // for (const offer of carOffersData.offers) {
+          //      const filter = {
+          //           _id: id,
+          //           'offers.calculationNo': offer.calculationNo,
+          //      };
 
-               const update = {
-                    $set: {
-                         'offers.$.duration': offer.duration,
-                         'offers.$.annualMileage': offer.annualMileage,
-                         'offers.$.monthlyCost': offer.monthlyCost,
-                    },
-               };
+          //      const update = {
+          //           $set: {
+          //                'offers.$.duration': offer.duration,
+          //                'offers.$.annualMileage': offer.annualMileage,
+          //                'offers.$.monthlyCost': offer.monthlyCost,
+          //           },
+          //      };
 
-               const updatedOffer = await carOfferModel.findOneAndUpdate(
-                    filter,
-                    update,
-                    { new: true }
-               );
-               updatedCarOffers.push(updatedOffer);
-          }
+          //      const updatedOffer = await carOfferModel.findOneAndUpdate(
+          //           filter,
+          //           update,
+          //           { new: true }
+          //      );
+          //      updatedCarOffers.push(updatedOffer);
+          // }
 
           /* 
 

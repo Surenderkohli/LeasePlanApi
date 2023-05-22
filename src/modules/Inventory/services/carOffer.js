@@ -642,64 +642,54 @@ const updateCar = async (
      id,
      carDetailsData,
      carFeaturesData,
-     inventoryData,
      carOffersData
 ) => {
      try {
           // Validate input
-          if (!carDetailsData || !carFeaturesData || !inventoryData) {
+          if (!carDetailsData || !carFeaturesData || !carOffersData) {
                throw new Error(
                     'carDetails, carFeatures, and carOffers must be provided'
                );
           }
 
           // Update car in CarFeatures collection
-          const carDetails = await carOfferModel.findById(id);
+          const carOffer = await carOfferModel.findById(id);
 
-          const { carBrand_id, carSeries_id } = carDetails;
+          const { carBrand_id, carSeries_id } = carOffer;
 
-          const filter = {
+          //////////////////////////////// Update carDetails
+          const carDetailsFilter = {
                carBrand_id,
                carSeries_id,
-               //yearModel,
           };
 
-          const updateFields = {};
+          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+               carDetailsFilter,
+               { ...carDetailsData },
+               { new: true }
+          );
 
-          for (const [key, value] of Object.entries(carDetailsData)) {
-               if (key.endsWith('Features') && Array.isArray(value)) {
-                    const featureIndex = key.slice(0, -8);
-                    value.forEach((featureValue, index) => {
-                         updateFields[`${featureIndex}Features.${index}`] =
-                              featureValue;
-                    });
-               } else {
-                    updateFields[key] = value;
-               }
-          }
-
+          //////////////////////////////// Update carFeatures
+          const carFeaturesFilter = {
+               carBrand_id,
+               carSeries_id,
+          };
           const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
-               filter,
-               updateFields,
+               carFeaturesFilter,
+               { ...carFeaturesData },
                { new: true }
           );
 
-          // update the car in the CarOffers collection
-          const updatedInventoryData = await carDetailsModel.findOneAndUpdate(
-               filter,
-               { ...inventoryData },
-               { new: true }
-          );
-
+          //////////////////////////////// Update inventory
           const updatedCarOffers = [];
 
           // for (const offer of carOffersData.offers) {
-          //      const filter = {
+          //      const offerFilter = {
           //           _id: id,
           //           'offers.calculationNo': offer.calculationNo,
           //      };
 
-          //      const update = {
+          //      const offerUpdate = {
           //           $set: {
           //                'offers.$.duration': offer.duration,
           //                'offers.$.annualMileage': offer.annualMileage,
@@ -708,62 +698,18 @@ const updateCar = async (
           //      };
 
           //      const updatedOffer = await carOfferModel.findOneAndUpdate(
-          //           filter,
-          //           update,
+          //           offerFilter,
+          //           offerUpdate,
           //           { new: true }
           //      );
           //      updatedCarOffers.push(updatedOffer);
           // }
 
-          /* 
-
-      // Update car in CarOffers collection
-          const filters = {
-               _id: id,
-          };
-
-          const update = {
-               $set: {},
-               arrayFilters: [],
-          };
-
-          for (const offer of carOffersData.offers) {
-               const existingOffer = await carOfferModel.findOne({
-                    ...filters,
-                    'offers.calculationNo': offer.calculationNo,
-               });
-
-               if (existingOffer) {
-                    update.$set['offers.$[o].duration'] = offer.duration;
-                    update.$set['offers.$[o].annualMileage'] =
-                         offer.annualMileage;
-                    update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
-                    update.arrayFilters.push({
-                         'o.calculationNo': offer.calculationNo,
-                    });
-               } else {
-                    update.$push = { offers: offer };
-               }
-          }
-             
-
-          Example of update object
-             {
-               '$set': {
-                         'offers.$[o].duration': '61',
-                         'offers.$[o].annualMileage': '25001',
-                         'offers.$[o].monthlyCost': '3801'
-             },
-              arrayFilters: [ { 'o.calculationNo': '1248516' } ]
-             }
-
-*/
-
           // Return the updated car object
           return {
                carOffers: updatedCarOffers,
                carFeatures: updatedCarFeatures,
-               inventoryData: updatedInventoryData,
+               inventoryData: updatedCarDetails,
           };
      } catch (error) {
           console.error('Error in updating car:', error);

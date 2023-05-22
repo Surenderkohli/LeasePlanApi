@@ -373,3 +373,114 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
           res.status(400).json({ message: error.message });
      }
 });
+
+///////////
+/////////////////////
+/* 
+
+   const carFeaturesData = {
+               exteriorFeatures: req.body.exteriorFeatures,
+               interiorFeatures: req.body.interiorFeatures,
+               safetySecurityFeatures: req.body.safetySecurityFeatures,
+               comfortConvenienceFeatures: req.body.comfortConvenienceFeatures,
+               audioEntertainmentFeatures: req.body.audioEntertainmentFeatures,
+          };
+          const carOffersData = {
+               offers: [],
+          };
+
+          for (let i = 1; i <= 20; i++) {
+               const duration = req.body[`duration${i}`];
+               const annualMileage = req.body[`annualMileage${i}`];
+               const monthlyCost = req.body[`monthlyCost${i}`];
+               const calculationNo = req.body[`calculationNo${i}`];
+               if (duration && annualMileage && monthlyCost && calculationNo) {
+                    const offerIndex = carOffersData.offers.findIndex(
+                         (offer) => offer.calculationNo === calculationNo
+                    );
+                    if (offerIndex !== -1) {
+                         carOffersData.offers[offerIndex].duration = duration;
+                         carOffersData.offers[offerIndex].annualMileage =
+                              annualMileage;
+                         carOffersData.offers[offerIndex].monthlyCost =
+                              monthlyCost;
+                    } else {
+                         carOffersData.offers.push({
+                              duration: duration,
+                              annualMileage: annualMileage,
+                              monthlyCost: monthlyCost,
+                              calculationNo: calculationNo,
+                         });
+                    }
+               }
+          } 
+          
+       */
+/* 
+
+      // Update car in CarOffers collection
+          const filters = {
+               _id: id,
+          };
+
+          const update = {
+               $set: {},
+               arrayFilters: [],
+          };
+
+          for (const offer of carOffersData.offers) {
+               const existingOffer = await carOfferModel.findOne({
+                    ...filters,
+                    'offers.calculationNo': offer.calculationNo,
+               });
+
+               if (existingOffer) {
+                    update.$set['offers.$[o].duration'] = offer.duration;
+                    update.$set['offers.$[o].annualMileage'] =
+                         offer.annualMileage;
+                    update.$set['offers.$[o].monthlyCost'] = offer.monthlyCost;
+                    update.arrayFilters.push({
+                         'o.calculationNo': offer.calculationNo,
+                    });
+               } else {
+                    update.$push = { offers: offer };
+               }
+          }
+             
+
+          Example of update object
+             {
+               '$set': {
+                         'offers.$[o].duration': '61',
+                         'offers.$[o].annualMileage': '25001',
+                         'offers.$[o].monthlyCost': '3801'
+             },
+              arrayFilters: [ { 'o.calculationNo': '1248516' } ]
+             }
+
+*/
+// const filter = {
+//      carBrand_id,
+//      carSeries_id,
+//      //yearModel,
+// };
+
+// const updateFields = {};
+
+// for (const [key, value] of Object.entries(carDetailsData)) {
+//      if (key.endsWith('Features') && Array.isArray(value)) {
+//           const featureIndex = key.slice(0, -8);
+//           value.forEach((featureValue, index) => {
+//                updateFields[`${featureIndex}Features.${index}`] =
+//                     featureValue;
+//           });
+//      } else {
+//           updateFields[key] = value;
+//      }
+// }
+
+// const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+//      filter,
+//      updateFields,
+//      { new: true }
+// );

@@ -200,63 +200,23 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
           const id = req.params.id;
           const carDetailsData = req.body;
 
-          const carFeaturesData = {
-               exteriorFeatures: req.body.exteriorFeatures,
-               interiorFeatures: req.body.interiorFeatures,
-               safetySecurityFeatures: req.body.safetySecurityFeatures,
-               comfortConvenienceFeatures: req.body.comfortConvenienceFeatures,
-               audioEntertainmentFeatures: req.body.audioEntertainmentFeatures,
-          };
-
-          const inventoryData = {
-               bodyType: req.body.bodyType,
-               door: req.body.door,
-               seat: req.body.seat,
-               gears: req.body.gears,
-               acceleration: req.body.acceleration,
-               co2: req.body.co2,
-               fuelType: req.body.fuelType,
-               transmission: req.body.transmission,
-               tankCapacity: req.body.tankCapacity,
-               image: req.body.image,
-               imageUrl: req.body.imageUrl,
-               publicId: req.body.publicId,
-          };
+          // const inventoryData = {
+          //      bodyType: req.body.bodyType,
+          //      door: req.body.door,
+          //      seat: req.body.seat,
+          //      gears: req.body.gears,
+          //      acceleration: req.body.acceleration,
+          //      co2: req.body.co2,
+          //      fuelType: req.body.fuelType,
+          //      transmission: req.body.transmission,
+          //      tankCapacity: req.body.tankCapacity,
+          //      image: req.body.image,
+          //      imageUrl: req.body.imageUrl,
+          //      publicId: req.body.publicId,
+          // };
 
           const carOffersData = req.body;
-
-          /* 
-          const carOffersData = {
-               offers: [],
-          };
-
-          for (let i = 1; i <= 20; i++) {
-               const duration = req.body[`duration${i}`];
-               const annualMileage = req.body[`annualMileage${i}`];
-               const monthlyCost = req.body[`monthlyCost${i}`];
-               const calculationNo = req.body[`calculationNo${i}`];
-               if (duration && annualMileage && monthlyCost && calculationNo) {
-                    const offerIndex = carOffersData.offers.findIndex(
-                         (offer) => offer.calculationNo === calculationNo
-                    );
-                    if (offerIndex !== -1) {
-                         carOffersData.offers[offerIndex].duration = duration;
-                         carOffersData.offers[offerIndex].annualMileage =
-                              annualMileage;
-                         carOffersData.offers[offerIndex].monthlyCost =
-                              monthlyCost;
-                    } else {
-                         carOffersData.offers.push({
-                              duration: duration,
-                              annualMileage: annualMileage,
-                              monthlyCost: monthlyCost,
-                              calculationNo: calculationNo,
-                         });
-                    }
-               }
-          } 
-          
-       */
+          const carFeaturesData = req.body;
 
           const images = [];
 
@@ -288,9 +248,8 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
           const result = await carOfferService.updateCar(
                id,
                carDetailsData,
-               carFeaturesData,
-               inventoryData,
-               carOffersData
+               carOffersData,
+               carFeaturesData
           );
           res.send(result);
      } catch (error) {

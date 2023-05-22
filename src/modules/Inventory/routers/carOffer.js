@@ -242,7 +242,7 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                }
 
                // update the images array in the request body
-               inventoryData.image = images;
+               carDetailsData.image = images;
           }
 
           const result = await carOfferService.updateCar(

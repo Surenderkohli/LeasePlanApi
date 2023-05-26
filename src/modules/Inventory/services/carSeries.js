@@ -60,16 +60,16 @@ const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
                          from: 'leasetypes',
                          localField: 'carBrand.leaseType_id',
                          foreignField: '_id',
-                         as: 'leaseType',
+                         as: 'carBrand.leaseType',
                     },
                },
                {
-                    $unwind: '$leaseType',
+                    $unwind: '$carBrand.leaseType',
                },
                {
                     $match: {
-                         'leaseType.leaseType': leaseType,
-                         'leaseType.term': term, // Corrected the field comparison
+                         'carBrand.leaseType.leaseType': leaseType,
+                         'carBrand.leaseType.term': term,
                     },
                },
           ]);

@@ -58,7 +58,7 @@ const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
                {
                     $lookup: {
                          from: 'leasetypes',
-                         localField: 'carBrand.leaseType_id',
+                         localField: 'leaseType_id',
                          foreignField: '_id',
                          as: 'leaseType',
                     },

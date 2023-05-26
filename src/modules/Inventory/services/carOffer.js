@@ -159,15 +159,24 @@ import { carFeatureModel } from '../models/carFeatures.js';
 //      }
 // };
 
-const createCarOffer = async (carOfferData) => {
+const createCarOffer = async (carOfferData, leaseType_ids) => {
      try {
           let leaseTypes = [];
-          if (carOfferData.leaseType && carOfferData.term) {
-               // Find or create a leaseType entry in the leaseTypeModel collection
+
+          if (leaseType_ids && leaseType_ids.length > 0) {
+               leaseTypes = await leaseTypeModel.find({
+                    _id: { $in: leaseType_ids },
+               });
+
+               if (leaseTypes.length !== leaseType_ids.length) {
+                    throw new Error('Invalid leaseType_ids');
+               }
+          } else if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({
                     leaseType: carOfferData.leaseType,
                     term: carOfferData.term,
                });
+
                if (existingLeaseType) {
                     leaseTypes.push(existingLeaseType);
                } else {
@@ -202,6 +211,7 @@ const createCarOffer = async (carOfferData) => {
                          (leaseTypeId) =>
                               !companyName.leaseType_id.includes(leaseTypeId)
                     );
+
                if (leaseTypeIdsToAdd.length > 0) {
                     companyName.leaseType_id = [
                          ...companyName.leaseType_id,
@@ -211,34 +221,48 @@ const createCarOffer = async (carOfferData) => {
                }
           }
 
-          const seriesName = await carSeriesModel.findOne({
-               modelCode: carOfferData.modelCode,
+          let seriesName = await carSeriesModel.findOne({
                carBrand_id: companyName._id,
+               seriesName: carOfferData.seriesName,
           });
-          if (!seriesName) {
-               throw new Error(
-                    `Car series with modelCode ${carOfferData.modelCode} not found`
-               );
-          }
 
-          // const yearModel = carOfferData.yearModel;
+          if (!seriesName) {
+               seriesName = await carSeriesModel.create({
+                    carBrand_id: companyName._id,
+                    leaseType_id: leaseTypes,
+                    seriesName: carOfferData.seriesName,
+                    modelCode: carOfferData.modelCode,
+               });
+          } else if (leaseTypes.length > 0) {
+               const leaseTypeIdsToAdd = leaseTypes
+                    .map((leaseType) => leaseType._id)
+                    .filter(
+                         (leaseTypeId) =>
+                              !seriesName.leaseType_id.includes(leaseTypeId)
+                    );
+
+               if (leaseTypeIdsToAdd.length > 0) {
+                    seriesName.leaseType_id = [
+                         ...seriesName.leaseType_id,
+                         ...leaseTypeIdsToAdd,
+                    ];
+                    await seriesName.save();
+               }
+          }
 
           const existingCarOffer = await carOfferModel.findOne({
                leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
-               //yearModel: yearModel,
           });
 
           if (existingCarOffer) {
-               // car offer already exists with the given calculationNo, update the offer
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
                          offer.calculationNo.toString() ===
                          carOfferData.calculationNo
                );
                if (existingOffer) {
-                    // update only the changed values
                     existingOffer.duration = carOfferData.duration;
                     existingOffer.annualMileage = carOfferData.annualMileage;
                     existingOffer.monthlyCost = carOfferData.monthlyCost;
@@ -246,7 +270,6 @@ const createCarOffer = async (carOfferData) => {
                          ? carOfferData.bestDeals
                          : 'No';
                } else {
-                    // add a new offer object with the same calculationNo
                     existingCarOffer.offers.push({
                          duration: carOfferData.duration,
                          annualMileage: carOfferData.annualMileage,
@@ -264,12 +287,10 @@ const createCarOffer = async (carOfferData) => {
                     data: existingCarOffer,
                };
           } else {
-               // create new car offer with a new group
                const newCarOffer = await carOfferModel.create({
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
                     leaseType_id: leaseTypes,
-                    // yearModel: yearModel,
                     offers: [
                          {
                               duration: carOfferData.duration,
@@ -288,11 +309,9 @@ const createCarOffer = async (carOfferData) => {
           }
      } catch (error) {
           console.log(error);
-          g;
           throw new Error('Failed to create/update car offer.');
      }
 };
-
 const getAllOffer = async () => {
      const response = await carOfferModel
           .find()

@@ -104,4 +104,31 @@ router.delete(
      })
 );
 
+router.get(
+     '/cars/:carBrand_id',
+     httpHandler(async (req, res) => {
+          try {
+               const { carBrand_id } = req.params;
+               const { leaseType, term } = req.query;
+
+               const result = await carSeriesService.AllCarSeriesByBrandId(
+                    carBrand_id,
+                    leaseType,
+                    term
+               );
+
+               res.status(200).json({
+                    success: true,
+                    msg: 'carSeries retrieved successfully',
+                    seriesList: result,
+               });
+          } catch (error) {
+               console.log(error);
+               res.status(500).json({
+                    success: false,
+                    message: 'Server Error',
+               });
+          }
+     })
+);
 export default router;

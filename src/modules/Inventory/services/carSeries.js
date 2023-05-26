@@ -1,4 +1,5 @@
 import carSeriesModel from '../models/carSeries.js';
+import mongoose from 'mongoose';
 
 const getAllCarSeries = async () => {
      const response = await carSeriesModel.find().populate('carBrand_id');
@@ -20,6 +21,7 @@ const getAllCarSeriesByBrandId = async (carBrand_id) => {
           const response = await carSeriesModel
                .find({ carBrand_id })
                .populate('carBrand_id');
+
           return response;
      } catch (error) {
           throw new Error('Unable to retrieve car Brand');
@@ -34,10 +36,56 @@ const deleteCarSeries = async (id) => {
      return response;
 };
 
+const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
+     try {
+          const response = await carSeriesModel.aggregate([
+               {
+                    $match: {
+                         carBrand_id: mongoose.Types.ObjectId(carBrand_id),
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'carbrands',
+                         localField: 'carBrand_id',
+                         foreignField: '_id',
+                         as: 'carBrand',
+                    },
+               },
+               {
+                    $unwind: '$carBrand',
+               },
+               {
+                    $lookup: {
+                         from: 'leasetypes',
+                         localField: 'carBrand.leaseType_id',
+                         foreignField: '_id',
+                         as: 'leaseType',
+                    },
+               },
+               {
+                    $unwind: '$leaseType',
+               },
+               {
+                    $match: {
+                         'leaseType.leaseType': leaseType,
+                         $expr: { $eq: ['$leaseType.term', term] },
+                    },
+               },
+          ]);
+
+          return response;
+     } catch (error) {
+          console.log(error);
+          throw new Error('Unable to retrieve car Series');
+     }
+};
+
 export const carSeriesService = {
      getSingleCarSeries,
      addCarSeries,
      getAllCarSeries,
      getAllCarSeriesByBrandId,
      deleteCarSeries,
+     AllCarSeriesByBrandId,
 };

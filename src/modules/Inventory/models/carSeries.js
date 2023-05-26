@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const carBrandSchema = new mongoose.Schema(
+const carSeriesSchema = new mongoose.Schema(
      {
           carBrand_id: {
                type: mongoose.Schema.ObjectId,
@@ -22,4 +22,4 @@ const carBrandSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('carSeries', carBrandSchema);
+export default mongoose.model('carSeries', carSeriesSchema);

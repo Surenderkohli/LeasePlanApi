@@ -35,10 +35,51 @@ const getAllCarBrandByLeaseType = async (leaseType_id) => {
      }
 };
 
+// const getCarsByLeaseTypeAndTerm = async (leaseType, term) => {
+//      const carBrands = await carBrandModel.find().populate({
+//           path: 'leaseType_id',
+//           match: {
+//                leaseType: leaseType,
+//                term: term,
+//           },
+//      });
+
+//      const filteredCars = carBrands.filter(
+//           (carBrand) => carBrand.leaseType_id !== null
+//      );
+
+//      return filteredCars;
+// };
+
+const getCarsByLeaseTypeAndTerm = async (leaseType, term) => {
+     const cars = await carBrandModel.aggregate([
+          {
+               $lookup: {
+                    from: 'leasetypes',
+                    localField: 'leaseType_id',
+                    foreignField: '_id',
+                    as: 'leaseType',
+               },
+          },
+          {
+               $unwind: '$leaseType',
+          },
+          {
+               $match: {
+                    'leaseType.leaseType': leaseType,
+                    'leaseType.term': term,
+               },
+          },
+     ]);
+
+     return cars;
+};
+
 export const carBrandService = {
      getAllCarBrand,
      addCarBrand,
      getSingleCarBrand,
      deleteCarBrand,
      getAllCarBrandByLeaseType,
+     getCarsByLeaseTypeAndTerm,
 };

@@ -106,4 +106,22 @@ router.get(
      })
 );
 
+// GET /cars?leaseType=:leaseType&term=:term
+router.get('/list', async (req, res) => {
+     try {
+          const { leaseType, term } = req.query;
+          const cars = await carBrandService.getCarsByLeaseTypeAndTerm(
+               leaseType,
+               term
+          );
+          res.json({
+               success: true,
+               msg: 'Successfully retrieved cars',
+               list: cars,
+          });
+     } catch (err) {
+          console.error(err);
+          res.status(500).json({ error: 'Internal server error' });
+     }
+});
 export default router;

@@ -5,7 +5,7 @@ const leaseTypeSchema = new mongoose.Schema(
           leaseType: {
                type: String,
                required: false,
-               //enum: ['Private Lease', 'FlexiPlan', 'Business Lease'],
+               enum: ['Private Lease', 'Business Lease'],
           },
           term: {
                type: String,

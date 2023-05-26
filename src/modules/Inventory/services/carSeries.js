@@ -60,16 +60,16 @@ const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
                          from: 'leasetypes',
                          localField: 'carBrand.leaseType_id',
                          foreignField: '_id',
-                         as: 'carBrand.leaseType',
+                         as: 'leaseType',
                     },
                },
                {
-                    $unwind: '$carBrand.leaseType',
+                    $unwind: '$leaseType',
                },
                {
                     $match: {
-                         'carBrand.leaseType.leaseType': leaseType,
-                         'carBrand.leaseType.term': term,
+                         'leaseType.leaseType': leaseType,
+                         'leaseType.term': term,
                     },
                },
           ]);
@@ -77,7 +77,7 @@ const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
           return response;
      } catch (error) {
           console.log(error);
-          throw new Error('Unable to retrieve car Series');
+          throw new Error('Unable to retrieve car series');
      }
 };
 

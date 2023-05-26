@@ -69,7 +69,7 @@ const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
                {
                     $match: {
                          'leaseType.leaseType': leaseType,
-                         $expr: { $eq: ['$leaseType.term', term] },
+                         'leaseType.term': term,
                     },
                },
           ]);

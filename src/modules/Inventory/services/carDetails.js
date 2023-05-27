@@ -317,6 +317,49 @@ const addNewCar = async (
                     await carBrand.save();
                }
           }
+
+          // Find or create a carSeries entry in the carSeriesModel collection
+          let carSeries = await carSeriesModel
+               .findOne({
+                    _id: carDetailsData.carSeries_id,
+               })
+               .populate('leaseType_id');
+
+          if (!carSeries) {
+               // Create new carSeries if not found
+               carSeries = await carSeriesModel.create({
+                    carBrand_id: carDetailsData.carBrand_id,
+                    leaseType_id: carOffersData.leaseType_id,
+                    seriesName: carDetailsData.seriesName,
+                    modelCode: carDetailsData.modelCode,
+               });
+          } else {
+               // Check if leaseType already exists in leaseType collection
+               let leaseType = await leaseTypeModel.findOne({
+                    leaseType: carOffersData.leaseType_id[0].leaseType,
+                    term: carOffersData.leaseType_id[0].term,
+               });
+
+               if (!leaseType) {
+                    // Create new leaseType if not found
+                    leaseType = await leaseTypeModel.create({
+                         leaseType: carOffersData.leaseType_id[0].leaseType,
+                         term: carOffersData.leaseType_id[0].term,
+                    });
+               }
+               // Update carOffersData with existing or new leaseType _id
+               carOffersData.leaseType_id[0]._id = leaseType._id;
+
+               // Add new leaseType to carSeries if it doesn't already exist
+               const existingLeaseTypeIds = carSeries.leaseType_id.map((lt) =>
+                    String(lt._id)
+               );
+               if (!existingLeaseTypeIds.includes(String(leaseType._id))) {
+                    carSeries.leaseType_id.push(leaseType._id);
+                    await carSeries.save();
+               }
+          }
+
           const carOffer = await carOfferModel.create({
                ...carOffersData,
                carBrand_id: carBrand._id,

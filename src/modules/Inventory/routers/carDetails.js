@@ -6,6 +6,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
+import carOfferModel from '../models/carOffer.js';
 
 dotenv.config();
 
@@ -159,6 +160,21 @@ router.post(
                               calculationNo: req.body[`calculationNo${i}`],
                          });
                     }
+               }
+
+               // Check if calculationNo already exists
+               const calculationNos = carOffersData.offers.map(
+                    (offer) => offer.calculationNo
+               );
+               const existingCalculationNos = await carOfferModel.find({
+                    'offers.calculationNo': { $in: calculationNos },
+               });
+
+               if (existingCalculationNos.length > 0) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'calculationNo already exists',
+                    });
                }
 
                const carImage = [];

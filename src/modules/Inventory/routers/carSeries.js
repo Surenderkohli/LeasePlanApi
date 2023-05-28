@@ -32,26 +32,6 @@ router.post(
      upload.none(),
      httpHandler(async (req, res) => {
           try {
-               const carBrand_id = req.body.carBrand_id;
-
-               // // Check if carBrand_id is provided and valid
-               // if (!carBrand_id) {
-               //      throw new Error('carBrand_id is required');
-               // } else if (!mongoose.Types.ObjectId.isValid(carBrand_id)) {
-               //      throw new Error('carBrand_id is invalid');
-               // }
-
-               // // Check if carBrand_id exists
-               // const carBrand = await carBrandModel.findOne({
-               //      _id: carBrand_id,
-               // });
-               // if (!carBrand) {
-               //      return res.status(404).json({
-               //           success: false,
-               //           msg: 'carBrand not found',
-               //      });
-               // }
-
                const result = await carSeriesService.addCarSeries(req.body);
                res.json(result);
           } catch (error) {

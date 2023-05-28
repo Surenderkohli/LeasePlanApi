@@ -19,6 +19,7 @@ const carSeriesSchema = new mongoose.Schema(
           },
           modelCode: {
                type: Number,
+               unique: true, // Specify unique constraint
                required: false,
           },
           isDeleted: {

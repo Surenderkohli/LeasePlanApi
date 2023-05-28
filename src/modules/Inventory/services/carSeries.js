@@ -7,8 +7,22 @@ const getAllCarSeries = async () => {
 };
 
 const addCarSeries = async (data) => {
-     const response = await carSeriesModel.create(data);
-     return response;
+     try {
+          const response = await carSeriesModel.create(data);
+          return response;
+     } catch (error) {
+          if (
+               error.code === 11000 &&
+               error.keyValue &&
+               error.keyValue.modelCode
+          ) {
+               const duplicateModelCode = error.keyValue.modelCode;
+               throw new Error(
+                    `Car series with modelCode '${duplicateModelCode}' already exists.`
+               );
+          }
+          throw error;
+     }
 };
 
 const getSingleCarSeries = async (id) => {

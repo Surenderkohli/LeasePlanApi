@@ -32,28 +32,6 @@ router.post(
      upload.none(), // Use the `none()` function to accept form-data with no file uploads
      httpHandler(async (req, res) => {
           try {
-               const leaseType_id = req.body.leaseType_id;
-               const companyName = req.body.companyName;
-
-               // Check if leaseType_id is provided and valid
-               // if (!leaseType_id) {
-               //      throw new Error('leaseType_id is required');
-               // } else if (!mongoose.Types.ObjectId.isValid(leaseType_id)) {
-               //      throw new Error('leaseType_id is invalid');
-               // }
-
-               // Check if leaseType_id exists
-               // const leaseType = await leaseTypeModel.findOne({
-               //      _id: leaseType_id,
-               // });
-               // if (!leaseType) {
-               //      return res.status(404).json({
-               //           success: false,
-               //           msg: 'LeaseType not found',
-               //      });
-               // }
-
-               // Call the carBrandService to add the car brand
                const result = await carBrandService.addCarBrand(req.body);
                res.json(result);
           } catch (error) {

@@ -5,9 +5,28 @@ const getAllCarBrand = async () => {
      return response;
 };
 
+// const addCarBrand = async (data) => {
+//      const response = await carBrandModel.create(data);
+//      return response;
+// };
+
 const addCarBrand = async (data) => {
-     const response = await carBrandModel.create(data);
-     return response;
+     try {
+          const response = await carBrandModel.create(data);
+          return response;
+     } catch (error) {
+          if (
+               error.code === 11000 &&
+               error.keyValue &&
+               error.keyValue.makeCode
+          ) {
+               const duplicateMakeCode = error.keyValue.makeCode;
+               throw new Error(
+                    `Car brand with makeCode '${duplicateMakeCode}' already exists.`
+               );
+          }
+          throw error;
+     }
 };
 
 const getSingleCarBrand = async (id) => {

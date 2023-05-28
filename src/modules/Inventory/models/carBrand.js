@@ -12,6 +12,7 @@ const carBrandSchema = new mongoose.Schema(
           companyName: String,
           makeCode: {
                type: Number,
+               unique: true, // Specify unique constraint
                required: false,
           },
           isDeleted: {

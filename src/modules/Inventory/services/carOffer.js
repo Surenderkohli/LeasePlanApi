@@ -776,6 +776,39 @@ const getDeals = async (query) => {
      }
 };
 
+const filterCars = async (filterOptions) => {
+     try {
+          const { leaseType, term, carBrand_id, carSeries_id } = filterOptions;
+
+          const query = {};
+
+          if (leaseType) {
+               query['leaseType_id.leaseType'] = leaseType;
+          }
+
+          if (term) {
+               query['leaseType_id.term'] = term;
+          }
+
+          if (carBrand_id) {
+               query.carBrand_id = carBrand_id;
+          }
+
+          if (carSeries_id) {
+               query.carSeries_id = carSeries_id;
+          }
+
+          const cars = await carOfferModel
+               .find(query)
+               .populate('carBrand_id')
+               .populate('carSeries_id');
+
+          return cars;
+     } catch (error) {
+          throw error;
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -784,4 +817,5 @@ export const carOfferService = {
      getSingleCar,
      updateCar,
      getDeals,
+     filterCars,
 };

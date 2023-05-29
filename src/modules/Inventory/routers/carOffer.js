@@ -347,4 +347,31 @@ function isValidCarOfferData(carOfferData) {
      };
 }
 
+router.get('/filter_cars', async (req, res) => {
+     try {
+          const { leaseType, term, carBrand_id, carSeries_id } = req.query;
+
+          const filterOptions = {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+          };
+
+          const cars = await carOfferService.filterCars(filterOptions);
+
+          if (cars.length > 0) {
+               res.status(200).json({ success: true, data: cars });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'No cars found with the given filters.',
+                    data: [],
+               });
+          }
+     } catch (error) {
+          res.status(400).json({ success: false, message: error.message });
+     }
+});
+
 export default router;

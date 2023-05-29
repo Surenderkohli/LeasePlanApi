@@ -503,6 +503,7 @@ const getAllCarWithOffersV2 = async (
      try {
           const filter = {};
 
+          // Apply price range filter
           if (priceMin || priceMax) {
                filter['offers.monthlyCost'] = {};
                if (priceMin) {
@@ -513,28 +514,14 @@ const getAllCarWithOffersV2 = async (
                }
           }
 
+          // Apply annual mileage filter
           if (annualMileage) {
                filter['offers.annualMileage'] = parseInt(annualMileage);
           }
 
-          // if (querySrch) {
-          //      filter.$or = [
-          //           {
-          //                'carBrand.companyName': {
-          //                     $regex: `.*${querySrch}.*`,
-          //                     $options: 'i',
-          //                },
-          //           },
-          //           {
-          //                'carSeries.seriesName': {
-          //                     $regex: `.*${querySrch}.*`,
-          //                     $options: 'i',
-          //                },
-          //           },
-          //      ];
-          // }
-
+          // Apply search query filter for car brands and car series
           if (querySrch) {
+               // Find car brand IDs matching the search query
                const carBrandIds = await carBrandModel.find(
                     {
                          companyName: {
@@ -545,6 +532,7 @@ const getAllCarWithOffersV2 = async (
                     '_id'
                );
 
+               // Find car series IDs matching the search query
                const carSeriesIds = await carSeriesModel.find(
                     {
                          seriesName: {
@@ -555,6 +543,7 @@ const getAllCarWithOffersV2 = async (
                     '_id'
                );
 
+               // Apply the $or condition to match either car brand or car series
                filter.$or = [
                     {
                          carBrand_id: {

@@ -489,6 +489,85 @@ const getAllCarWithOffers = async (
      }
 };
 
+const getAllCarWithOffersV2 = async (
+     fuelType,
+     priceMin,
+     priceMax,
+     bodyType,
+     annualMileage,
+     yearModel,
+     querySrch,
+     limit,
+     skip
+) => {
+     try {
+          const filter = {};
+
+          if (priceMin || priceMax) {
+               filter['offers.monthlyCost'] = {};
+               if (priceMin) {
+                    filter['offers.monthlyCost'].$gte = parseInt(priceMin);
+               }
+               if (priceMax) {
+                    filter['offers.monthlyCost'].$lte = parseInt(priceMax);
+               }
+          }
+
+          if (annualMileage) {
+               filter['offers.annualMileage'] = parseInt(annualMileage);
+          }
+
+          if (querySrch) {
+               filter.$or = [
+                    {
+                         'carBrand.companyName': {
+                              $regex: `.*${querySrch}.*`,
+                              $options: 'i',
+                         },
+                    },
+                    {
+                         'carSeries.seriesName': {
+                              $regex: `.*${querySrch}.*`,
+                              $options: 'i',
+                         },
+                    },
+               ];
+          }
+
+          if (fuelType) {
+               filter['details.fuelType'] = fuelType;
+          }
+
+          if (bodyType) {
+               filter['details.bodyType'] = bodyType;
+          }
+
+          if (yearModel) {
+               filter['yearModel'] = parseInt(yearModel);
+          }
+
+          let query = carOfferModel.find(filter);
+
+          if (Object.keys(filter).length > 0) {
+               query = query
+                    .populate({
+                         path: 'carBrand_id',
+                         model: 'carBrand',
+                    })
+                    .populate({
+                         path: 'carSeries_id',
+                         model: 'carSeries',
+                    });
+          }
+
+          const response = await query.skip(skip).limit(limit).exec();
+
+          return response;
+     } catch (error) {
+          console.log(error);
+     }
+};
+
 // const getCount = async () => {
 //      const counts = await carOfferModel.aggregate([
 //           {
@@ -818,4 +897,5 @@ export const carOfferService = {
      updateCar,
      getDeals,
      filterCars,
+     getAllCarWithOffersV2,
 };

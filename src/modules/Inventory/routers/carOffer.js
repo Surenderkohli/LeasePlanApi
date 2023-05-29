@@ -140,7 +140,7 @@ router.get('/all-cars', async (req, res) => {
           const limit = parseInt(req.query.limit) || 1000000;
           const skip = parseInt(req.query.skip) || 0;
 
-          const result = await carOfferService.getAllCarWithOffers(
+          const result = await carOfferService.getAllCarWithOffersV2(
                fuelType,
                priceMin,
                priceMax,

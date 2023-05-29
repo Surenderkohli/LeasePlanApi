@@ -12,6 +12,16 @@ const getAllCarBrand = async () => {
 
 const addCarBrand = async (data) => {
      try {
+          //find makeCode if already exists
+          const makeCode = await carBrandModel.findOne({
+               makeCode: data.makeCode,
+          });
+          if (makeCode) {
+               throw new Error(
+                    `Car brand with makeCode '${data.makeCode}' already exists  .`
+               );
+          }
+
           const response = await carBrandModel.create(data);
           return response;
      } catch (error) {

@@ -8,6 +8,15 @@ const getAllCarSeries = async () => {
 
 const addCarSeries = async (data) => {
      try {
+          const modelCode = await carSeriesModel.findOne({
+               modelCode: data.modelCode,
+          });
+
+          if (modelCode) {
+               throw new Error(
+                    `Car series with modelCode '${data.modelCode}' already exists  .`
+               );
+          }
           const response = await carSeriesModel.create(data);
           return response;
      } catch (error) {

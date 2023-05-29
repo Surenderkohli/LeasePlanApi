@@ -517,18 +517,53 @@ const getAllCarWithOffersV2 = async (
                filter['offers.annualMileage'] = parseInt(annualMileage);
           }
 
+          // if (querySrch) {
+          //      filter.$or = [
+          //           {
+          //                'carBrand.companyName': {
+          //                     $regex: `.*${querySrch}.*`,
+          //                     $options: 'i',
+          //                },
+          //           },
+          //           {
+          //                'carSeries.seriesName': {
+          //                     $regex: `.*${querySrch}.*`,
+          //                     $options: 'i',
+          //                },
+          //           },
+          //      ];
+          // }
+
           if (querySrch) {
-               filter.$or = [
+               const carBrandIds = await carBrandModel.find(
                     {
-                         'carBrand.companyName': {
+                         companyName: {
                               $regex: `.*${querySrch}.*`,
                               $options: 'i',
                          },
                     },
+                    '_id'
+               );
+
+               const carSeriesIds = await carSeriesModel.find(
                     {
-                         'carSeries.seriesName': {
+                         seriesName: {
                               $regex: `.*${querySrch}.*`,
                               $options: 'i',
+                         },
+                    },
+                    '_id'
+               );
+
+               filter.$or = [
+                    {
+                         carBrand_id: {
+                              $in: carBrandIds,
+                         },
+                    },
+                    {
+                         carSeries_id: {
+                              $in: carSeriesIds,
                          },
                     },
                ];

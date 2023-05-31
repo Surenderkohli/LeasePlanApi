@@ -736,7 +736,7 @@ const getSingleCar = async (id) => {
      try {
           const carOffer = await carOfferModel
                .findOne({ _id: id })
-               .populate('leaseType_id')
+               // .populate('leaseType_id')
                .populate('carBrand_id')
                .populate('carSeries_id');
 

@@ -159,19 +159,11 @@ import { carFeatureModel } from '../models/carFeatures.js';
 //      }
 // };
 
-const createCarOffer = async (carOfferData, leaseType_ids) => {
+const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
 
-          if (leaseType_ids && leaseType_ids.length > 0) {
-               leaseTypes = await leaseTypeModel.find({
-                    _id: { $in: leaseType_ids },
-               });
-
-               if (leaseTypes.length !== leaseType_ids.length) {
-                    throw new Error('Invalid leaseType_ids');
-               }
-          } else if (carOfferData.leaseType && carOfferData.term) {
+          if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({
                     leaseType: carOfferData.leaseType,
                     term: carOfferData.term,
@@ -251,17 +243,21 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
           }
 
           const existingCarOffer = await carOfferModel.findOne({
-               leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
+               leaseType: carOfferData.leaseType,
+               term: carOfferData.term,
           });
 
           if (existingCarOffer) {
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
+                         offer.leaseType === carOfferData.leaseType &&
+                         offer.term === carOfferData.term &&
                          offer.calculationNo.toString() ===
-                         carOfferData.calculationNo
+                              carOfferData.calculationNo
                );
+
                if (existingOffer) {
                     existingOffer.duration = carOfferData.duration;
                     existingOffer.annualMileage = carOfferData.annualMileage;
@@ -270,7 +266,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                          ? carOfferData.bestDeals
                          : 'No';
                } else {
-                    existingCarOffer.offers.push({
+                    const newOffer = {
                          duration: carOfferData.duration,
                          annualMileage: carOfferData.annualMileage,
                          monthlyCost: carOfferData.monthlyCost,
@@ -278,7 +274,14 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                          bestDeals: carOfferData.bestDeals
                               ? carOfferData.bestDeals
                               : 'No',
-                    });
+                    };
+
+                    if (carOfferData.leaseType && carOfferData.term) {
+                         newOffer.leaseType = carOfferData.leaseType;
+                         newOffer.term = carOfferData.term;
+                    }
+
+                    existingCarOffer.offers.push(newOffer);
                }
 
                await existingCarOffer.save();
@@ -290,7 +293,8 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                const newCarOffer = await carOfferModel.create({
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
-                    leaseType_id: leaseTypes,
+                    leaseType: carOfferData.leaseType,
+                    term: carOfferData.term,
                     offers: [
                          {
                               duration: carOfferData.duration,
@@ -305,6 +309,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                     validFrom: carOfferData.validFrom,
                     validTo: carOfferData.validTo,
                });
+
                return newCarOffer;
           }
      } catch (error) {
@@ -312,6 +317,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
           throw new Error('Failed to create/update car offer.');
      }
 };
+
 const getAllOffer = async () => {
      const response = await carOfferModel
           .find()

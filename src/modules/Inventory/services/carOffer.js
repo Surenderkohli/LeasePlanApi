@@ -895,6 +895,51 @@ const getDeals = async (query) => {
      }
 };
 
+// const filterCars = async (filterOptions) => {
+//      try {
+//           const { leaseType, term, carBrand_id, carSeries_id } = filterOptions;
+
+//           const query = {};
+
+//           if (leaseType) {
+//                query['leaseType_id.leaseType'] = leaseType;
+//           }
+
+//           if (term) {
+//                query['leaseType_id.term'] = term;
+//           }
+
+//           if (carBrand_id) {
+//                query.carBrand_id = carBrand_id;
+//           }
+
+//           if (carSeries_id) {
+//                query.carSeries_id = carSeries_id;
+//           }
+
+//           const carOffers = await carOfferModel
+//                .find(query)
+//                .populate('carBrand_id')
+//                .populate('carSeries_id');
+
+//           const cars = carOffers.map(async (carOffer) => {
+//                const car = carOffer.toObject();
+//                const carDetails = await carDetailsModel.find({
+//                     carBrand_id: car.carBrand_id,
+//                     carSeries_id: car.carSeries_id,
+//                });
+//                // .populate('carBrand_id')
+//                // .populate('carSeries_id');
+//                car.details = carDetails[0]; // Assuming there is only one matching car detail
+//                return car;
+//           });
+
+//           return Promise.all(cars);
+//      } catch (error) {
+//           throw error;
+//      }
+// };
+
 const filterCars = async (filterOptions) => {
      try {
           const { leaseType, term, carBrand_id, carSeries_id } = filterOptions;
@@ -917,10 +962,31 @@ const filterCars = async (filterOptions) => {
                query.carSeries_id = carSeries_id;
           }
 
-          const cars = await carOfferModel
+          const carOffers = await carOfferModel
                .find(query)
                .populate('carBrand_id')
                .populate('carSeries_id');
+
+          const cars = [];
+
+          for (const carOffer of carOffers) {
+               const car = carOffer.toObject();
+               const carDetails = await carDetailsModel
+                    .find({
+                         carBrand_id: car.carBrand_id,
+                         carSeries_id: car.carSeries_id,
+                    })
+                    .populate('carBrand_id')
+                    .populate('carSeries_id');
+
+               car.details = carDetails[0]; // Assuming there is only one matching car detail
+
+               if (!leaseType || carOffer.leaseType === leaseType) {
+                    if (!term || carOffer.term === term) {
+                         cars.push(car);
+                    }
+               }
+          }
 
           return cars;
      } catch (error) {

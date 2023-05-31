@@ -124,19 +124,15 @@ router.post(
                     makeCode: carDetailsData.makeCode,
                     categories: carDetailsData.categories,
                };
-               // Extract leaseTypes data from the req body
-               const leaseType = req.body.leaseType_id.leaseType;
-               const term = req.body.leaseType_id.term;
+
+               const leaseType = req.body.leaseType;
+               const term = req.body.term;
 
                const carOffersData = {
                     carBrand_id: carDetailsData.carBrand_id,
                     carSeries_id: carDetailsData.carSeries_id,
-                    leaseType_id: [
-                         {
-                              leaseType: leaseType,
-                              term: term,
-                         },
-                    ],
+                    leaseType: leaseType,
+                    term: term,
                     offers: [],
                     deals: req.body.deals,
                };

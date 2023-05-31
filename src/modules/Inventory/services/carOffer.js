@@ -857,6 +857,44 @@ const updateCar = async (
      }
 };
 
+// const getDeals = async (query) => {
+//      try {
+//           const carOffers = await carOfferModel
+//                .find({
+//                     'offers.bestDeals': 'Yes',
+//                     ...query,
+//                })
+//                .populate(['carBrand_id', 'carSeries_id']);
+
+//           const offersWithBestDeals = carOffers
+//                .map((carOffer) => {
+//                     const offers = carOffer.offers.filter(
+//                          (offer) => offer.bestDeals === 'Yes'
+//                     );
+//                     return {
+//                          ...carOffer.toObject(),
+//                          offers,
+//                          totalBestDeals: offers.length,
+//                     };
+//                })
+//                .filter((carOffer) => carOffer.offers.length > 0);
+
+//           const totalBestDeals = offersWithBestDeals.reduce(
+//                (acc, carOffer) => acc + carOffer.totalBestDeals,
+//                0
+//           );
+
+//           const result = {
+//                carOffers: offersWithBestDeals,
+//                totalBestDeals,
+//           };
+
+//           return result;
+//      } catch (error) {
+//           throw new Error(error.message);
+//      }
+// };
+
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
@@ -888,6 +926,26 @@ const getDeals = async (query) => {
                carOffers: offersWithBestDeals,
                totalBestDeals,
           };
+
+          // Retrieve car details for each car offer
+          const carsWithDetails = [];
+          for (const carOffer of offersWithBestDeals) {
+               // const car = carOffer.toObject();
+               const car = carOffer;
+               const carDetails = await carDetailsModel.find({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+               // .populate('carBrand_id')
+               // .populate('carSeries_id');
+
+               if (carDetails.length > 0) {
+                    car.details = carDetails[0]; // Assuming there is only one matching car detail
+                    carsWithDetails.push(car);
+               }
+          }
+
+          result.carOffers = carsWithDetails;
 
           return result;
      } catch (error) {

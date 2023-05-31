@@ -159,19 +159,11 @@ import { carFeatureModel } from '../models/carFeatures.js';
 //      }
 // };
 
-const createCarOffer = async (carOfferData, leaseType_ids) => {
+const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
 
-          if (leaseType_ids && leaseType_ids.length > 0) {
-               leaseTypes = await leaseTypeModel.find({
-                    _id: { $in: leaseType_ids },
-               });
-
-               if (leaseTypes.length !== leaseType_ids.length) {
-                    throw new Error('Invalid leaseType_ids');
-               }
-          } else if (carOfferData.leaseType && carOfferData.term) {
+          if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({
                     leaseType: carOfferData.leaseType,
                     term: carOfferData.term,
@@ -251,17 +243,21 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
           }
 
           const existingCarOffer = await carOfferModel.findOne({
-               leaseType_id: leaseTypes,
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
+               leaseType: carOfferData.leaseType,
+               term: carOfferData.term,
           });
 
           if (existingCarOffer) {
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
+                         offer.leaseType === carOfferData.leaseType &&
+                         offer.term === carOfferData.term &&
                          offer.calculationNo.toString() ===
-                         carOfferData.calculationNo
+                              carOfferData.calculationNo
                );
+
                if (existingOffer) {
                     existingOffer.duration = carOfferData.duration;
                     existingOffer.annualMileage = carOfferData.annualMileage;
@@ -270,7 +266,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                          ? carOfferData.bestDeals
                          : 'No';
                } else {
-                    existingCarOffer.offers.push({
+                    const newOffer = {
                          duration: carOfferData.duration,
                          annualMileage: carOfferData.annualMileage,
                          monthlyCost: carOfferData.monthlyCost,
@@ -278,7 +274,14 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                          bestDeals: carOfferData.bestDeals
                               ? carOfferData.bestDeals
                               : 'No',
-                    });
+                    };
+
+                    if (carOfferData.leaseType && carOfferData.term) {
+                         newOffer.leaseType = carOfferData.leaseType;
+                         newOffer.term = carOfferData.term;
+                    }
+
+                    existingCarOffer.offers.push(newOffer);
                }
 
                await existingCarOffer.save();
@@ -290,7 +293,8 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                const newCarOffer = await carOfferModel.create({
                     carBrand_id: companyName._id,
                     carSeries_id: seriesName._id,
-                    leaseType_id: leaseTypes,
+                    leaseType: carOfferData.leaseType,
+                    term: carOfferData.term,
                     offers: [
                          {
                               duration: carOfferData.duration,
@@ -305,6 +309,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
                     validFrom: carOfferData.validFrom,
                     validTo: carOfferData.validTo,
                });
+
                return newCarOffer;
           }
      } catch (error) {
@@ -312,6 +317,7 @@ const createCarOffer = async (carOfferData, leaseType_ids) => {
           throw new Error('Failed to create/update car offer.');
      }
 };
+
 const getAllOffer = async () => {
      const response = await carOfferModel
           .find()
@@ -730,7 +736,7 @@ const getSingleCar = async (id) => {
      try {
           const carOffer = await carOfferModel
                .findOne({ _id: id })
-               .populate('leaseType_id')
+               // .populate('leaseType_id')
                .populate('carBrand_id')
                .populate('carSeries_id');
 
@@ -851,6 +857,44 @@ const updateCar = async (
      }
 };
 
+// const getDeals = async (query) => {
+//      try {
+//           const carOffers = await carOfferModel
+//                .find({
+//                     'offers.bestDeals': 'Yes',
+//                     ...query,
+//                })
+//                .populate(['carBrand_id', 'carSeries_id']);
+
+//           const offersWithBestDeals = carOffers
+//                .map((carOffer) => {
+//                     const offers = carOffer.offers.filter(
+//                          (offer) => offer.bestDeals === 'Yes'
+//                     );
+//                     return {
+//                          ...carOffer.toObject(),
+//                          offers,
+//                          totalBestDeals: offers.length,
+//                     };
+//                })
+//                .filter((carOffer) => carOffer.offers.length > 0);
+
+//           const totalBestDeals = offersWithBestDeals.reduce(
+//                (acc, carOffer) => acc + carOffer.totalBestDeals,
+//                0
+//           );
+
+//           const result = {
+//                carOffers: offersWithBestDeals,
+//                totalBestDeals,
+//           };
+
+//           return result;
+//      } catch (error) {
+//           throw new Error(error.message);
+//      }
+// };
+
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
@@ -883,11 +927,76 @@ const getDeals = async (query) => {
                totalBestDeals,
           };
 
+          // Retrieve car details for each car offer
+          const carsWithDetails = [];
+          for (const carOffer of offersWithBestDeals) {
+               // const car = carOffer.toObject();
+               const car = carOffer;
+               const carDetails = await carDetailsModel.find({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+               // .populate('carBrand_id')
+               // .populate('carSeries_id');
+
+               if (carDetails.length > 0) {
+                    car.details = carDetails[0]; // Assuming there is only one matching car detail
+                    carsWithDetails.push(car);
+               }
+          }
+
+          result.carOffers = carsWithDetails;
+
           return result;
      } catch (error) {
           throw new Error(error.message);
      }
 };
+
+// const filterCars = async (filterOptions) => {
+//      try {
+//           const { leaseType, term, carBrand_id, carSeries_id } = filterOptions;
+
+//           const query = {};
+
+//           if (leaseType) {
+//                query['leaseType_id.leaseType'] = leaseType;
+//           }
+
+//           if (term) {
+//                query['leaseType_id.term'] = term;
+//           }
+
+//           if (carBrand_id) {
+//                query.carBrand_id = carBrand_id;
+//           }
+
+//           if (carSeries_id) {
+//                query.carSeries_id = carSeries_id;
+//           }
+
+//           const carOffers = await carOfferModel
+//                .find(query)
+//                .populate('carBrand_id')
+//                .populate('carSeries_id');
+
+//           const cars = carOffers.map(async (carOffer) => {
+//                const car = carOffer.toObject();
+//                const carDetails = await carDetailsModel.find({
+//                     carBrand_id: car.carBrand_id,
+//                     carSeries_id: car.carSeries_id,
+//                });
+//                // .populate('carBrand_id')
+//                // .populate('carSeries_id');
+//                car.details = carDetails[0]; // Assuming there is only one matching car detail
+//                return car;
+//           });
+
+//           return Promise.all(cars);
+//      } catch (error) {
+//           throw error;
+//      }
+// };
 
 const filterCars = async (filterOptions) => {
      try {
@@ -911,10 +1020,31 @@ const filterCars = async (filterOptions) => {
                query.carSeries_id = carSeries_id;
           }
 
-          const cars = await carOfferModel
+          const carOffers = await carOfferModel
                .find(query)
                .populate('carBrand_id')
                .populate('carSeries_id');
+
+          const cars = [];
+
+          for (const carOffer of carOffers) {
+               const car = carOffer.toObject();
+               const carDetails = await carDetailsModel
+                    .find({
+                         carBrand_id: car.carBrand_id,
+                         carSeries_id: car.carSeries_id,
+                    })
+                    .populate('carBrand_id')
+                    .populate('carSeries_id');
+
+               car.details = carDetails[0]; // Assuming there is only one matching car detail
+
+               if (!leaseType || carOffer.leaseType === leaseType) {
+                    if (!term || carOffer.term === term) {
+                         cars.push(car);
+                    }
+               }
+          }
 
           return cars;
      } catch (error) {

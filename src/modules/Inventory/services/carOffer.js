@@ -559,11 +559,21 @@ const getAllCarWithOffersV2 = async (
           }
 
           if (fuelType) {
-               filter['details.fuelType'] = fuelType;
+               const carDetailsFilter = { fuelType: fuelType };
+               const carDetails = await carDetailsModel.find(carDetailsFilter);
+               const carSeriesIds = carDetails.map(
+                    (detail) => detail.carSeries_id
+               );
+               filter.carSeries_id = { $in: carSeriesIds };
           }
 
           if (bodyType) {
-               filter['details.bodyType'] = bodyType;
+               const carDetailsFilter = { bodyType: bodyType };
+               const carDetails = await carDetailsModel.find(carDetailsFilter);
+               const carSeriesIds = carDetails.map(
+                    (detail) => detail.carSeries_id
+               );
+               filter.carSeries_id = { $in: carSeriesIds };
           }
 
           if (yearModel) {

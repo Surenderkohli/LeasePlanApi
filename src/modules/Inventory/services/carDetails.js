@@ -467,6 +467,7 @@ const addNewCar = async (
                ...carDetailsData,
                image: images,
           });
+
           // Extract categories data from carFeaturesData
           const { categories } = carFeaturesData;
 
@@ -510,20 +511,23 @@ const addNewCar = async (
           );
 
           if (!leaseType) {
-               // Check if leaseType and term already exist in leaseTypes collection
-               const existingLeaseType = await leaseTypeModel.findOne({
-                    leaseType: carOffersData.leaseType,
-                    term: carOffersData.term,
-               });
-
-               if (existingLeaseType) {
-                    leaseType = existingLeaseType;
-               } else {
-                    leaseType = await leaseTypeModel.create({
-                         leaseType: carOffersData.leaseType,
-                         term: carOffersData.term,
-                    });
-               }
+               // Find or create leaseType document in leaseTypes collection
+               leaseType = await leaseTypeModel
+                    .findOneAndUpdate(
+                         {
+                              leaseType: carOffersData.leaseType,
+                              term: carOffersData.term,
+                         },
+                         {
+                              leaseType: carOffersData.leaseType,
+                              term: carOffersData.term,
+                         },
+                         {
+                              upsert: true,
+                              new: true,
+                         }
+                    )
+                    .exec();
 
                carBrand.leaseType_id.push(leaseType._id);
                await carBrand.save();

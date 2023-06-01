@@ -1019,6 +1019,10 @@ const filterCars = async (filterOptions) => {
                query['leaseType_id.term'] = term;
           }
 
+          if (monthlyCost) {
+               query['offers.monthlyCost'] = monthlyCost;
+          }
+
           if (carBrand_id) {
                query.carBrand_id = carBrand_id;
           }

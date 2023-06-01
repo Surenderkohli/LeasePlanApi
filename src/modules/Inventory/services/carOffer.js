@@ -1006,6 +1006,7 @@ const filterCars = async (filterOptions) => {
                carBrand_id,
                carSeries_id,
                monthlyCost,
+               annualMileage,
                fuelType,
           } = filterOptions;
 
@@ -1021,6 +1022,10 @@ const filterCars = async (filterOptions) => {
 
           if (monthlyCost) {
                query['offers.monthlyCost'] = monthlyCost;
+          }
+
+          if (annualMileage) {
+               query['offers.annualMileage'] = annualMileage;
           }
 
           if (carBrand_id) {

@@ -355,6 +355,7 @@ router.get('/filter_cars', async (req, res) => {
                carBrand_id,
                carSeries_id,
                monthlyCost,
+               annualMileage,
                fuelType,
           } = req.query;
 
@@ -364,6 +365,7 @@ router.get('/filter_cars', async (req, res) => {
                carBrand_id,
                carSeries_id,
                monthlyCost,
+               annualMileage,
                fuelType,
           };
 

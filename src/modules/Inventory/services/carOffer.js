@@ -1063,19 +1063,19 @@ const filterCars = async (filterOptions) => {
                }
           }
 
-          if (fuelType) {
-               const carsWithFuelType = cars.filter(
-                    (car) => car.details.fuelType === fuelType
-               );
-               return carsWithFuelType;
-          }
+          // if (fuelType) {
+          //      const carsWithFuelType = cars.filter(
+          //           (car) => car.details.fuelType === fuelType
+          //      );
+          //      return carsWithFuelType;
+          // }
 
-          if (bodyType) {
-               const carsWithBodyType = cars.filter(
-                    (car) => car.details.bodyType === bodyType
-               );
-               return carsWithBodyType;
-          }
+          // if (bodyType) {
+          //      const carsWithBodyType = cars.filter(
+          //           (car) => car.details.bodyType === bodyType
+          //      );
+          //      return carsWithBodyType;
+          // }
 
           // if (fuelType && bodyType) {
           //      const carsWithFuelAndBodyType = cars.filter(
@@ -1086,6 +1086,25 @@ const filterCars = async (filterOptions) => {
           //      return carsWithFuelAndBodyType;
           // }
 
+          if (fuelType && bodyType) {
+               const carsWithFuelAndBodyType = cars.filter(
+                    (car) =>
+                         car.details.fuelType === fuelType &&
+                         car.details.bodyType === bodyType
+               );
+               return carsWithFuelAndBodyType;
+          } else if (fuelType) {
+               const carsWithFuelType = cars.filter(
+                    (car) => car.details.fuelType === fuelType
+               );
+               return carsWithFuelType;
+          } else if (bodyType) {
+               const carsWithBodyType = cars.filter(
+                    (car) => car.details.bodyType === bodyType
+               );
+               return carsWithBodyType;
+          }
+
           return cars;
      } catch (error) {
           throw error;
@@ -1093,7 +1112,7 @@ const filterCars = async (filterOptions) => {
 };
 
 export const carOfferService = {
-     createCarOffer,
+     createCarOffer,ds
      getAllOffer,
      getCount,
      getAllCarWithOffers,

@@ -1009,6 +1009,7 @@ const filterCars = async (filterOptions) => {
                annualMileage,
                fuelType,
                bodyType,
+               querySearch,
           } = filterOptions;
 
           const query = {};
@@ -1035,6 +1036,25 @@ const filterCars = async (filterOptions) => {
 
           if (carSeries_id) {
                query.carSeries_id = carSeries_id;
+          }
+
+          if (querySearch) {
+               const carBrands = await carBrandModel.find({
+                    companyName: { $regex: querySearch, $options: 'i' },
+               });
+
+               const carBrandIds = carBrands.map((brand) => brand._id);
+
+               const carSeries = await carSeriesModel.find({
+                    seriesName: { $regex: querySearch, $options: 'i' },
+               });
+
+               const carSeriesIds = carSeries.map((series) => series._id);
+
+               query.$or = [
+                    { carBrand_id: { $in: carBrandIds } },
+                    { carSeries_id: { $in: carSeriesIds } },
+               ];
           }
 
           const carOffers = await carOfferModel

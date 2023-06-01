@@ -358,6 +358,7 @@ router.get('/filter_cars', async (req, res) => {
                annualMileage,
                fuelType,
                bodyType,
+               querySearch,
           } = req.query;
 
           const filterOptions = {
@@ -369,6 +370,7 @@ router.get('/filter_cars', async (req, res) => {
                annualMileage,
                fuelType,
                bodyType,
+               querySearch,
           };
 
           const cars = await carOfferService.filterCars(filterOptions);

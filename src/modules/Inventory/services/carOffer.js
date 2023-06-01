@@ -1062,6 +1062,13 @@ const filterCars = async (filterOptions) => {
                }
           }
 
+          if (fuelType) {
+               const carsWithFuelType = cars.filter(
+                    (car) => car.details.fuelType === fuelType
+               );
+               return carsWithFuelType;
+          }
+
           return cars;
      } catch (error) {
           throw error;

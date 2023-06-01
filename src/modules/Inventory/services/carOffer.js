@@ -1112,7 +1112,7 @@ const filterCars = async (filterOptions) => {
 };
 
 export const carOfferService = {
-     createCarOffer,ds
+     createCarOffer,
      getAllOffer,
      getCount,
      getAllCarWithOffers,

@@ -784,7 +784,7 @@ const createCarDetailUpdateExistingCar = async (carDetailData) => {
                     transmission: carDetailData.transmission,
                     gears: carDetailData.gears,
                     tankCapacity: carDetailData.tankCapacity,
-                    c02: carDetailData.co2,
+                    co2: carDetailData.co2,
                });
                const savedCarDetail = await newCarDetail.save();
                return savedCarDetail;

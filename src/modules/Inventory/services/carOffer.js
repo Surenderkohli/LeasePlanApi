@@ -1077,6 +1077,15 @@ const filterCars = async (filterOptions) => {
                return carsWithBodyType;
           }
 
+          // if (fuelType && bodyType) {
+          //      const carsWithFuelAndBodyType = cars.filter(
+          //           (car) =>
+          //                car.details.fuelType === fuelType &&
+          //                car.details.bodyType === bodyType
+          //      );
+          //      return carsWithFuelAndBodyType;
+          // }
+
           return cars;
      } catch (error) {
           throw error;

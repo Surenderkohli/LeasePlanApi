@@ -349,13 +349,22 @@ function isValidCarOfferData(carOfferData) {
 
 router.get('/filter_cars', async (req, res) => {
      try {
-          const { leaseType, term, carBrand_id, carSeries_id } = req.query;
+          const {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+               monthlyCost,
+               fuelType,
+          } = req.query;
 
           const filterOptions = {
                leaseType,
                term,
                carBrand_id,
                carSeries_id,
+               monthlyCost,
+               fuelType,
           };
 
           const cars = await carOfferService.filterCars(filterOptions);

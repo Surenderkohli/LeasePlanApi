@@ -1000,7 +1000,14 @@ const getDeals = async (query) => {
 
 const filterCars = async (filterOptions) => {
      try {
-          const { leaseType, term, carBrand_id, carSeries_id } = filterOptions;
+          const {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+               monthlyCost,
+               fuelType,
+          } = filterOptions;
 
           const query = {};
 

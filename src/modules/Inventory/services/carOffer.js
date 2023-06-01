@@ -1008,6 +1008,7 @@ const filterCars = async (filterOptions) => {
                monthlyCost,
                annualMileage,
                fuelType,
+               bodyType,
           } = filterOptions;
 
           const query = {};
@@ -1067,6 +1068,13 @@ const filterCars = async (filterOptions) => {
                     (car) => car.details.fuelType === fuelType
                );
                return carsWithFuelType;
+          }
+
+          if (bodyType) {
+               const carsWithBodyType = cars.filter(
+                    (car) => car.details.bodyType === bodyType
+               );
+               return carsWithBodyType;
           }
 
           return cars;

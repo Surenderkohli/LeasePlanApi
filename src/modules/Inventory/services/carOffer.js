@@ -252,10 +252,10 @@ const createCarOffer = async (carOfferData) => {
           if (existingCarOffer) {
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
-                         offer.leaseType === carOfferData.leaseType &&
-                         offer.term === carOfferData.term &&
+                         // offer.leaseType === carOfferData.leaseType &&
+                         // offer.term === carOfferData.term &&
                          offer.calculationNo.toString() ===
-                              carOfferData.calculationNo
+                         carOfferData.calculationNo
                );
 
                if (existingOffer) {

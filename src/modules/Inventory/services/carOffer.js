@@ -1060,7 +1060,7 @@ const filterCars = async (filterOptions) => {
 
           const carOffers = await carOfferModel
                .find({
-                    query,
+                    ...query,
                     isDeleted: false, //  line to filter based on isDeleted property
                })
                .populate('carBrand_id')

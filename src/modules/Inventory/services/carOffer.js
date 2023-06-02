@@ -833,6 +833,7 @@ const updateCar = async (
                               'offers.$.duration': offer.duration,
                               'offers.$.annualMileage': offer.annualMileage,
                               'offers.$.monthlyCost': offer.monthlyCost,
+                              'offers.$.bestDeals': offer.bestDeals,
                          },
                     };
 

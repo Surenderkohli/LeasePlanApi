@@ -1067,13 +1067,12 @@ const filterCars = async (filterOptions) => {
 
           for (const carOffer of carOffers) {
                const car = carOffer.toObject();
-               const carDetails = await carDetailsModel
-                    .find({
-                         carBrand_id: car.carBrand_id,
-                         carSeries_id: car.carSeries_id,
-                    })
-                    .populate('carBrand_id')
-                    .populate('carSeries_id');
+               const carDetails = await carDetailsModel.find({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+               // .populate('carBrand_id')
+               // .populate('carSeries_id');
 
                car.details = carDetails[0]; // Assuming there is only one matching car detail
 
@@ -1132,6 +1131,34 @@ const filterCars = async (filterOptions) => {
      }
 };
 
+const deletedCar = async (id) => {
+     try {
+          const car = await carOfferModel.findOne({ _id: id });
+          if (!car) {
+               throw new Error('Car not found');
+          }
+
+          // // Delete associated car offers
+          // await carDetailsModel.deleteMany({
+          //      carBrand_id: car.carBrand_id,
+          //      carSeries_id: car.carSeries_id,
+          // });
+
+          // // Delete associated car features
+          // await carFeatureModel.deleteMany({
+          //      carBrand_id: car.carBrand_id,
+          //      carSeries_id: car.carSeries_id,
+          // });
+
+          car.isDeleted = true;
+          await car.save();
+          return car;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -1142,4 +1169,5 @@ export const carOfferService = {
      getDeals,
      filterCars,
      getAllCarWithOffersV2,
+     deletedCar,
 };

@@ -504,3 +504,36 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 //      updateFields,
 //      { new: true }
 // );
+
+router.get('/fetch-single/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          const { chosenDuration, chosenAnnualMileage } = req.query;
+
+          const result = await carOfferService.getSingleCar(id);
+          let monthlyCost = null;
+
+          result.carOffer.offers.forEach((offer) => {
+               if (
+                    offer.duration == chosenDuration &&
+                    offer.annualMileage == chosenAnnualMileage
+               ) {
+                    monthlyCost = offer.monthlyCost;
+               }
+          });
+
+          if (monthlyCost !== null) {
+               res.status(200).json({
+                    success: true,
+                    monthlyCost: monthlyCost,
+               });
+          } else {
+               res.status(404).json({
+                    success: false,
+                    msg: 'No matching offer found',
+               });
+          }
+     } catch (error) {
+          res.status(400).json({ success: false, msg: error.message });
+     }
+});

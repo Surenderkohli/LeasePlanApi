@@ -100,6 +100,7 @@ router.post(
                }
 
                const carDetailsData = req.body;
+
                const files = req.files; // Get the image files from the request
 
                const carFeaturesData = {
@@ -110,53 +111,103 @@ router.post(
                     categories: carDetailsData.categories,
                };
 
-               const leaseType = req.body.leaseType;
-               const term = req.body.term;
+               // const leaseType = req.body.leaseType;
+               // const term = req.body.term;
 
-               const carOffersData = {
-                    carBrand_id: carDetailsData.carBrand_id,
-                    carSeries_id: carDetailsData.carSeries_id,
-                    leaseType: leaseType,
-                    term: term,
-                    offers: [],
-                    deals: req.body.deals,
-               };
+               // const carOffersData = {
+               //      carBrand_id: carDetailsData.carBrand_id,
+               //      carSeries_id: carDetailsData.carSeries_id,
+               //      leaseType: leaseType,
+               //      term: term,
+               //      offers: [],
+               //      deals: req.body.deals,
+               // };
 
-               for (let i = 1; i <= 20; i++) {
-                    const duration = req.body[`duration${i}`];
-                    const annualMileage = req.body[`annualMileage${i}`];
-                    const monthlyCost = req.body[`monthlyCost${i}`];
-                    const calculationNo = req.body[`calculationNo${i}`];
+               // for (let i = 1; i <= 20; i++) {
+               //      const duration = req.body[`duration${i}`];
+               //      const annualMileage = req.body[`annualMileage${i}`];
+               //      const monthlyCost = req.body[`monthlyCost${i}`];
+               //      const calculationNo = req.body[`calculationNo${i}`];
 
-                    if (
-                         duration &&
-                         annualMileage &&
-                         monthlyCost &&
-                         calculationNo
-                    ) {
-                         carOffersData.offers.push({
-                              duration: duration,
-                              annualMileage: annualMileage,
-                              monthlyCost: monthlyCost,
-                              calculationNo: req.body[`calculationNo${i}`],
+               //      if (
+               //           duration &&
+               //           annualMileage &&
+               //           monthlyCost &&
+               //           calculationNo
+               //      ) {
+               //           carOffersData.offers.push({
+               //                duration: duration,
+               //                annualMileage: annualMileage,
+               //                monthlyCost: monthlyCost,
+               //                calculationNo: req.body[`calculationNo${i}`],
+               //           });
+               //      }
+               // }
+               const carOffersData = [];
+
+               // Iterate over carOffersData objects
+               for (let i = 0; i < req.body.carOffersData.length; i++) {
+                    const leaseType = req.body.carOffersData[i].leaseType;
+                    const term = req.body.carOffersData[i].term;
+
+                    if (leaseType && term) {
+                         const offers = [];
+
+                         // Iterate over offers within each carOffersData object
+                         for (
+                              let j = 0;
+                              j < req.body.carOffersData[i].offers.length;
+                              j++
+                         ) {
+                              const duration =
+                                   req.body.carOffersData[i].offers[j].duration;
+                              const annualMileage =
+                                   req.body.carOffersData[i].offers[j]
+                                        .annualMileage;
+                              const monthlyCost =
+                                   req.body.carOffersData[i].offers[j]
+                                        .monthlyCost;
+                              const calculationNo =
+                                   req.body.carOffersData[i].offers[j]
+                                        .calculationNo;
+
+                              if (
+                                   duration &&
+                                   annualMileage &&
+                                   monthlyCost &&
+                                   calculationNo
+                              ) {
+                                   offers.push({
+                                        duration: duration,
+                                        annualMileage: annualMileage,
+                                        monthlyCost: monthlyCost,
+                                        calculationNo: calculationNo,
+                                   });
+                              }
+                         }
+
+                         carOffersData.push({
+                              leaseType: leaseType,
+                              term: term,
+                              offers: offers,
                          });
                     }
                }
 
                // Check if calculationNo already exists
-               const calculationNos = carOffersData.offers.map(
-                    (offer) => offer.calculationNo
-               );
-               const existingCalculationNos = await carOfferModel.find({
-                    'offers.calculationNo': { $in: calculationNos },
-               });
+               // const calculationNos = carOffersData.offers.map(
+               //      (offer) => offer.calculationNo
+               // );
+               // const existingCalculationNos = await carOfferModel.find({
+               //      'offers.calculationNo': { $in: calculationNos },
+               // });
 
-               if (existingCalculationNos.length > 0) {
-                    return res.status(400).json({
-                         success: false,
-                         msg: 'calculationNo already exists',
-                    });
-               }
+               // if (existingCalculationNos.length > 0) {
+               //      return res.status(400).json({
+               //           success: false,
+               //           msg: 'calculationNo already exists',
+               //      });
+               // }
 
                const carImage = [];
                if (files) {
@@ -185,6 +236,7 @@ router.post(
                          });
                     }
                }
+               //const carOffer = await carOfferModel.create(carOffersData[i]);
 
                const result = await CarServices.addNewCar(
                     carDetailsData,

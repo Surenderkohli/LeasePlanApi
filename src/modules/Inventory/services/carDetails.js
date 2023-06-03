@@ -504,71 +504,62 @@ const addNewCar = async (
                });
           }
 
-          let leaseType = carBrand.leaseType_id.find(
-               (lt) =>
-                    lt.leaseType === carOffersData.leaseType &&
-                    lt.term === carOffersData.term
-          );
+          let carOfferResults = [];
 
-          if (!leaseType) {
-               // Find or create leaseType document in leaseTypes collection
-               leaseType = await leaseTypeModel
-                    .findOneAndUpdate(
-                         {
-                              leaseType: carOffersData.leaseType,
-                              term: carOffersData.term,
-                         },
-                         {
-                              leaseType: carOffersData.leaseType,
-                              term: carOffersData.term,
-                         },
-                         {
-                              upsert: true,
-                              new: true,
-                         }
-                    )
-                    .exec();
+          for (let i = 0; i < carOffersData.length; i++) {
+               const leaseType = carOffersData[i].leaseType;
+               const term = carOffersData[i].term;
 
-               carBrand.leaseType_id.push(leaseType._id);
-               await carBrand.save();
+               let leaseTypeDoc = carBrand.leaseType_id.find(
+                    (lt) => lt.leaseType === leaseType && lt.term === term
+               );
+
+               if (!leaseTypeDoc) {
+                    leaseTypeDoc = await leaseTypeModel
+                         .findOneAndUpdate(
+                              { leaseType: leaseType, term: term },
+                              { leaseType: leaseType, term: term },
+                              { upsert: true, new: true }
+                         )
+                         .exec();
+
+                    carBrand.leaseType_id.push(leaseTypeDoc._id);
+                    await carBrand.save();
+               }
+
+               let carSeries = await carSeriesModel
+                    .findOne({
+                         _id: carDetailsData.carSeries_id,
+                    })
+                    .populate('leaseType_id');
+
+               if (!carSeries) {
+                    carSeries = await carSeriesModel.create({
+                         carBrand_id: carDetailsData.carBrand_id,
+                         leaseType_id: [],
+                         seriesName: carDetailsData.seriesName,
+                         modelCode: carDetailsData.modelCode,
+                    });
+               }
+
+               const existingLeaseType = carSeries.leaseType_id.find(
+                    (lt) => lt.leaseType === leaseType && lt.term === term
+               );
+
+               if (!existingLeaseType) {
+                    carSeries.leaseType_id.push(leaseTypeDoc._id);
+                    await carSeries.save();
+               }
+
+               const carOffer = await carOfferModel.create(carOffersData[i]);
+               carOfferResults.push(carOffer);
           }
-
-          let carSeries = await carSeriesModel
-               .findOne({
-                    _id: carDetailsData.carSeries_id,
-               })
-               .populate('leaseType_id');
-
-          if (!carSeries) {
-               carSeries = await carSeriesModel.create({
-                    carBrand_id: carDetailsData.carBrand_id,
-                    leaseType_id: [],
-                    seriesName: carDetailsData.seriesName,
-                    modelCode: carDetailsData.modelCode,
-               });
-          }
-
-          const existingLeaseType = carSeries.leaseType_id.find(
-               (lt) =>
-                    lt.leaseType === carOffersData.leaseType &&
-                    lt.term === carOffersData.term
-          );
-
-          if (!existingLeaseType) {
-               carSeries.leaseType_id.push(leaseType._id);
-               await carSeries.save();
-          }
-
-          const carOffer = await carOfferModel.create({
-               ...carOffersData,
-               carBrand_id: carBrand._id,
-          });
 
           // Return the new car object
           return {
                carDetails: newCarDetails,
                carFeatures: newCarFeatures,
-               carOffers: carOffer,
+               carOffers: carOfferResults,
           };
      } catch (error) {
           console.log(error);

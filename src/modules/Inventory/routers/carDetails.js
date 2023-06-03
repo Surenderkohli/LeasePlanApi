@@ -187,6 +187,8 @@ router.post(
                          }
 
                          carOffersData.push({
+                              carBrand_id: carDetailsData.carBrand_id,
+                              carSeries_id: carDetailsData.carSeries_id,
                               leaseType: leaseType,
                               term: term,
                               offers: offers,

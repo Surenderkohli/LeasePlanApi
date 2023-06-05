@@ -231,7 +231,8 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                from: 'dhananjay@plaxonic.com',
                to: [enquireFormData.emailAddress],
                subject: 'Enquiry Form Submission',
-               html: message,
+               // html: message,
+               text: 'Please find the attachment.', // Add a text property for a plain text message
                attachments: [attachment],
           };
 

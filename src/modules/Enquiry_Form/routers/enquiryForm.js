@@ -37,8 +37,6 @@ router.post(
                     const { carBrand_id, carSeries_id, leaseType, term } =
                          carOffers;
 
-                    console.log(carOffers);
-
                     if (!carOffers) {
                          throw new Error('Car offers not found');
                     }

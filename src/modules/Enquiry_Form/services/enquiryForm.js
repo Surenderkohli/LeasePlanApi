@@ -209,30 +209,92 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
 
         `;
 
-          const messageTwo = `<!DOCTYPE html>
+          const messageTwo = `
           <!DOCTYPE html>
           <html>
-          <head>
-             <title>LeasePlan Car Reference</title>
-          </head>
-          <body>
-             <h2>LeasePlan Car Reference</h2>
-          
-             <p>Dear [Recipient's Name],</p>
-          
-             <p>Thank you for your interest in LeasePlan! We have received your car inquiry and would like to provide you with a personalized reference regarding your request.</p>
-          
-             <p>Please find the attached PDF for detailed information regarding your car inquiry.</p>
-          
-             <p>If you have any further questions or require assistance, please don't hesitate to contact our dedicated team. We are here to help you make an informed decision and ensure a seamless car leasing experience.</p>
-          
-             <p>Thank you for considering LeasePlan. We look forward to serving you!</p>
-          
-             <p>Best regards,<br>
-             [Your Name]<br>
-             LeasePlan</p>
-          </body>
+             <head>
+                <title>LeasePlan Car Reference</title>
+                <style>
+                   body {
+                   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                   font-size: 16px;
+                   /* background-color: rgb(240, 228, 215); */
+                   }
+                   .lastLogo {
+                   height: 140px;
+                   }
+                   .lastLogo {
+                   display: flex;
+                   align-items: center;
+                   }
+                   .lastLogo img {
+                   width: 140px;
+                   height: 100px;
+                   padding-right: 15px;
+                   margin-top: 25px;
+                   border-right: 2px solid red;
+                   }
+                   .address {
+                   margin-left: 15px;
+                   height: 100px;
+                   }
+                   .address p {
+                   line-height: 3px;
+                   }
+                   .para-1 {
+                   font-size: 25px;
+                   font-weight: 500;
+                   }
+                   .address span{
+                   color: brown;
+                   font-size: 18px;
+                   font-weight: 600;
+                   }
+                </style>
+             </head>
+             <body>
+                <div>
+                   <h2>LeasePlan Car Reference</h2>
+                   <p>Dear ${enquireFormData.firstName} ${enquireFormData.lastName},</p>
+                   <p>
+                      Thank you for your interest in LeasePlan! We have received your car
+                      inquiry and would like to provide you with a personalized reference
+                      regarding your request.
+                   </p>
+                   <p>
+                      Please find the attached PDF for detailed information regarding your car
+                      inquiry.
+                   </p>
+                   <p>
+                      If you have any further questions or require assistance, please don't
+                      hesitate to contact our dedicated team. We are here to help you make an
+                      informed decision and ensure a seamless car leasing experience.
+                   </p>
+                   <p>
+                      Thank you for considering LeasePlan. We look forward to serving you!
+                   </p>
+                   <p>
+                   <p style="font-size: 19px; font-weight: 500;">Best regards,</p>
+                   [Emirates]<br />
+                   LeasePlan
+                   </p>
+                </div>
+                <div class="lastLogo">
+                   <div>
+                      <img
+                         src="https://res.cloudinary.com/dqkag6b79/image/upload/v1683703490/logos_xolxnt.png"
+                         alt="" />
+                   </div>
+                   <div class="address">
+                      <p class="para-1">LeasePlan Emirates</p>
+                      <p><span>M: </span> 1860 500 5050 | 1860 419 5050</p>
+                      <p><span>A: </span> Al Fahim HQ 1st Floor Abu Dhabi PO Box 36679, AE</p>
+                      <p><span>E: </span> customercare@leaseplan.com</p>
+                   </div>
+                </div>
+             </body>
           </html>
+         
           `;
 
           // Generate the PDF using Puppeteer
@@ -252,7 +314,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                type: 'application/pdf',
                disposition: 'attachment',
           };
-g
+
           const mailOptions = {
                from: 'dhananjay@plaxonic.com',
                to: [enquireFormData.emailAddress],

@@ -118,6 +118,20 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                         width: 100%;
                                    "
                               >
+                              <tr  class="detail"
+                              style="
+                                  text-align: left;
+                              ">
+                                   <th>Name:</th>
+                                   <td>${enquireFormData.firstName} ${enquireFormData.lastName}</td>
+                              </tr>
+                              <tr  class="detail"
+                              style="
+                                  text-align: left;
+                              ">
+                                   <th>Mobile Number:</th>
+                                   <td>${enquireFormData.mobileNumber}</td>
+                              </tr>
                                    <tr  class="detail"
                                    style="
                                        text-align: left;
@@ -255,7 +269,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
              <body>
                 <div>
                    <h2>LeasePlan Car Reference</h2>
-                   <p>Dear ${enquireFormData.firstName} ${enquireFormData.lastName},</p>
+                   <p>Dear ${enquireFormData.firstName} ${enquireFormData.lastName} ,</p>
                    <p>
                       Thank you for your interest in LeasePlan! We have received your car
                       inquiry and would like to provide you with a personalized reference

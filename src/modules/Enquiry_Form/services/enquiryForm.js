@@ -1,6 +1,7 @@
 import enquiryFormModel from '../models/enquiryForm.js';
 import mongoose from 'mongoose';
 import sgMail from '@sendgrid/mail';
+import puppeteer from 'puppeteer';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -208,21 +209,56 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
 
         `;
 
-          let mailOptions = {
+          // Generate the PDF using Puppeteer
+          const browser = await puppeteer.launch();
+          const page = await browser.newPage();
+          await page.setContent(message);
+          const pdfBuffer = await page.pdf({
+               format: 'A4',
+               printBackground: true,
+               scale: 0.75, // Adjust the scale factor to fit more content onto a single page
+          });
+          await browser.close();
+
+          const attachment = {
+               content: pdfBuffer.toString('base64'),
+               filename: 'attachment.pdf',
+               type: 'application/pdf',
+               disposition: 'attachment',
+          };
+
+          const mailOptions = {
                from: 'dhananjay@plaxonic.com',
                to: [enquireFormData.emailAddress],
                subject: 'Enquiry Form Submission',
                html: message,
+               attachments: [attachment],
           };
 
           // Send the email using the transporter object
           await sgMail.send(mailOptions);
 
-          //Save the enquiry data to MongoDB
+          // Save the enquiry data to MongoDB
           enquireFormData.htmlTemplate = message;
           const enquiry = new enquiryFormModel(enquireFormData);
           const res = await enquiry.save();
           return res.id;
+
+          // let mailOptions = {
+          //      from: 'dhananjay@plaxonic.com',
+          //      to: [enquireFormData.emailAddress],
+          //      subject: 'Enquiry Form Submission',
+          //      html: message,
+          // };
+
+          // // Send the email using the transporter object
+          // await sgMail.send(mailOptions);
+
+          // //Save the enquiry data to MongoDB
+          // enquireFormData.htmlTemplate = message;
+          // const enquiry = new enquiryFormModel(enquireFormData);
+          // const res = await enquiry.save();
+          // return res.id;
      } catch (error) {
           console.error(error);
           return false;

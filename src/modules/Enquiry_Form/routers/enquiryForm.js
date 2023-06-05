@@ -43,9 +43,9 @@ router.post(
                     // Extract the leaseType data from the populated carOffer document
                     // const leaseTypes = carOffers.leaseType_id;
 
-                    const leaseTypeValues = leaseTypes.map(
-                         (type) => type.leaseType
-                    );
+                    // const leaseTypeValues = leaseTypes.map(
+                    //      (type) => type.leaseType
+                    // );
 
                     //  const term = carOffers.leaseType_id;
                     //  let terms = term.map((type) => type.term);
@@ -79,8 +79,8 @@ router.post(
                          // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
-                         leaseTypeValues,
-                         terms,
+                         // leaseTypeValues,
+                         // terms,
                          companyName,
                          duration: req.query.duration,
                          annualMileage: req.query.annualMileage,

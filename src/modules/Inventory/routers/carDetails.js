@@ -227,17 +227,17 @@ router.post(
                     });
                }
                // Check if id is a valid ObjectId
-               const fieldsToCheck = ['carBrand_id', 'carSeries_id'];
-               for (let field of fieldsToCheck) {
-                    if (
-                         !mongoose.Types.ObjectId.isValid(carDetailsData[field])
-                    ) {
-                         return res.status(400).send({
-                              success: false,
-                              msg: `Invalid ObjectId `,
-                         });
-                    }
-               }
+               // const fieldsToCheck = ['carBrand_id', 'carSeries_id'];
+               // for (let field of fieldsToCheck) {
+               //      if (
+               //           !mongoose.Types.ObjectId.isValid(carDetailsData[field])
+               //      ) {
+               //           return res.status(400).send({g
+               //                success: false,
+               //                msg: `Invalid ObjectId `,
+               //           });
+               //      }
+               // }
                //const carOffer = await carOfferModel.create(carOffersData[i]);
 
                const result = await CarServices.addNewCar(

@@ -28,10 +28,10 @@ router.post(
                          .findById({
                               _id: carOffers_id,
                          })
-                         .populate({
-                              path: 'leaseType_id',
-                              model: 'leaseType',
-                         })
+                         // .populate({
+                         //      path: 'leaseType_id',
+                         //      model: 'leaseType',
+                         // })
                          .exec();
 
                     // Extract relevant fields from carOffers documentq
@@ -42,14 +42,14 @@ router.post(
                     }
 
                     // Extract the leaseType data from the populated carOffer document
-                    const leaseTypes = carOffers.leaseType_id;
+                    // const leaseTypes = carOffers.leaseType_id;
 
                     const leaseTypeValues = leaseTypes.map(
                          (type) => type.leaseType
                     );
 
-                    const term = carOffers.leaseType_id;
-                    let terms = term.map((type) => type.term);
+                    //  const term = carOffers.leaseType_id;
+                    //  let terms = term.map((type) => type.term);
 
                     // Use find() method to retrieve the matching carOffers document with populated leaseType data
                     const carDetails = await carDetailModel.findOne({

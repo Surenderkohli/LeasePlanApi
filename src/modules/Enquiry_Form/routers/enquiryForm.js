@@ -24,15 +24,14 @@ router.post(
                     const { carOffers_id } = req.body;
 
                     // Retrieve car details using carId from carOffers collection
-                    const carOffers = await carOfferModel
-                         .findById({
-                              _id: carOffers_id,
-                         })
-                         // .populate({
-                         //      path: 'leaseType_id',
-                         //      model: 'leaseType',
-                         // })
-                         .exec();
+                    const carOffers = await carOfferModel.findById({
+                         _id: carOffers_id,
+                    });
+                    // .populate({
+                    //      path: 'leaseType_id',
+                    //      model: 'leaseType',
+                    // })
+                    // .exec();
 
                     // Extract relevant fields from carOffers documentq
                     const { carBrand_id, carSeries_id, yearModel } = carOffers;

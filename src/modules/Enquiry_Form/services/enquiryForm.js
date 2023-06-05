@@ -209,6 +209,32 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
 
         `;
 
+          const messageTwo = `<!DOCTYPE html>
+          <!DOCTYPE html>
+          <html>
+          <head>
+             <title>LeasePlan Car Reference</title>
+          </head>
+          <body>
+             <h2>LeasePlan Car Reference</h2>
+          
+             <p>Dear [Recipient's Name],</p>
+          
+             <p>Thank you for your interest in LeasePlan! We have received your car inquiry and would like to provide you with a personalized reference regarding your request.</p>
+          
+             <p>Please find the attached PDF for detailed information regarding your car inquiry.</p>
+          
+             <p>If you have any further questions or require assistance, please don't hesitate to contact our dedicated team. We are here to help you make an informed decision and ensure a seamless car leasing experience.</p>
+          
+             <p>Thank you for considering LeasePlan. We look forward to serving you!</p>
+          
+             <p>Best regards,<br>
+             [Your Name]<br>
+             LeasePlan</p>
+          </body>
+          </html>
+          `;
+
           // Generate the PDF using Puppeteer
           const browser = await puppeteer.launch();
           const page = await browser.newPage();
@@ -226,13 +252,13 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                type: 'application/pdf',
                disposition: 'attachment',
           };
-
+g
           const mailOptions = {
                from: 'dhananjay@plaxonic.com',
                to: [enquireFormData.emailAddress],
                subject: 'Enquiry Form Submission',
-               // html: message,
-               text: 'Please find the attachment.', // Add a text property for a plain text message
+               html: messageTwo,
+               // text: 'Please find the attachment.', // Add a text property for a plain text message
                attachments: [attachment],
           };
 

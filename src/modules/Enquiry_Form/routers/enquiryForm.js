@@ -34,7 +34,10 @@ router.post(
                     // .exec();
 
                     // Extract relevant fields from carOffers documentq
-                    const { carBrand_id, carSeries_id, yearModel } = carOffers;
+                    const { carBrand_id, carSeries_id, leaseType, term } =
+                         carOffers;
+
+                    console.log(carOffers);
 
                     if (!carOffers) {
                          throw new Error('Car offers not found');
@@ -79,6 +82,8 @@ router.post(
                          // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
+                         leaseType,
+                         term,
                          // leaseTypeValues,
                          // terms,
                          companyName,

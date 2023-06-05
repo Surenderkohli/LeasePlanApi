@@ -130,7 +130,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                    text-align: left;
                                ">
                                         <th>Lease Type:</th>
-                                        <td>${enquiryData.leaseTypeValues}</td>
+                                        <td>${enquiryData.leaseType}</td>
                                    </tr>
 
                                     <tr  class="detail"
@@ -138,7 +138,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                    text-align: left;
                                ">
                                         <th>Lease Term:</th>
-                                        <td>${enquiryData.terms}</td>
+                                        <td>${enquiryData.term}</td>
                                    </tr>
                                    <tr class="detail"
                                    style="

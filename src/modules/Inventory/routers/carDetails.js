@@ -400,9 +400,9 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
 router.get('/fetch-singles/:id', async (req, res) => {
      try {
           const { id } = req.params;
-          const { leaseTypeId } = req.query;
+          // const { leaseTypeId } = req.query;
 
-          const result = await CarServices.getSingleCars(id, leaseTypeId);
+          const result = await CarServices.getSingleCars(id);
 
           res.status(200).json({ success: true, data: result });
      } catch (error) {

@@ -230,7 +230,7 @@ router.post(
                     carSeries_id: carDetailsData.carSeries_id,
                     yearModel: carDetailsData.yearModel,
                     //leaseType_id: leaseTypes.map((leaseType) => leaseType._id),
-                    leaseType_id: carDetailsData.leaseType_id,
+                    //leaseType_id: carDetailsData.leaseType_id,
                     offers: [],
                };
 

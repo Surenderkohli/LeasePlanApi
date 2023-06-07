@@ -68,7 +68,7 @@ const getAllCar = async (
                          let: {
                               carBrandId: '$carBrand_id',
                               carSeriesId: '$carSeries_id',
-                              leaseTypeId: '$leaseType_id',
+                              // leaseTypeId: '$leaseType_id',
                               // yearModel: '$yearModel',
                          },
                          pipeline: [
@@ -825,7 +825,7 @@ const getDeals = async (query) => {
 
 // <----------------------------------------------------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------------------------------------------------------->
 
-const getSingleCars = async (id, leaseTypeId) => {
+const getSingleCars = async (id) => {
      try {
           const car = await carDetailModel
                .findOne({ _id: id })
@@ -841,17 +841,16 @@ const getSingleCars = async (id, leaseTypeId) => {
                carSeries_id: car.carSeries_id,
                // yearModel: car.yearModel,
           });
-          let clause = {
-               carBrand_id: car.carBrand_id,
-               carSeries_id: car.carSeries_id,
-               // yearModel: car.yearModel,
-          };
-          if (leaseTypeId) {
-               clause.leaseType_id = leaseTypeId;
-          }
-          const carOffers = await carOfferModel
-               .find(clause)
-               .populate('leaseType_id');
+          // let clause = {
+          //      carBrand_id: car.carBrand_id,
+          //      carSeries_id: car.carSeries_id,
+          //      // yearModel: car.yearModel,
+          // };
+          // if (leaseTypeId) {
+          //      clause.leaseType_id = leaseTypeId;
+          // }
+          // const carOffers = await carOfferModel.find(clause);
+          // .populate('leaseType_id');
 
           carOffers.forEach((carOffer) => {
                // Call the `isExpired` method on each individual car offer document

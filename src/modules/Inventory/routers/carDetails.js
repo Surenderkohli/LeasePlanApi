@@ -94,10 +94,10 @@ router.post(
      carUpload.array('image', 6),
      httpHandler(async (req, res) => {
           try {
-               const { deals } = req.body;
-               if (deals && !['active', 'inactive'].includes(deals)) {
-                    throw new Error('Invalid deals status');
-               }
+               // const { deals } = req.body;
+               // if (deals && !['active', 'inactive'].includes(deals)) {
+               //      throw new Error('Invalid deals status');
+               // }
 
                const carDetailsData = req.body;
 
@@ -248,11 +248,20 @@ router.post(
                     carFeaturesData,
                     carOffersData
                );
+
+               if (!result) {
+                    return res.status(400).json({
+                         success: false,
+                         error: 'Failed to add new car',
+                    });
+               }
+
                res.status(200).json({ success: true, data: result });
           } catch (error) {
                console.log(error);
                console.error('Error in adding new carDetails:', error);
-               res.send({ status: 400, success: false, msg: error.message });
+               //  res.send({ status: 400, success: false, msg: error.message });
+               res.status(400).json({ success: false, error: error.message });
           }
      })
 );

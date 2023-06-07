@@ -807,28 +807,86 @@ const updateCar = async (
           //////////////////////////////// Update inventory
           const updatedCarOffers = [];
 
+          // if (carOffersData.offers) {
+          //      for (const offer of carOffersData.offers) {
+          //           const offerFilter = {
+          //                _id: id,
+          //                'offers.calculationNo': offer.calculationNo,
+          //           };
+
+          //           const offerUpdate = {
+          //                $set: {
+          //                     'offers.$.duration': offer.duration,
+          //                     'offers.$.annualMileage': offer.annualMileage,
+          //                     'offers.$.monthlyCost': offer.monthlyCost,
+          //                     'offers.$.bestDeals': offer.bestDeals,
+          //                },
+          //           };
+
+          //           const updatedOffer = await carOfferModel.findOneAndUpdate(
+          //                offerFilter,
+          //                offerUpdate,
+          //                { new: true }
+          //           );
+          //           updatedCarOffers.push(updatedOffer);
+          //      }
+          // }
+
           if (carOffersData.offers) {
+               const existingOffers = await carOfferModel.findById(
+                    id,
+                    'offers'
+               );
+
                for (const offer of carOffersData.offers) {
-                    const offerFilter = {
-                         _id: id,
-                         'offers.calculationNo': offer.calculationNo,
-                    };
-
-                    const offerUpdate = {
-                         $set: {
-                              'offers.$.duration': offer.duration,
-                              'offers.$.annualMileage': offer.annualMileage,
-                              'offers.$.monthlyCost': offer.monthlyCost,
-                              'offers.$.bestDeals': offer.bestDeals,
-                         },
-                    };
-
-                    const updatedOffer = await carOfferModel.findOneAndUpdate(
-                         offerFilter,
-                         offerUpdate,
-                         { new: true }
+                    const existingOffer = existingOffers.offers.find(
+                         (o) =>
+                              o.calculationNo.toString() === offer.calculationNo
                     );
-                    updatedCarOffers.push(updatedOffer);
+
+                    if (existingOffer) {
+                         // If the offer exists, update it
+                         const offerFilter = {
+                              _id: id,
+                              'offers.calculationNo': offer.calculationNo,
+                         };
+
+                         const offerUpdate = {
+                              $set: {
+                                   'offers.$.duration': offer.duration,
+                                   'offers.$.annualMileage':
+                                        offer.annualMileage,
+                                   'offers.$.monthlyCost': offer.monthlyCost,
+                                   'offers.$.bestDeals': offer.bestDeals,
+                              },
+                         };
+
+                         const updatedOffer =
+                              await carOfferModel.findOneAndUpdate(
+                                   offerFilter,
+                                   offerUpdate,
+                                   { new: true }
+                              );
+                         updatedCarOffers.push(updatedOffer);
+                    } else {
+                         // If the offer does not exist, add it to the array
+                         const newOffer = {
+                              calculationNo: offer.calculationNo,
+                              duration: offer.duration,
+                              annualMileage: offer.annualMileage,
+                              monthlyCost: offer.monthlyCost,
+                              bestDeals: offer.bestDeals,
+                         };
+                         existingOffers.offers.push(newOffer);
+
+                         const updatedOffer =
+                              await carOfferModel.findByIdAndUpdate(
+                                   id,
+                                   { offers: existingOffers.offers },
+                                   { new: true }
+                              );
+                         updatedCarOffers.push(updatedOffer);
+                    }
                }
           }
 

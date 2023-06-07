@@ -321,7 +321,7 @@ const createCarOffer = async (carOfferData) => {
 const getAllOffer = async () => {
      const response = await carOfferModel
           .find()
-          .populate(['carBrand_id', 'carSeries_id', 'leaseType_id']);
+          .populate(['carBrand_id', 'carSeries_id']);
      return response;
 };
 

@@ -108,7 +108,7 @@ export const carSeriesService = {
      getSingleCarSeries,
      addCarSeries,
      getAllCarSeries,
-     getAllCarSeriesByBrandId,
+     // getAllCarSeriesByBrandId,
      deleteCarSeries,
      // AllCarSeriesByBrandId,
 };

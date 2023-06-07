@@ -251,7 +251,8 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
                carOffersData,
                carFeaturesData
           );
-          res.send(result);
+          // res.send(result);
+          res.status(200).json({ success: true, data: result });
      } catch (error) {
           console.error('Error in updating car details:', error);
           res.send({ status: 400, success: false, msg: error.message });

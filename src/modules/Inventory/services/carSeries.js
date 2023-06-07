@@ -39,17 +39,17 @@ const getSingleCarSeries = async (id) => {
      return response;
 };
 
-const getAllCarSeriesByBrandId = async (carBrand_id) => {
-     try {
-          const response = await carSeriesModel
-               .find({ carBrand_id })
-               .populate('carBrand_id');
+// const getAllCarSeriesByBrandId = async (carBrand_id) => {
+//      try {
+//           const response = await carSeriesModel
+//                .find({ carBrand_id })
+//                .populate('carBrand_id');
 
-          return response;
-     } catch (error) {
-          throw new Error('Unable to retrieve car Brand');
-     }
-};
+//           return response;
+//      } catch (error) {
+//           throw new Error('Unable to retrieve car Brand');
+//      }
+// };
 
 const deleteCarSeries = async (id) => {
      const response = await carSeriesModel.findOneAndDelete(

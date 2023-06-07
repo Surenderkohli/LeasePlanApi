@@ -43,29 +43,29 @@ router.post(
      })
 );
 
-router.get(
-     '/get-carBrand_id/:carBrand_id',
-     httpHandler(async (req, res) => {
-          try {
-               const { carBrand_id } = req.params;
+// router.get(
+//      '/get-carBrand_id/:carBrand_id',
+//      httpHandler(async (req, res) => {
+//           try {
+//                const { carBrand_id } = req.params;
 
-               const result = await carSeriesService.getAllCarSeriesByBrandId(
-                    carBrand_id
-               );
+//                const result = await carSeriesService.getAllCarSeriesByBrandId(
+//                     carBrand_id
+//                );
 
-               res.status(200).json({
-                    success: true,
-                    data: result,
-               });
-          } catch (error) {
-               console.log(error);
-               res.status(500).json({
-                    success: false,
-                    message: 'Server Error',
-               });
-          }
-     })
-);
+//                res.status(200).json({
+//                     success: true,
+//                     data: result,
+//                });
+//           } catch (error) {
+//                console.log(error);
+//                res.status(500).json({
+//                     success: false,
+//                     message: 'Server Error',
+//                });
+//           }
+//      })
+// );
 
 router.delete(
      '/delete/:id',

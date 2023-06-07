@@ -1,5 +1,4 @@
 //------------------------------------------------------------------------------------------carDetails.js-----------------------------------------------------------------------------------
-const carBrand_id = req.body.carBrand_id;
 
 // // Check if carBrand_id is provided and valid
 // if (!carBrand_id) {
@@ -19,7 +18,7 @@ const carBrand_id = req.body.carBrand_id;
 //      });
 // }
 
-router.get('/fetch-single/:id', async (req, res) => {
+/* router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
 
@@ -315,10 +314,10 @@ router.get(
           }
      })
 );
-
+ */
 //------------------------------------------------------------------------------------------carFeature.js-----------------------------------------------------------------------------------
 
-router.post(
+/* router.post(
      '/add-carFeature',
      httpHandler(async (req, res) => {
           try {
@@ -333,17 +332,17 @@ router.post(
           }
      })
 );
-
+ */
 //------------------------------------------------------------------------------------------carOffer.js-----------------------------------------------------------------------------------
 
-// POST /car-offers
+/* // POST /car-offers
 
 router.post('/car-offers-manual', async (req, res) => {
      try {
           const carOffer = await carOfferService.createCarOfferManual(req.body);
           res.status(201).json({
                message: 'Car offer added successfully',
-               data: carOffer,
+               data: carOffer, D
           });
      } catch (error) {
           console.log(error);
@@ -392,7 +391,7 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
           console.log(error);
           res.status(400).json({ message: error.message });
      }
-});
+}); */
 
 ///////////
 /////////////////////
@@ -505,7 +504,7 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 //      { new: true }
 // );
 
-router.get('/fetch-single/:id', async (req, res) => {
+/* router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
           const { chosenDuration, chosenAnnualMileage } = req.query;
@@ -537,3 +536,4 @@ router.get('/fetch-single/:id', async (req, res) => {
           res.status(400).json({ success: false, msg: error.message });
      }
 });
+ */

@@ -59,50 +59,50 @@ const deleteCarSeries = async (id) => {
      return response;
 };
 
-const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
-     try {
-          const response = await carSeriesModel.aggregate([
-               {
-                    $match: {
-                         carBrand_id: mongoose.Types.ObjectId(carBrand_id),
-                    },
-               },
-               {
-                    $lookup: {
-                         from: 'carbrands',
-                         localField: 'carBrand_id',
-                         foreignField: '_id',
-                         as: 'carBrand',
-                    },
-               },
-               {
-                    $unwind: '$carBrand',
-               },
-               {
-                    $lookup: {
-                         from: 'leasetypes',
-                         localField: 'leaseType_id',
-                         foreignField: '_id',
-                         as: 'leaseType',
-                    },
-               },
-               {
-                    $unwind: '$leaseType',
-               },
-               {
-                    $match: {
-                         'leaseType.leaseType': leaseType,
-                         'leaseType.term': term,
-                    },
-               },
-          ]);
+// const AllCarSeriesByBrandId = async (carBrand_id, leaseType, term) => {
+//      try {
+//           const response = await carSeriesModel.aggregate([
+//                {
+//                     $match: {
+//                          carBrand_id: mongoose.Types.ObjectId(carBrand_id),
+//                     },
+//                },
+//                {
+//                     $lookup: {
+//                          from: 'carbrands',
+//                          localField: 'carBrand_id',
+//                          foreignField: '_id',
+//                          as: 'carBrand',
+//                     },
+//                },
+//                {
+//                     $unwind: '$carBrand',
+//                },
+//                {
+//                     $lookup: {
+//                          from: 'leasetypes',
+//                          localField: 'leaseType_id',
+//                          foreignField: '_id',
+//                          as: 'leaseType',
+//                     },
+//                },
+//                {
+//                     $unwind: '$leaseType',
+//                },
+//                {
+//                     $match: {
+//                          'leaseType.leaseType': leaseType,
+//                          'leaseType.term': term,
+//                     },
+//                },
+//           ]);
 
-          return response;
-     } catch (error) {
-          console.log(error);
-          throw new Error('Unable to retrieve car series');
-     }
-};
+//           return response;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Unable to retrieve car series');
+//      }
+// };
 
 export const carSeriesService = {
      getSingleCarSeries,
@@ -110,5 +110,5 @@ export const carSeriesService = {
      getAllCarSeries,
      getAllCarSeriesByBrandId,
      deleteCarSeries,
-     AllCarSeriesByBrandId,
+     // AllCarSeriesByBrandId,
 };

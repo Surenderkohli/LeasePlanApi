@@ -196,20 +196,26 @@ router.post(
                     }
                }
 
-               // Check if calculationNo already exists
-               // const calculationNos = carOffersData.offers.map(
-               //      (offer) => offer.calculationNo
-               // );
-               // const existingCalculationNos = await carOfferModel.find({
-               //      'offers.calculationNo': { $in: calculationNos },
-               // });
+               /* 
+               The issue occurs because carOffersData is an array, not an object. Therefore, you cannot directly access carOffersData.offers as it is undefined. To resolve this, you can use the flatMap() method to flatten the array of offers and retrieve the calculationNo values.
 
-               // if (existingCalculationNos.length > 0) {
-               //      return res.status(400).json({
-               //           success: false,
-               //           msg: 'calculationNo already exists',
-               //      });
-               // }
+               By using carOffersData.flatMap(), you iterate over each carOffersData object and map it to an array of calculationNo values. This ensures that you have a flattened array of all the calculationNo values from the offers array within each carOffersData object.
+
+        */
+               // Check if calculationNo already exists
+               const calculationNos = carOffersData.flatMap((data) =>
+                    data.offers.map((offer) => offer.calculationNo)
+               );
+               const existingCalculationNos = await carOfferModel.find({
+                    'offers.calculationNo': { $in: calculationNos },
+               });
+
+               if (existingCalculationNos.length > 0) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'calculationNo already exists',
+                    });
+               }
 
                const carImage = [];
                if (files) {

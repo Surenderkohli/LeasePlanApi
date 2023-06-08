@@ -27,11 +27,11 @@ router.get('/fetch-single/:id', async (req, res) => {
      res.send(result);
 });
 
-router.put('/update', async (req, res) => {
-     const data = req.body;
-     const result = await leaseTypeService.updateLeaseType(data);
-     res.send(result);
-});
+// router.put('/update', async (req, res) => {
+//      const data = req.body;
+//      const result = await leaseTypeService.updateLeaseType(data);
+//      res.send(result);
+// });
 
 router.get(
      '/count',

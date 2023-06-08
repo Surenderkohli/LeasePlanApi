@@ -18,13 +18,13 @@ const getSingleLeaseType = async (id) => {
      return response;
 };
 
-const updateLeaseType = async (id, data) => {
-     const response = await leaseTypeModel.updateOne(
-          { leaseType_id: data.leaseType_id },
-          { data }
-     );
-     return response;
-};
+// const updateLeaseType = async (id, data) => {
+//      const response = await leaseTypeModel.updateOne(
+//           { leaseType_id: data.leaseType_id },
+//           { data }
+//      );
+//      return response;
+// };
 
 const getCount = async (query) => {
      const count = await leaseTypeModel.countDocuments(query);
@@ -43,7 +43,7 @@ const deleteLeaseType = async (id) => {
 export const leaseTypeService = {
      getAllLeaseType,
      getSingleLeaseType,
-     updateLeaseType,
+     // updateLeaseType,
      deleteLeaseType,
      addLeaseType,
      getCount,

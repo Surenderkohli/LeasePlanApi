@@ -718,11 +718,54 @@ const getCount = async () => {
      };
 };
 
-const getSingleCar = async (id) => {
+// const getSingleCar = async (id) => {
+//      try {
+//           const carOffer = await carOfferModel
+//                .findOne({ _id: id })
+//                // .populate('leaseType_id')
+//                .populate('carBrand_id')
+//                .populate('carSeries_id');
+
+//           if (!carOffer) {
+//                throw new Error('Car not found');
+//           }
+
+//           //  const { leaseType_id } = car;
+//           // Retrieve lease type details using leaseType_id from leasetypes collection
+//           // const leaseType = await leaseTypeModel.findOne({
+//           //      _id: leaseType_id,
+//           //      isDeleted: false,
+//           // });
+
+//           const carFeatures = await carFeatureModel.findOne({
+//                carBrand_id: carOffer.carBrand_id,
+//                carSeries_id: carOffer.carSeries_id,
+//                //yearModel: carOffer.yearModel,
+//           });
+
+//           const carDetails = await carDetailsModel.findOne({
+//                carBrand_id: carOffer.carBrand_id,
+//                carSeries_id: carOffer.carSeries_id,
+//                // yearModel: carOffer.yearModel,
+//           });
+
+//           const result = {
+//                carOffer,
+//                carDetails,
+//                features: carFeatures || [],
+//           };
+
+//           return result;
+//      } catch (error) {
+//           console.log(error);
+//           throw error;
+//      }
+// };
+
+const getSingleCar = async (id, duration, annualMileage) => {
      try {
           const carOffer = await carOfferModel
                .findOne({ _id: id })
-               // .populate('leaseType_id')
                .populate('carBrand_id')
                .populate('carSeries_id');
 
@@ -730,17 +773,25 @@ const getSingleCar = async (id) => {
                throw new Error('Car not found');
           }
 
-          //  const { leaseType_id } = car;
-          // Retrieve lease type details using leaseType_id from leasetypes collection
-          // const leaseType = await leaseTypeModel.findOne({
-          //      _id: leaseType_id,
-          //      isDeleted: false,
-          // });
+          let monthlyCost;
+
+          if (duration && annualMileage) {
+               const selectedOffer = carOffer.offers.find(
+                    (offer) =>
+                         offer.duration === Number(duration) &&
+                         offer.annualMileage === Number(annualMileage)
+               );
+
+               if (!selectedOffer) {
+                    throw new Error('Offer not found');
+               }
+
+               monthlyCost = selectedOffer.monthlyCost;
+          }
 
           const carFeatures = await carFeatureModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
-               //yearModel: carOffer.yearModel,
           });
 
           const carDetails = await carDetailsModel.findOne({
@@ -753,6 +804,7 @@ const getSingleCar = async (id) => {
                carOffer,
                carDetails,
                features: carFeatures || [],
+               monthlyCost: monthlyCost,
           };
 
           return result;

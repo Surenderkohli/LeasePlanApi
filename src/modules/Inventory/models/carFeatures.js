@@ -33,6 +33,11 @@ const carFeatureSchema = new Schema({
           type: Boolean,
           default: false,
      },
+     source: {
+          type: String,
+          enum: ['csv', 'manual'],
+          required: false,
+     },
 });
 
 // export const CarFeatureCategory = mongoose.model(

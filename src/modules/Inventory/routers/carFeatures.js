@@ -185,16 +185,16 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                });
           }
 
-          const existingFeatures = await carFeatureModel.find({});
+          // const existingFeatures = await carFeatureModel.find({});
 
-          // Delete existing car features only if they exist
-          if (existingFeatures.length > 0) {
-               await carFeatureService.deleteAllCarFeaturesDescription();
-          }
+          // // Delete existing car features only if they exist
+          // if (existingFeatures.length > 0) {
+          //      await carFeatureService.deleteAllCarFeaturesDescription();
+          // }
 
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =
-                    await carFeatureService.addFeatureDescription(
+                    await carFeatureService.addOrUpdateFeatureDescription(
                          featureDescriptionData[i]
                     );
                featureDescriptions.push(featureDescription);

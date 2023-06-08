@@ -296,7 +296,83 @@ const deleteAllCarFeaturesDescription = async () => {
      }
 };
 
-const addFeatureDescription = async (featureDescriptionData) => {
+// const addFeatureDescription = async (featureDescriptionData) => {
+//      try {
+//           const {
+//                makeCode,
+//                modelCode,
+//                categoryCode,
+//                categoryDescription,
+//                featureDescription,
+//           } = featureDescriptionData;
+
+//           // Find the corresponding carBrand document based on makeCode
+//           const carBrand = await carBrandModel.findOne({ makeCode });
+
+//           if (!carBrand) {
+//                throw new Error('Invalid makeCode. Car brand not found.');
+//           }
+
+//           // Find the corresponding carSeries document based on modelCode
+//           const carSeries = await carSeriesModel.findOne({ modelCode });
+
+//           if (!carSeries) {
+//                throw new Error('Invalid modelCode. Car series not found.');
+//           }
+
+//           // Find the corresponding carFeature document based on makeCode, modelCode, and categoryCode
+//           let carFeature = await carFeatureModel.findOne({
+//                makeCode,
+//                modelCode,
+//           });
+
+//           if (!carFeature) {
+//                // If the carFeature document does not exist, create a new one
+//                carFeature = new carFeatureModel({
+//                     carSeries_id: carSeries._id,
+//                     carBrand_id: carBrand._id,
+//                     modelCode,
+//                     makeCode,
+//                     categories: [
+//                          {
+//                               categoryCode,
+//                               categoryDescription,
+//                               features: [featureDescription],
+//                          },
+//                     ],
+//                });
+//           } else {
+//                // If the carFeature document exists, find the category based on categoryCode and categoryDescription
+//                let category = carFeature.categories.find((category) => {
+//                     return (
+//                          category.categoryCode === categoryCode &&
+//                          category.categoryDescription === categoryDescription
+//                     );
+//                });
+
+//                if (!category) {
+//                     // If the category does not exist, create a new one
+//                     category = {
+//                          categoryCode,
+//                          categoryDescription,
+//                          features: [featureDescription],
+//                     };
+//                     carFeature.categories.push(category);
+//                } else {
+//                     // If the category exists, push the featureDescription into the features array
+//                     category.features.push(featureDescription);
+//                }
+//           }
+
+//           await carFeature.save();
+//           return carFeature;
+//      } catch (error) {
+//           console.log(error);
+//           throw new Error('Failed to add feature description');
+//      }
+// };
+
+const addOrUpdateFeatureDescription = async (featureDescriptionData) => {
      try {
           const {
                makeCode,
@@ -359,7 +435,17 @@ const addFeatureDescription = async (featureDescriptionData) => {
                     };
                     carFeature.categories.push(category);
                } else {
-                    // If the category exists, push the featureDescription into the features array
+                    // If the category exists, check if the featureDescription already exists
+                    const featureIndex = category.features.findIndex(
+                         (feature) => feature === featureDescription
+                    );
+
+                    if (featureIndex !== -1) {
+                         // If the featureDescription already exists, remove it from the array
+                         category.features.splice(featureIndex, 1);
+                    }
+
+                    // Add the updated featureDescription
                     category.features.push(featureDescription);
                }
           }
@@ -368,7 +454,7 @@ const addFeatureDescription = async (featureDescriptionData) => {
           return carFeature;
      } catch (error) {
           console.log(error);
-          throw new Error('Failed to add feature description');
+          throw new Error('Failed to add/update feature description');
      }
 };
 
@@ -381,6 +467,7 @@ export const carFeatureService = {
      // upsertCarFeature,
      createCarFeature,
      createCarFeatureCategory,
-     addFeatureDescription,
+     // addFeatureDescription,
+     addOrUpdateFeatureDescription,
      deleteAllCarFeaturesDescription,
 };

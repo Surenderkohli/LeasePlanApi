@@ -195,6 +195,13 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                     makeCode,
                     modelCode,
                });
+
+               // Delete existing feature descriptions with source type 'csv' for the same makeCode and modelCode
+               await carFeatureModel.deleteMany({
+                    source: 'csv',
+                    makeCode,
+                    modelCode,
+               });
           } else if (req.body.source === 'csv') {
                // If the source is 'csv', delete existing feature descriptions with source type 'csv'
                await carFeatureModel.deleteMany({ source: 'csv' });

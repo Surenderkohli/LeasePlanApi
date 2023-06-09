@@ -187,21 +187,24 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                });
           }
 
-          // const existingFeatures = await carFeatureModel.find({});
-
-          // // Delete existing car features only if they exist
-          // if (existingFeatures.length > 0) {
-          //      await carFeatureService.deleteAllCarFeaturesDescription();
-          // }
-
-          // Delete existing feature descriptions with source type 'csv'
-          await carFeatureModel.deleteMany({ source: 'csv' });
+          if (req.body.source === 'manual') {
+               // If the source is 'manual', delete existing feature descriptions based on makeCode and modelCode
+               const { makeCode, modelCode } = req.body;
+               await carFeatureModel.deleteMany({
+                    source: 'manual',
+                    makeCode,
+                    modelCode,
+               });
+          } else if (req.body.source === 'csv') {
+               // If the source is 'csv', delete existing feature descriptions with source type 'csv'
+               await carFeatureModel.deleteMany({ source: 'csv' });
+          }
 
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =
                     await carFeatureService.addOrUpdateFeatureDescription(
                          featureDescriptionData[i],
-                         'csv' // Set the source parameter
+                         'csv' // Set the source parameter to 'csv' for all feature descriptions
                     );
                featureDescriptions.push(featureDescription);
           }

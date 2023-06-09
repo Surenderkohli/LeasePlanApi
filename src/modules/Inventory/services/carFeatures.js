@@ -457,7 +457,10 @@ const deleteAllCarFeaturesDescription = async () => {
 //           throw new Error('Failed to add/update feature description');
 //      }
 // };
-const addOrUpdateFeatureDescription = async (featureDescriptionData) => {
+const addOrUpdateFeatureDescription = async (
+     featureDescriptionData,
+     source
+) => {
      try {
           const {
                makeCode,
@@ -501,6 +504,7 @@ const addOrUpdateFeatureDescription = async (featureDescriptionData) => {
                               features: [featureDescription],
                          },
                     ],
+                    source, // Set the source field
                });
           } else {
                // If the carFeature document exists, find the category based on categoryCode and categoryDescription
@@ -548,6 +552,7 @@ const addOrUpdateFeatureDescription = async (featureDescriptionData) => {
                          carFeature.categories.splice(categoryIndex, 1);
                     }
                }
+               carFeature.source = source; // Update the source field
           }
 
           await carFeature.save();

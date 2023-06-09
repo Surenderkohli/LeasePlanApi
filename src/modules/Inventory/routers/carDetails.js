@@ -7,6 +7,8 @@ import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
 import carOfferModel from '../models/carOffer.js';
+import carBrandModel from '../models/carBrand.js';
+import carSeriesModel from '../models/carSeries.js';
 
 dotenv.config();
 
@@ -99,6 +101,15 @@ router.post(
                //      throw new Error('Invalid deals status');
                // }
 
+               const { carBrand_id, carSeries_id } = req.body;
+
+               // Retrieve makeCode and modelCode based on carBrand_id and carSeries_id
+               const carBrand = await carBrandModel.findById(carBrand_id);
+               const makeCode = carBrand.makeCode;
+
+               const carSeries = await carSeriesModel.findById(carSeries_id);
+               const modelCode = carSeries.modelCode;
+
                const carDetailsData = req.body;
 
                const files = req.files; // Get the image files from the request
@@ -106,9 +117,10 @@ router.post(
                const carFeaturesData = {
                     carSeries_id: carDetailsData.carSeries_id,
                     carBrand_id: carDetailsData.carBrand_id,
-                    modelCode: carDetailsData.modelCode,
-                    makeCode: carDetailsData.makeCode,
+                    modelCode: modelCode,
+                    makeCode: makeCode,
                     categories: carDetailsData.categories,
+                    source: 'manual', // Set the source to 'manual' for manual upload
                };
 
                // const leaseType = req.body.leaseType;
@@ -203,19 +215,19 @@ router.post(
 
         */
                // Check if calculationNo already exists
-               const calculationNos = carOffersData.flatMap((data) =>
-                    data.offers.map((offer) => offer.calculationNo)
-               );
-               const existingCalculationNos = await carOfferModel.find({
-                    'offers.calculationNo': { $in: calculationNos },
-               });
+               // const calculationNos = carOffersData.flatMap((data) =>
+               //      data.offers.map((offer) => offer.calculationNo)
+               // );
+               // const existingCalculationNos = await carOfferModel.find({
+               //      'offers.calculationNo': { $in: calculationNos },
+               // });
 
-               if (existingCalculationNos.length > 0) {
-                    return res.status(400).json({
-                         success: false,
-                         msg: 'calculationNo already exists',
-                    });
-               }
+               // if (existingCalculationNos.length > 0) {
+               //      return res.status(400).json({
+               //           success: false,
+               //           msg: 'calculationNo already exists',
+               //      });
+               // }
 
                const carImage = [];
                if (files) {

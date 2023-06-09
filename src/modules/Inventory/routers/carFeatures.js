@@ -167,6 +167,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           if (!req.file || req.file.mimetype !== 'text/csv') {
                return res.status(400).json({
                     message: 'Invalid file format. Please upload a CSV file',
+                    source: 'manual', // Set the source to 'manual' when not uploading a CSV file
                });
           }
 
@@ -182,20 +183,35 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           if (!validation.isValid) {
                return res.status(400).json({
                     message: `Invalid CSV format. ${validation.error}`,
+                    source: 'csv', // Set the source to 'csv' when uploading a valid CSV file
                });
           }
 
-          // const existingFeatures = await carFeatureModel.find({});
+          if (req.body.source === 'manual') {
+               // If the source is 'manual', delete existing feature descriptions based on makeCode and modelCode
+               const { makeCode, modelCode } = req.body;
+               await carFeatureModel.deleteMany({
+                    source: 'manual',
+                    makeCode,
+                    modelCode,
+               });
 
-          // // Delete existing car features only if they exist
-          // if (existingFeatures.length > 0) {
-          //      await carFeatureService.deleteAllCarFeaturesDescription();
-          // }
+               // Delete existing feature descriptions with source type 'csv' for the same makeCode and modelCode
+               await carFeatureModel.deleteMany({
+                    source: 'csv',
+                    makeCode,
+                    modelCode,
+               });
+          } else if (req.body.source === 'csv') {
+               // If the source is 'csv', delete existing feature descriptions with source type 'csv'
+               await carFeatureModel.deleteMany({ source: 'csv' });
+          }
 
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =
                     await carFeatureService.addOrUpdateFeatureDescription(
-                         featureDescriptionData[i]
+                         featureDescriptionData[i],
+                         'csv' // Set the source parameter to 'csv' for all feature descriptions
                     );
                featureDescriptions.push(featureDescription);
           }

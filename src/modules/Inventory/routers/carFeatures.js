@@ -167,6 +167,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           if (!req.file || req.file.mimetype !== 'text/csv') {
                return res.status(400).json({
                     message: 'Invalid file format. Please upload a CSV file',
+                    source: 'manual', // Set the source to 'manual' when not uploading a CSV file
                });
           }
 
@@ -182,6 +183,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           if (!validation.isValid) {
                return res.status(400).json({
                     message: `Invalid CSV format. ${validation.error}`,
+                    source: 'csv', // Set the source to 'csv' when uploading a valid CSV file
                });
           }
 
@@ -192,10 +194,14 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           //      await carFeatureService.deleteAllCarFeaturesDescription();
           // }
 
+          // Delete existing feature descriptions with source type 'csv'
+          await carFeatureModel.deleteMany({ source: 'csv' });
+
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =
                     await carFeatureService.addOrUpdateFeatureDescription(
-                         featureDescriptionData[i]
+                         featureDescriptionData[i],
+                         'csv' // Set the source parameter
                     );
                featureDescriptions.push(featureDescription);
           }

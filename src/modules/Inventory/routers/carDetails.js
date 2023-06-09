@@ -109,6 +109,7 @@ router.post(
                     modelCode: carDetailsData.modelCode,
                     makeCode: carDetailsData.makeCode,
                     categories: carDetailsData.categories,
+                    source: 'manual', // Set the source to 'manual' for manual upload
                };
 
                // const leaseType = req.body.leaseType;

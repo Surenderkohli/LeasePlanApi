@@ -195,23 +195,16 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                     makeCode,
                     modelCode,
                });
-
-               // Delete existing feature descriptions with source type 'csv' for the same makeCode and modelCode
-               await carFeatureModel.deleteMany({
-                    source: 'csv',
-                    makeCode,
-                    modelCode,
-               });
-          } else if (req.body.source === 'csv') {
-               // If the source is 'csv', delete existing feature descriptions with source type 'csv'
-               await carFeatureModel.deleteMany({ source: 'csv' });
           }
+
+          // Delete existing feature descriptions with source type 'csv'
+          await carFeatureModel.deleteMany({ source: 'csv' });
 
           for (let i = 0; i < featureDescriptionData.length; i++) {
                const featureDescription =
                     await carFeatureService.addOrUpdateFeatureDescription(
                          featureDescriptionData[i],
-                         'csv' // Set the source parameter to 'csv' for all feature descriptions
+                         req.body.source // Set the source parameter to the request body's source value for all feature descriptions
                     );
                featureDescriptions.push(featureDescription);
           }

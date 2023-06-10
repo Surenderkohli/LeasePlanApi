@@ -196,7 +196,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                     modelCode,
                });
           }
-
+g
           // Delete existing feature descriptions with source type 'csv'
           await carFeatureModel.deleteMany({ source: 'csv' });
 
@@ -204,7 +204,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                const featureDescription =
                     await carFeatureService.addOrUpdateFeatureDescription(
                          featureDescriptionData[i],
-                         req.body.source // Set the source parameter to the request body's source value for all feature descriptions
+                         'csv' // Set the source parameter to the request body's source value for all feature descriptions
                     );
                featureDescriptions.push(featureDescription);
           }

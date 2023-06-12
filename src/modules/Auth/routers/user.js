@@ -307,10 +307,10 @@ router.post('/reset_password', profileUpload.none(), async (req, res) => {
      }
 });
 
+let otpTimestamp = 0; // Define otpTimestamp as a global variable outside the endpoint
+
 router.post('/resend_otp', profileUpload.none(), async (req, res) => {
      try {
-          let otpTimestamp = 0; // Variable to store the timestamp of the last OTP sent
-
           const { email } = req.body;
 
           const user = await userService.getUserByEmail(email);
@@ -323,6 +323,7 @@ router.post('/resend_otp', profileUpload.none(), async (req, res) => {
           }
 
           const currentTime = Date.now();
+          // const currentTime = new Date();
           const timeDiff = currentTime - otpTimestamp;
 
           if (timeDiff < 30000) {
@@ -339,7 +340,7 @@ router.post('/resend_otp', profileUpload.none(), async (req, res) => {
           await user.save();
 
           otpTimestamp = currentTime; // Update the OTP timestamp to the current time
-
+          console.log('otpTimestamp', otpTimestamp);
           // Send the OTP to the user (e.g., via email or SMS)
           await userService.sendOTP(user.email, otp);
 

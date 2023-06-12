@@ -1071,14 +1071,25 @@ const updateCarV2 = async (
 
           if (carOffersData.offers) {
                existingOffers.offers = carOffersData.offers;
+          } else {
+               existingOffers.offers = []; // Set empty offers array
           }
 
           // Save the updated offers array
           await existingOffers.save();
 
+          // Prepare offers response
+          let carOffersResponse;
+
+          if (existingOffers.offers.length > 0) {
+               carOffersResponse = existingOffers.offers;
+          } else {
+               carOffersResponse = 'No offers available';
+          }
+
           // Return the updated car object
           return {
-               carOffers: existingOffers.offers,
+               carOffers: carOffersResponse,
                carFeatures: updatedCarFeatures,
                inventoryData: updatedCarDetails,
           };

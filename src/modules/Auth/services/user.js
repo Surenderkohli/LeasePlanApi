@@ -116,6 +116,28 @@ const forgotPassword = async (email) => {
      return response;
 };
 
+const sendOTP = async (email, otp) => {
+     // Send OTP to the user (e.g., via email or SMS)
+     // Replace the following code with your OTP sending logic
+
+     // Example using SendGrid to send OTP via email
+     const msg = {
+          to: email,
+          from: 'dhananjay@plaxonic.com', // Change to your verified sender
+          subject: 'OTP for Account Verification',
+          text: `Your OTP is ${otp}`,
+          html: `<p>Your OTP is <strong>${otp}</strong></p>`,
+     };
+
+     try {
+          const response = await sgMail.send(msg);
+          console.log('OTP sent:', response);
+     } catch (error) {
+          console.log('Error sending OTP:', error);
+          throw new Error('Failed to send OTP');
+     }
+};
+
 const verifyOTP = async (OTP) => {
      const user = await userModel.findOne({ otp: OTP });
 
@@ -130,6 +152,12 @@ const resetPassword = async (user, newPassword) => {
      user.password = newPassword;
      user.otp = null;
      await user.save();
+};
+
+const getUserByEmail = async (email) => {
+     const user = await userModel.findOne({ email: email });
+
+     return user;
 };
 
 const deleteUser = async (id) => {
@@ -149,5 +177,7 @@ export const userService = {
      forgotPassword,
      verifyOTP,
      resetPassword,
+     getUserByEmail,
      deleteUser,
+     sendOTP,
 };

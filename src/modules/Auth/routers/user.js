@@ -307,6 +307,52 @@ router.post('/reset_password', profileUpload.none(), async (req, res) => {
      }
 });
 
+router.post('/resend_otp', profileUpload.none(), async (req, res) => {
+     try {
+          let otpTimestamp = 0; // Variable to store the timestamp of the last OTP sent
+
+          const { email } = req.body;
+
+          const user = await userService.getUserByEmail(email);
+
+          if (!user) {
+               return res.status(404).send({
+                    success: false,
+                    msg: 'User not found',
+               });
+          }
+
+          const currentTime = Date.now();
+          const timeDiff = currentTime - otpTimestamp;
+
+          if (timeDiff < 30000) {
+               // Less than 30 seconds since the last OTP was sent
+               return res.status(429).send({
+                    success: false,
+                    msg: 'Please wait before resending OTP',
+               });
+          }
+
+          // const otp = generateOTP(); // Replace generateOTP() with your own OTP generation logic
+          const otp = Math.floor(100000 + Math.random() * 900000);
+          user.otp = otp;
+          await user.save();
+
+          otpTimestamp = currentTime; // Update the OTP timestamp to the current time
+
+          // Send the OTP to the user (e.g., via email or SMS)
+          await userService.sendOTP(user.email, otp);
+
+          res.status(200).send({
+               success: true,
+               msg: 'OTP resent successfully',
+          });
+     } catch (error) {
+          console.log(error);
+          res.status(500).send('An unexpected error occurred');
+     }
+});
+
 router.delete('/delete/:id', async (req, res) => {
      try {
           const { id } = req.params;

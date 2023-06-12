@@ -1024,6 +1024,17 @@ const updateCarV2 = async (
           );
 
           //////////////////////////////// Update carFeatures
+          // const carFeaturesFilter = {
+          //      carBrand_id,
+          //      carSeries_id,
+          // };
+          // const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+          //      carFeaturesFilter,
+          //      { ...carFeaturesData },
+          //      { new: true }
+          // );
+
+          //////////////////////////////// Update carFeatures
           const carFeaturesFilter = {
                carBrand_id,
                carSeries_id,
@@ -1033,6 +1044,27 @@ const updateCarV2 = async (
                { ...carFeaturesData },
                { new: true }
           );
+
+          //////////////////////////////// Update categories and features
+          if (carFeaturesData.categories) {
+               for (const newCategory of carFeaturesData.categories) {
+                    const existingCategory = updatedCarFeatures.categories.find(
+                         (category) =>
+                              category.categoryCode === newCategory.categoryCode
+                    );
+
+                    if (existingCategory) {
+                         // If the category exists, replace its features with the new features
+                         existingCategory.features = newCategory.features;
+                    } else {
+                         // If the category does not exist, add it to the array
+                         updatedCarFeatures.categories.push(newCategory);
+                    }
+               }
+          }
+
+          // Save the updated car features
+          await updatedCarFeatures.save();
 
           //////////////////////////////// Update inventory
           const existingOffers = await carOfferModel.findById(id, 'offers');

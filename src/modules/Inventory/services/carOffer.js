@@ -1047,7 +1047,17 @@ const updateCarV2 = async (
 
           //////////////////////////////// Update categories and features
           if (carFeaturesData.categories) {
+               // Remove null categories
+               updatedCarFeatures.categories =
+                    updatedCarFeatures.categories.filter(
+                         (category) => category !== null
+                    );
+
                for (const newCategory of carFeaturesData.categories) {
+                    if (!newCategory) {
+                         continue; // Skip null categories
+                    }
+
                     const existingCategory = updatedCarFeatures.categories.find(
                          (category) =>
                               category.categoryCode === newCategory.categoryCode
@@ -1087,10 +1097,18 @@ const updateCarV2 = async (
                carOffersResponse = 'No offers available';
           }
 
+          // Prepare car features response
+          let carFeaturesResponse;
+          if (updatedCarFeatures.categories.length > 0) {
+               carFeaturesResponse = updatedCarFeatures;
+          } else {
+               carFeaturesResponse = 'No car features available';
+          }
+
           // Return the updated car object
           return {
                carOffers: carOffersResponse,
-               carFeatures: updatedCarFeatures,
+               carFeatures: carFeaturesResponse,
                inventoryData: updatedCarDetails,
           };
      } catch (error) {

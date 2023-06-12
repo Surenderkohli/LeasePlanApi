@@ -434,7 +434,6 @@ router.get('/fetch-singles/:id', async (req, res) => {
 
 //get all cars by brand, series and lease type but different yearModel
 router.get('/list', async (req, res) => {
-     g;
      const { carBrand_id, carSeries_id } = req.query;
      try {
           const cars = await CarServices.getCarsByBrandSeriesLeaseType(

@@ -1082,7 +1082,7 @@ const updateCarV2 = async (
           if (carOffersData.offers) {
                existingOffers.offers = carOffersData.offers;
           } else {
-               existingOffers.offers = []; // Set empty offers array
+               // existingOffers.offers = []; // Set empty offers array
           }
 
           // Save the updated offers array

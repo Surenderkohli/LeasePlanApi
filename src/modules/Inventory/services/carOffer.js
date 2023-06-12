@@ -992,6 +992,70 @@ const updateCar = async (
 //      }
 // };
 
+const updateCarV2 = async (
+     id,
+     carDetailsData,
+     carFeaturesData,
+     carOffersData
+) => {
+     try {
+          // Validate input
+          if (!carDetailsData || !carFeaturesData || !carOffersData) {
+               throw new Error(
+                    'carDetails, carFeatures, and carOffers must be provided'
+               );
+          }
+
+          // Update car in CarFeatures collection
+          const carOffer = await carOfferModel.findById(id);
+
+          const { carBrand_id, carSeries_id } = carOffer;
+
+          //////////////////////////////// Update carDetails
+          const carDetailsFilter = {
+               carBrand_id,
+               carSeries_id,
+          };
+
+          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+               carDetailsFilter,
+               { ...carDetailsData },
+               { new: true }
+          );
+
+          //////////////////////////////// Update carFeatures
+          const carFeaturesFilter = {
+               carBrand_id,
+               carSeries_id,
+          };
+          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+               carFeaturesFilter,
+               { ...carFeaturesData },
+               { new: true }
+          );
+
+          //////////////////////////////// Update inventory
+          const existingOffers = await carOfferModel.findById(id, 'offers');
+
+          if (carOffersData.offers) {
+               existingOffers.offers = carOffersData.offers;
+          }
+
+          // Save the updated offers array
+          await existingOffers.save();
+
+          // Return the updated car object
+          return {
+               carOffers: existingOffers.offers,
+               carFeatures: updatedCarFeatures,
+               inventoryData: updatedCarDetails,
+          };
+     } catch (error) {
+          console.error('Error in updating car:', error);
+          throw new Error(error.message);
+     }
+};
+
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
@@ -1269,4 +1333,5 @@ export const carOfferService = {
      filterCars,
      getAllCarWithOffersV2,
      deletedCar,
+     updateCarV2,
 };

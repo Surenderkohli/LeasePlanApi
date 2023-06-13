@@ -1390,17 +1390,17 @@ const deletedCarV2 = async (id) => {
                throw new Error('Car not found');
           }
 
-          // Delete associated car offers
-          await carDetailsModel.deleteMany({
-               carBrand_id: car.carBrand_id,
-               carSeries_id: car.carSeries_id,
-          });
+          // // Delete associated car offers
+          // await carDetailsModel.deleteMany({
+          //      carBrand_id: car.carBrand_id,
+          //      carSeries_id: car.carSeries_id,
+          // });
 
-          // Delete associated car features
-          await carFeatureModel.deleteMany({
-               carBrand_id: car.carBrand_id,
-               carSeries_id: car.carSeries_id,
-          });
+          // // Delete associated car features
+          // await carFeatureModel.deleteMany({
+          //      carBrand_id: car.carBrand_id,
+          //      carSeries_id: car.carSeries_id,
+          // });g
 
           await car.remove();
           return car;

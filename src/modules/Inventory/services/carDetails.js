@@ -597,13 +597,24 @@ const addNewCar = async (
           const modifiedCategories = [];
 
           // Iterate over the categories and push the required fields to modifiedCategories array
-          for (const category of categories) {
-               modifiedCategories.push({
-                    categoryCode: category.categoryCode,
-                    categoryDescription: category.categoryDescription,
-                    features: category.features,
-               });
+          if (categories && Array.isArray(categories)) {
+               for (const category of categories) {
+                    modifiedCategories.push({
+                         categoryCode: category.categoryCode,
+                         categoryDescription: category.categoryDescription,
+                         features: category.features,
+                    });
+               }
           }
+
+          // Iterate over the categories and push the required fields to modifiedCategories array
+          // for (const category of categories) {
+          //      modifiedCategories.push({
+          //           categoryCode: category.categoryCode,
+          //           categoryDescription: category.categoryDescription,
+          //           features: category.features,
+          //      });
+          // }
 
           // Update carFeaturesData with modified categories
           carFeaturesData.categories = modifiedCategories;

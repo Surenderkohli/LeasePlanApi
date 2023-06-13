@@ -1383,6 +1383,33 @@ const deletedCar = async (id) => {
      }
 };
 
+const deletedCarV2 = async (id) => {
+     try {
+          const car = await carOfferModel.findOne({ _id: id });
+          if (!car) {
+               throw new Error('Car not found');
+          }
+
+          // Delete associated car offers
+          await carDetailsModel.deleteMany({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+          });
+
+          // Delete associated car features
+          await carFeatureModel.deleteMany({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+          });
+
+          await car.remove();
+          return car;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -1395,4 +1422,5 @@ export const carOfferService = {
      getAllCarWithOffersV2,
      deletedCar,
      updateCarV2,
+     deletedCarV2,
 };

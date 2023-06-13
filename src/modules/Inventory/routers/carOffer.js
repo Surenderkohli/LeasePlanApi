@@ -414,7 +414,7 @@ router.get('/filter_cars', async (req, res) => {
 
 router.delete('/delete_offers/:id', async (req, res) => {
      const { id } = req.params;
-     const result = await carOfferService.deletedCar(id, req.body);
+     const result = await carOfferService.deletedCarV2(id, req.body);
      res.send({
           success: true,
           message: 'Car with offers and features deleted successfully',

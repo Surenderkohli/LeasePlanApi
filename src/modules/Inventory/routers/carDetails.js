@@ -489,12 +489,12 @@ function isValidCarDetailData(carDetailData) {
           }
 
           // Check if makeCode and modelCode are different, but companyName is not unique
-          if (
-               carDetail.makeCode !== carDetail.modelCode &&
-               companyCodes[carDetail.companyName]
-          ) {
-               return false;
-          }
+          // if (
+          //      carDetail.makeCode !== carDetail.modelCode &&
+          //      companyCodes[carDetail.companyName]
+          // ) {
+          //      return false;
+          // }
 
           // Validate the enum values
           if (

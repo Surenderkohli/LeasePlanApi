@@ -468,6 +468,8 @@ function isValidCarDetailData(carDetailData) {
           return false;
      }
 
+     const companyCodes = {}; // Object to store the unique company codes
+
      // Iterate over each car detail record and validate the fields
      for (let i = 0; i < carDetailData.length; i++) {
           const carDetail = carDetailData[i];
@@ -482,6 +484,14 @@ function isValidCarDetailData(carDetailData) {
                !carDetail.tankCapacity ||
                !carDetail.fuelType ||
                !carDetail.transmission
+          ) {
+               return false;
+          }
+
+          // Check if makeCode and modelCode are different, but companyName is not unique
+          if (
+               carDetail.makeCode !== carDetail.modelCode &&
+               companyCodes[carDetail.companyName]
           ) {
                return false;
           }
@@ -523,6 +533,8 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
+          // Store the company code as a key in the object
+          companyCodes[carDetail.companyName] = true;
           // Add more validation checks as per your requirements
      }
 

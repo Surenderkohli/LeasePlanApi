@@ -468,7 +468,7 @@ function isValidCarDetailData(carDetailData) {
           return false;
      }
 
-     const companyCodes = {}; // Object to store the unique company codes
+     const companyCodes = {}; // Object to store the assigned company codes
 
      // Iterate over each car detail record and validate the fields
      for (let i = 0; i < carDetailData.length; i++) {
@@ -488,14 +488,6 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
-          // Check if makeCode and modelCode are different, but companyName is not unique
-          // if (
-          //      carDetail.makeCode !== carDetail.modelCode &&
-          //      companyCodes[carDetail.companyName]
-          // ) {
-          //      return false;
-          // }
-
           // Validate the enum values
           if (
                ![
@@ -512,7 +504,7 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
-          // // Example validation for numeric fields
+          // Example validation for numeric fields
           if (carDetail.yearModel && typeof carDetail.yearModel !== 'string') {
                return false;
           }
@@ -525,7 +517,7 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
-          // // Example validation for string fields
+          // Example validation for string fields
           if (
                carDetail.acceleration &&
                typeof carDetail.acceleration !== 'string'
@@ -533,9 +525,16 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
-          // Store the company code as a key in the object
-          companyCodes[carDetail.companyName] = true;
-          // Add more validation checks as per your requirements
+          // Check if the companyName is already assigned to a different makeCode
+          if (
+               companyCodes[carDetail.companyName] &&
+               companyCodes[carDetail.companyName] !== carDetail.makeCode
+          ) {
+               return false;
+          }
+
+          // Store the companyName and makeCode in the companyCodes object
+          companyCodes[carDetail.companyName] = carDetail.makeCode;
      }
 
      return true;

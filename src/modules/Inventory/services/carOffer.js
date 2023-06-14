@@ -1121,7 +1121,7 @@ const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
                .find({
-                    'offers.bestDeals': 'Yes',
+                    'offers.bestDeals': { $regex: /^yes$/i }, // Case-insensitive matching
                     ...query,
                })
                .populate(['carBrand_id', 'carSeries_id']);
@@ -1129,7 +1129,7 @@ const getDeals = async (query) => {
           const offersWithBestDeals = carOffers
                .map((carOffer) => {
                     const offers = carOffer.offers.filter(
-                         (offer) => offer.bestDeals === 'Yes'
+                         (offer) => /^yes$/i.test(offer.bestDeals) // Case-insensitive matching
                     );
                     return {
                          ...carOffer.toObject(),
@@ -1152,14 +1152,11 @@ const getDeals = async (query) => {
           // Retrieve car details for each car offer
           const carsWithDetails = [];
           for (const carOffer of offersWithBestDeals) {
-               // const car = carOffer.toObject();
                const car = carOffer;
                const carDetails = await carDetailsModel.find({
                     carBrand_id: car.carBrand_id,
                     carSeries_id: car.carSeries_id,
                });
-               // .populate('carBrand_id')
-               // .populate('carSeries_id');
 
                if (carDetails.length > 0) {
                     car.details = carDetails[0]; // Assuming there is only one matching car detail

@@ -42,9 +42,19 @@ const carOfferSchema = new mongoose.Schema(
                     annualMileage: Number,
                     monthlyCost: Number,
                     calculationNo: Number,
+                    // bestDeals: {
+                    //      type: String,
+                    //      enum: ['Yes', 'No'],
+                    //      default: 'No',
+                    // },
                     bestDeals: {
                          type: String,
-                         enum: ['Yes', 'No'],
+                         validate: {
+                              validator: function (value) {
+                                   return /^(yes|no)$/i.test(value);
+                              },
+                              message: 'Best deals value must be "Yes" or "No".',
+                         },
                          default: 'No',
                     },
                },

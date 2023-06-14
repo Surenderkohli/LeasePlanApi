@@ -216,6 +216,7 @@ const createCarOffer = async (carOfferData) => {
           let seriesName = await carSeriesModel.findOne({
                carBrand_id: companyName._id,
                seriesName: carOfferData.seriesName,
+               modelCode: carOfferData.modelCode, // Cross-Check modelCode as well 
           });
 
           if (!seriesName) {

@@ -463,12 +463,90 @@ router.delete(
 );
 
 // Helper function to validate the CSV data for car details
+// function isValidCarDetailData(carDetailData) {
+//      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
+//           return false;
+//      }
+
+//      const companyCodes = {}; // Object to store the assigned company codes
+
+//      // Iterate over each car detail record and validate the fields
+//      for (let i = 0; i < carDetailData.length; i++) {
+//           const carDetail = carDetailData[i];
+
+//           // Check if required fields exist
+//           if (
+//                !carDetail.modelCode ||
+//                !carDetail.makeCode ||
+//                !carDetail.companyName ||
+//                !carDetail.seriesName ||
+//                !carDetail.yearModel ||
+//                !carDetail.tankCapacity ||
+//                !carDetail.fuelType ||
+//                !carDetail.transmission
+//           ) {
+//                return false;
+//           }
+
+//           // Validate the enum values
+//           if (
+//                ![
+//                     'city-car',
+//                     'coupe',
+//                     'estate',
+//                     'sedan',
+//                     'hatchback',
+//                     'mpv',
+//                     'saloon',
+//                     'sports',
+//                ].includes(carDetail.bodyType)
+//           ) {
+//                return false;
+//           }
+
+//           // Example validation for numeric fields
+//           if (carDetail.yearModel && typeof carDetail.yearModel !== 'string') {
+//                return false;
+//           }
+
+//           if (carDetail.door && typeof carDetail.door !== 'string') {
+//                return false;
+//           }
+
+//           if (carDetail.seat && typeof carDetail.seat !== 'string') {
+//                return false;
+//           }
+
+//           // Example validation for string fields
+//           if (
+//                carDetail.acceleration &&
+//                typeof carDetail.acceleration !== 'string'
+//           ) {
+//                return false;
+//           }
+
+//           // Check if the companyName is already assigned to a different makeCode
+//           if (
+//                companyCodes[carDetail.companyName] &&
+//                companyCodes[carDetail.companyName] !== carDetail.makeCode
+//           ) {
+//                return false;
+//           }
+
+//           // Store the companyName and makeCode in the companyCodes object
+//           companyCodes[carDetail.companyName] = carDetail.makeCode;
+//      }
+
+//      return true;
+// }
+
 function isValidCarDetailData(carDetailData) {
      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
           return false;
      }
 
      const companyCodes = {}; // Object to store the assigned company codes
+     const modelCodes = {}; // Object to store the assigned model codes
 
      // Iterate over each car detail record and validate the fields
      for (let i = 0; i < carDetailData.length; i++) {
@@ -533,8 +611,15 @@ function isValidCarDetailData(carDetailData) {
                return false;
           }
 
+          // Check if the modelCode is already assigned
+          if (modelCodes[carDetail.modelCode]) {
+               return false;
+          }
+
           // Store the companyName and makeCode in the companyCodes object
           companyCodes[carDetail.companyName] = carDetail.makeCode;
+          // Store the modelCode in the modelCodes object
+          modelCodes[carDetail.modelCode] = true;
      }
 
      return true;

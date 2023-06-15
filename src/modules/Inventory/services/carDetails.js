@@ -1264,6 +1264,99 @@ const createCarDetailUpdateExistingCar = async (carDetailData) => {
      }
 }; */
 
+// const addNewCar = async (
+//      carDetailsData,
+//      carImage,
+//      carFeaturesData,
+//      carOffersData
+// ) => {
+//      try {
+//           // Validate input
+//           if (!carDetailsData || !carFeaturesData) {
+//                throw new Error(
+//                     'Both carDetails and carFeatures must be provided'
+//                );
+//           }
+
+//           const images = carImage.map((image) => ({
+//                imageUrl: image.imageUrl,
+//                publicId: image.publicId,
+//           }));
+
+//           // Create car in CarDetails collection
+//           const newCarDetails = await carDetailModel.create({
+//                ...carDetailsData,
+//                image: images,
+//           });
+
+//           // Extract categories data from carFeaturesData
+//           const { categories } = carFeaturesData;
+
+//           // Validate categories data
+//           if (
+//                !categories ||
+//                !Array.isArray(categories) ||
+//                categories.length === 0
+//           ) {
+//                throw new Error('Invalid categories data');
+//           }
+
+//           const modifiedCategories = [];
+
+//           // Validate and modify categories data
+//           for (const category of categories) {
+//                const { categoryCode, categoryDescription, features } = category;
+
+//                // Validate categoryCode, categoryDescription, and features
+//                if (
+//                     !categoryCode ||
+//                     !categoryDescription ||
+//                     !Array.isArray(features)
+//                ) {
+//                     throw new Error('Invalid category data');
+//                }
+
+//                // Validate unique categoryDescription within the same categoryCode
+//                const existingCategory = modifiedCategories.find(
+//                     (cat) =>
+//                          cat.categoryCode === categoryCode &&
+//                          cat.categoryDescription === categoryDescription
+//                );
+
+//                if (existingCategory) {
+//                     throw new Error(
+//                          'Duplicate categoryDescription assigned to the same categoryCode'
+//                     );
+//                }
+
+//                modifiedCategories.push({
+//                     categoryCode,
+//                     categoryDescription,
+//                     features,
+//                });
+//           }
+
+//           // Update carFeaturesData with modified categories
+//           carFeaturesData.categories = modifiedCategories;
+
+//           // Create carFeatureModel in CarFeatureModel collection
+//           const newCarFeatures = await carFeatureModel.create({
+//                ...carFeaturesData,
+//           });
+
+//           // Rest of the code...
+
+//           // Return the new car object
+//           return {
+//                carDetails: newCarDetails,
+//                carFeatures: newCarFeatures,
+//                carOffers: carOfferResults,
+//           };
+//      } catch (error) {
+//           console.log(error);
+//      }
+// };
+
 export const CarServices = {
      getAllCar,
      addNewCar,

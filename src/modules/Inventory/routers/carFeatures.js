@@ -267,6 +267,52 @@ function isValidCarFeatureCategoryData(carFeatureCategoryData) {
 }
 
 // Helper function to validate the CSV data for feature descriptions
+// function isValidFeatureDescriptionData(featureDescriptionData) {
+//      if (
+//           !Array.isArray(featureDescriptionData) ||
+//           featureDescriptionData.length === 0
+//      ) {
+//           return {
+//                isValid: false,
+//                error: 'No feature description data provided',
+//           };
+//      }
+
+//      const missingFields = new Set();
+
+//      for (let i = 0; i < featureDescriptionData.length; i++) {
+//           const featureDescription = featureDescriptionData[i];
+
+//           if (!featureDescription.makeCode) {
+//                missingFields.add('makeCode');
+//           }
+
+//           if (!featureDescription.modelCode) {
+//                missingFields.add('modelCode');
+//           }
+
+//           if (!featureDescription.categoryCode) {
+//                missingFields.add('categoryCode');
+//           }
+
+//           if (!featureDescription.featureDescription) {
+//                missingFields.add('featureDescription');
+//           }
+//      }
+
+//      if (missingFields.size > 0) {
+//           const missingFieldsList = Array.from(missingFields).join(', ');
+//           return {
+//                isValid: false,
+//                error: `Missing or invalid fields: ${missingFieldsList}`,
+//           };
+//      }
+
+//      return {
+//           isValid: true,
+//      };
+// }
+
 function isValidFeatureDescriptionData(featureDescriptionData) {
      if (
           !Array.isArray(featureDescriptionData) ||
@@ -279,6 +325,7 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
      }
 
      const missingFields = new Set();
+     const categoryMap = new Map();
 
      for (let i = 0; i < featureDescriptionData.length; i++) {
           const featureDescription = featureDescriptionData[i];
@@ -298,6 +345,32 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
           if (!featureDescription.featureDescription) {
                missingFields.add('featureDescription');
           }
+
+          const { makeCode, modelCode, categoryCode, categoryDescription } =
+               featureDescription;
+          const categoryKey = `${makeCode}_${modelCode}`;
+          const existingCategory = categoryMap.get(categoryKey);
+
+          if (existingCategory) {
+               const foundCategory = existingCategory.find(
+                    (category) =>
+                         category.categoryDescription === categoryDescription &&
+                         category.categoryCode !== categoryCode
+               );
+               if (foundCategory) {
+                    return {
+                         isValid: false,
+                         error: `Duplicate categoryDescription '${categoryDescription}' assigned to different categoryCodes within makeCode '${makeCode}' and modelCode '${modelCode}'`,
+                    };
+               }
+          } else {
+               categoryMap.set(categoryKey, []);
+          }
+
+          categoryMap.get(categoryKey).push({
+               categoryCode,
+               categoryDescription,
+          });
      }
 
      if (missingFields.size > 0) {

@@ -216,7 +216,7 @@ const createCarOffer = async (carOfferData) => {
           let seriesName = await carSeriesModel.findOne({
                carBrand_id: companyName._id,
                seriesName: carOfferData.seriesName,
-               modelCode: carOfferData.modelCode, // Cross-Check modelCode as well 
+               modelCode: carOfferData.modelCode, // Cross-Check modelCode as well
           });
 
           if (!seriesName) {
@@ -1408,6 +1408,62 @@ const deletedCarV2 = async (id) => {
      }
 };
 
+const getAllCarWithoutOffers = async () => {
+     try {
+          // const carDetails = await carDetailsModel.find(
+          //      {},
+          //      '-_id carBrand_id carSeries_id door seat'
+          // );
+
+          const carDetails = await carDetailsModel.find({}, '-_id ');
+
+          const carFeatures = await carFeatureModel.find({}, '-_id ');
+
+          const carOffers = await carOfferModel.find(
+               {},
+               'carBrand_id carSeries_id'
+          );
+
+          const carDetailsIds = carDetails.map(
+               (detail) => `${detail.carBrand_id}_${detail.carSeries_id}`
+          );
+          const carFeaturesIds = carFeatures.map(
+               (feature) => `${feature.carBrand_id}_${feature.carSeries_id}`
+          );
+          const carOffersIds = carOffers.map(
+               (offer) => `${offer.carBrand_id}_${offer.carSeries_id}`
+          );
+
+          const carsWithoutOffersIds = carDetailsIds.filter(
+               (id) => !carOffersIds.includes(id) && carFeaturesIds.includes(id)
+          );
+
+          const carsWithoutOffers = carDetails.filter((detail) => {
+               const carId = `${detail.carBrand_id}_${detail.carSeries_id}`;
+               return carsWithoutOffersIds.includes(carId);
+          });
+
+          const carsWithoutOffersWithFeatures = carsWithoutOffers.map((car) => {
+               const carFeature = carFeatures.find(
+                    (feature) =>
+                         feature.carBrand_id === car.carBrand_id &&
+                         feature.carSeries_id === car.carSeries_id
+               );
+
+               return {
+                    // carBrand_id: car.carBrand_id,
+                    // carSeries_id: car.carSeries_id,
+                    carDetails: car,
+                    carFeature,
+               };
+          });
+
+          return carsWithoutOffersWithFeatures;
+     } catch (error) {
+          throw new Error('Failed to get offers without cars');
+     }
+};
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -1421,4 +1477,5 @@ export const carOfferService = {
      deletedCar,
      updateCarV2,
      deletedCarV2,
+     getAllCarWithoutOffers,
 };

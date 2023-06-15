@@ -427,4 +427,15 @@ router.delete('/delete_offers/:id', async (req, res) => {
      });
 });
 
+router.get('/list_not_offers', async (req, res) => {
+     try {
+          const result = await carOfferService.getAllCarWithoutOffers();
+
+          res.status(200).json({ success: true, carWithoutOffer: result });
+     } catch (error) {
+          console.log(error);
+          res.status(500).send('Internal Server Error');
+     }
+});
+
 export default router;

@@ -67,6 +67,30 @@ router.get(
      })
 );
 
+router.get(
+     '/get-carBrand_id_V2/:carBrand_id',
+     httpHandler(async (req, res) => {
+          try {
+               const { carBrand_id } = req.params;
+
+               const result = await carSeriesService.getAllCarSeriesByBrandIdV2(
+                    carBrand_id
+               );
+
+               res.status(200).json({
+                    success: true,
+                    data: result,
+               });
+          } catch (error) {
+               console.log(error);
+               res.status(500).json({
+                    success: false,
+                    message: 'Server Error',
+               });
+          }
+     })
+);
+
 router.delete(
      '/delete/:id',
      httpHandler(async (req, res) => {

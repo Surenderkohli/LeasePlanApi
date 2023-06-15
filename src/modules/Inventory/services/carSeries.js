@@ -51,6 +51,37 @@ const getAllCarSeriesByBrandId = async (carBrand_id) => {
      }
 };
 
+const getAllCarSeriesByBrandIdV2 = async (carBrand_id) => {
+     try {
+          const response = await carSeriesModel.aggregate([
+               {
+                    $match: {
+                         carBrand_id: mongoose.Types.ObjectId(carBrand_id),
+                    },
+               },
+               {
+                    $lookup: {
+                         from: 'cardetails', // Assuming the collection name is 'cardetails'
+                         localField: '_id',
+                         foreignField: 'carSeries_id',
+                         as: 'carDetails',
+                    },
+               },
+               {
+                    $match: {
+                         carDetails: {
+                              $size: 0, // Exclude car series with any car details
+                         },
+                    },
+               },
+          ]);
+
+          return response;
+     } catch (error) {
+          throw new Error('Unable to retrieve car series');
+     }
+};
+
 const deleteCarSeries = async (id) => {
      const response = await carSeriesModel.findOneAndDelete(
           { _id: id },
@@ -110,5 +141,6 @@ export const carSeriesService = {
      getAllCarSeries,
      getAllCarSeriesByBrandId,
      deleteCarSeries,
+     getAllCarSeriesByBrandIdV2,
      // AllCarSeriesByBrandId,
 };

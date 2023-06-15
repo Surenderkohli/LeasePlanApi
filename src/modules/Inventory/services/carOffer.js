@@ -1415,10 +1415,8 @@ const getAllCarWithoutOffers = async () => {
           //      '-_id carBrand_id carSeries_id door seat'
           // );
 
-          const carDetails = await carDetailsModel.find({}, '-_id ');
-
-          const carFeatures = await carFeatureModel.find({}, '-_id ');
-
+          const carDetails = await carDetailsModel.find({}, '-_id');
+          const carFeatures = await carFeatureModel.find({}, '-_id');
           const carOffers = await carOfferModel.find(
                {},
                'carBrand_id carSeries_id'
@@ -1446,15 +1444,15 @@ const getAllCarWithoutOffers = async () => {
           const carsWithoutOffersWithFeatures = carsWithoutOffers.map((car) => {
                const carFeature = carFeatures.find(
                     (feature) =>
-                         feature.carBrand_id === car.carBrand_id &&
-                         feature.carSeries_id === car.carSeries_id
+                         feature.carBrand_id.toString() ===
+                              car.carBrand_id.toString() &&
+                         feature.carSeries_id.toString() ===
+                              car.carSeries_id.toString()
                );
 
                return {
-                    // carBrand_id: car.carBrand_id,
-                    // carSeries_id: car.carSeries_id,
                     carDetails: car,
-                    carFeature,
+                    carFeature: carFeature || {}, // Set empty object if carFeature is undefined
                };
           });
 
@@ -1463,7 +1461,6 @@ const getAllCarWithoutOffers = async () => {
           throw new Error('Failed to get offers without cars');
      }
 };
-
 export const carOfferService = {
      createCarOffer,
      getAllOffer,

@@ -12,13 +12,28 @@ const getAllCarBrand = async () => {
 
 const addCarBrand = async (data) => {
      try {
-          //find makeCode if already exists
-          const makeCode = await carBrandModel.findOne({
+          // Find car brand by makeCode
+          const existingCarBrand = await carBrandModel.findOne({
                makeCode: data.makeCode,
           });
-          if (makeCode) {
+
+          if (existingCarBrand) {
                throw new Error(
-                    `Car brand with makeCode '${data.makeCode}' already exists  .`
+                    `Car brand with makeCode '${data.makeCode}' already exists.`
+               );
+          }
+
+          // Find car brand by companyName and makeCode combination (case-insensitive)
+          const carBrandWithSameCompanyName = await carBrandModel.findOne({
+               companyName: {
+                    $regex: new RegExp(`^${data.companyName}$`, 'i'),
+               },
+               makeCode: { $ne: data.makeCode }, // Exclude the current makeCode from the search
+          });
+
+          if (carBrandWithSameCompanyName) {
+               throw new Error(
+                    `Car brand with companyName '${data.companyName}' already exists with a different makeCode.`
                );
           }
 

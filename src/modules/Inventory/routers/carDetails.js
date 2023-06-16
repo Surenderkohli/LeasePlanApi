@@ -215,19 +215,19 @@ router.post(
 
         */
                // Check if calculationNo already exists
-               // const calculationNos = carOffersData.flatMap((data) =>
-               //      data.offers.map((offer) => offer.calculationNo)
-               // );
-               // const existingCalculationNos = await carOfferModel.find({
-               //      'offers.calculationNo': { $in: calculationNos },
-               // });
+               const calculationNos = carOffersData.flatMap((data) =>
+                    data.offers.map((offer) => offer.calculationNo)
+               );
+               const existingCalculationNos = await carOfferModel.find({
+                    'offers.calculationNo': { $in: calculationNos },
+               });
 
-               // if (existingCalculationNos.length > 0) {
-               //      return res.status(400).json({
-               //           success: false,
-               //           msg: 'calculationNo already exists',
-               //      });
-               // }
+               if (existingCalculationNos.length > 0) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'calculationNo already exists',
+                    });
+               }
 
                const carImage = [];
                if (files) {

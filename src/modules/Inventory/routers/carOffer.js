@@ -121,13 +121,22 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-     const result = await carOfferService.getAllOffer();
-     const transformedResult = result.map((offer) => {
-          const makeCode = offer.carBrand_id.makeCode;
-          const modelCode = offer.carSeries_id.modelCode;
-          return { ...offer.toObject(), makeCode, modelCode };
-     });
-     res.send(transformedResult);
+     try {
+          const result = await carOfferService.getAllOffer();
+          const transformedResult = result.map((offer) => {
+               const makeCode = offer.carBrand_id
+                    ? offer.carBrand_id.makeCode
+                    : null;
+               const modelCode = offer.carSeries_id
+                    ? offer.carSeries_id.modelCode
+                    : null;
+               return { ...offer.toObject(), makeCode, modelCode };
+          });
+          res.send(transformedResult);
+     } catch (error) {
+          console.error(error);
+          res.status(500).send('Internal Server Error');
+     }
 });
 
 router.get('/all-cars', async (req, res) => {

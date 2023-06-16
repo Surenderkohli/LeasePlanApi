@@ -166,7 +166,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
 
           if (!req.file || req.file.mimetype !== 'text/csv') {
                return res.status(400).json({
-                    message: 'Invalid file format. Please upload a CSV file',
+                    message: 'Invalid CSV format. Please upload a valid car features CSV file.',
                     source: 'manual', // Set the source to 'manual' when not uploading a CSV file
                });
           }

@@ -382,7 +382,7 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                // Check if the CSV data is valid
                if (!isValidCarDetailData(carDetailData)) {
                     throw new Error(
-                         'Invalid CSV format. Please upload a valid CSV file.'
+                         'Invalid CSV format. Please upload a valid car details CSV file.'
                     );
                }
 

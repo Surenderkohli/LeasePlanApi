@@ -8,15 +8,28 @@ const getAllCarSeries = async () => {
 
 const addCarSeries = async (data) => {
      try {
-          const modelCode = await carSeriesModel.findOne({
+          const existingCarSeries = await carSeriesModel.findOne({
                modelCode: data.modelCode,
           });
 
-          if (modelCode) {
+          if (existingCarSeries) {
                throw new Error(
-                    `Car series with modelCode '${data.modelCode}' already exists  .`
+                    `Car series with modelCode '${data.modelCode}' already exists.`
                );
           }
+
+          // Find car series by seriesName and modelCode combination (case-insensitive)
+          const carSeriesWithSameName = await carSeriesModel.findOne({
+               seriesName: { $regex: new RegExp(`^${data.seriesName}$`, 'i') },
+               modelCode: { $ne: data.modelCode }, // Exclude the current modelCode from the search
+          });
+
+          if (carSeriesWithSameName) {
+               throw new Error(
+                    `Car series with seriesName '${data.seriesName}' already exists with a different modelCode.`
+               );
+          }
+
           const response = await carSeriesModel.create(data);
           return response;
      } catch (error) {
@@ -33,7 +46,6 @@ const addCarSeries = async (data) => {
           throw error;
      }
 };
-
 const getSingleCarSeries = async (id) => {
      const response = await carSeriesModel.findById(id);
      return response;

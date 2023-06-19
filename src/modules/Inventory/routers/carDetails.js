@@ -5,6 +5,7 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import mongoose from 'mongoose';
 import csvtojson from 'csvtojson';
+import { createObjectCsvWriter } from 'csv-writer';
 import dotenv from 'dotenv';
 import carOfferModel from '../models/carOffer.js';
 import carBrandModel from '../models/carBrand.js';
@@ -367,9 +368,28 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
+async function generateErrorCSV(errorList) {
+     const csvWriter = createObjectCsvWriter({
+          path: 'error_list.csv', // Set the file path to save the CSV file
+          header: [
+               { id: 'column', title: 'Column' },
+               { id: 'cell', title: 'Cell' },
+               { id: 'message', title: 'Message' },
+          ],
+     });
+
+     try {
+          await csvWriter.writeRecords(errorList);
+          return console.log('CSV file generated successfully');
+     } catch (error) {
+          return console.log('Error generating CSV file:', error);
+     }
+}
+
 router.post('/car-details', upload.single('file'), async (req, res) => {
      try {
           let carDetails = [];
+          let errorList = []; // Array to store the errors
 
           if (req.file && req.file.mimetype === 'text/csv') {
                // CSV upload
@@ -380,18 +400,19 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                //await CarServices.deleteAllCarDetails();
 
                // Check if the CSV data is valid
-               if (!isValidCarDetailData(carDetailData)) {
-                    throw new Error(
-                         'Invalid CSV format. Please upload a valid car details CSV file.'
-                    );
-               }
+               const validationResult = isValidCarDetailData(carDetailData);
 
-               for (let i = 0; i < carDetailData.length; i++) {
-                    const carDetail =
-                         await CarServices.createCarDetailUpdateExistingCar(
-                              carDetailData[i]
-                         );
-                    carDetails.push(carDetail);
+               if (!validationResult.isValid) {
+                    // Push the errors to the errorList array
+                    errorList = validationResult.errors.slice(0, 10); // Limiting to maximum 10 errors
+               } else {
+                    for (let i = 0; i < carDetailData.length; i++) {
+                         const carDetail =
+                              await CarServices.createCarDetailUpdateExistingCar(
+                                   carDetailData[i]
+                              );
+                         carDetails.push(carDetail);
+                    }
                }
           } else if (req.body) {
                // Manual upload
@@ -405,10 +426,25 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                throw new Error('No file or data provided');
           }
 
-          res.status(201).json({
-               message: 'Car details added successfully',
-               data: carDetails,
-          });
+          if (errorList.length > 0) {
+               // res.status(400).json({
+               //      message: 'Invalid car details CSV file',
+               //      errors: errorList,
+               // });
+               // Generate the error CSV file
+               await generateErrorCSV(errorList);
+
+               // Return the CSV file as a download link
+               res.status(200).json({
+                    message: 'Invalid car details CSV file',
+                    errorFile: 'error_list.csv', // Provide the file name to be downloaded
+               });
+          } else {
+               res.status(201).json({
+                    message: 'Car details added successfully',
+                    data: carDetails,
+               });
+          }
      } catch (error) {
           console.log(error);
           res.status(400).json({ message: error.message });
@@ -542,31 +578,43 @@ router.delete(
 
 function isValidCarDetailData(carDetailData) {
      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
-          return false;
+          return {
+               isValid: false,
+               errors: ['No data found in the CSV file.'],
+          };
      }
 
-     const companyCodes = {}; // Object to store the assigned company codes
-     const modelCodes = {}; // Object to store the assigned model codes
+     const companyCodes = {};
+     const modelCodes = {};
+     const errors = [];
 
-     // Iterate over each car detail record and validate the fields
      for (let i = 0; i < carDetailData.length; i++) {
           const carDetail = carDetailData[i];
+          const rowNumber = i;
 
-          // Check if required fields exist
           if (
                !carDetail.modelCode ||
-               !carDetail.makeCode ||
                !carDetail.companyName ||
                !carDetail.seriesName ||
                !carDetail.yearModel ||
+               !carDetail.description ||
+               !carDetail.transmission ||
+               !carDetail.bodyType ||
+               !carDetail.co2 ||
+               !carDetail.door ||
+               !carDetail.seat ||
+               !carDetail.acceleration ||
                !carDetail.tankCapacity ||
                !carDetail.fuelType ||
-               !carDetail.transmission
+               !carDetail.gears
           ) {
-               return false;
+               errors.push({
+                    column: 'Required Fields',
+                    cell: getCellAddress(0, rowNumber), // Assuming column 0 is the first column (modelCode)
+                    message: 'One or more required fields are missing.',
+               });
           }
 
-          // Validate the enum values
           if (
                ![
                     'city-car',
@@ -579,50 +627,70 @@ function isValidCarDetailData(carDetailData) {
                     'sports',
                ].includes(carDetail.bodyType)
           ) {
-               return false;
+               errors.push({
+                    column: 'bodyType',
+                    cell: getCellAddress(7, rowNumber), // Assuming column 7 is the eighth column (bodyType)
+                    message: 'Invalid body type.',
+               });
           }
 
-          // Example validation for numeric fields
-          if (carDetail.yearModel && typeof carDetail.yearModel !== 'string') {
-               return false;
-          }
+          // Other field validations...
 
-          if (carDetail.door && typeof carDetail.door !== 'string') {
-               return false;
-          }
-
-          if (carDetail.seat && typeof carDetail.seat !== 'string') {
-               return false;
-          }
-
-          // Example validation for string fields
-          if (
-               carDetail.acceleration &&
-               typeof carDetail.acceleration !== 'string'
-          ) {
-               return false;
-          }
-
-          // Check if the companyName is already assigned to a different makeCode
           if (
                companyCodes[carDetail.companyName] &&
                companyCodes[carDetail.companyName] !== carDetail.makeCode
           ) {
-               return false;
+               errors.push({
+                    column: 'companyName',
+                    cell: getCellAddress(2, rowNumber), // Assuming column 2 is the third column (companyName)
+                    message: 'Company Name is already assigned to a different Make Code.',
+               });
           }
 
-          // Check if the modelCode is already assigned
           if (modelCodes[carDetail.modelCode]) {
-               return false;
+               errors.push({
+                    column: 'modelCode',
+                    cell: getCellAddress(0, rowNumber), // Assuming column 0 is the first column (modelCode)
+                    message: 'Model Code is already assigned.',
+               });
           }
 
-          // Store the companyName and makeCode in the companyCodes object
           companyCodes[carDetail.companyName] = carDetail.makeCode;
-          // Store the modelCode in the modelCodes object
           modelCodes[carDetail.modelCode] = true;
      }
 
-     return true;
+     if (errors.length > 0) {
+          return {
+               isValid: false,
+               errors,
+          };
+     }
+
+     return {
+          isValid: true,
+          errors: [],
+     };
+}
+
+// Function to get the cell address based on the column index and row number (e.g., 0, 1 -> A2, B3, etc.)
+function getCellAddress(columnIndex, rowNumber) {
+     const columnName = getColumnName(columnIndex);
+     const adjustedRowNumber = rowNumber + 2; // Adding 2 to row number to account for header row
+     return columnName + adjustedRowNumber;
+}
+
+// Function to get the column name based on the column index
+function getColumnName(columnIndex) {
+     let dividend = columnIndex;
+     let columnName = '';
+
+     while (dividend >= 0) {
+          let modulo = dividend % 26;
+          columnName = String.fromCharCode(65 + modulo) + columnName;
+          dividend = Math.floor((dividend - modulo) / 26) - 1;
+     }
+
+     return columnName;
 }
 
 export default router;

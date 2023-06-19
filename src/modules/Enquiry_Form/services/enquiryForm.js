@@ -312,14 +312,21 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           `;
 
           // Generate the PDF using Puppeteer
-          const browser = await puppeteer.launch();
+          const browser = await puppeteer.launch({
+               args: ['--no-sandbox', '--disable-setuid-sandbox'],
+               args: ['--no-sandbox', '--disable-setuid-sandbox'], // Add these arguments to prevent errors in production
+               headless: true, // Run Puppeteer in headless mode on the server
+          });
+
           const page = await browser.newPage();
+
           await page.setContent(message);
           const pdfBuffer = await page.pdf({
                format: 'A4',
                printBackground: true,
                scale: 0.75, // Adjust the scale factor to fit more content onto a single page
           });
+
           await browser.close();
 
           const attachment = {

@@ -31,6 +31,7 @@ export const CreateApp = () => {
                //credentials: true,
           })
      );
+     app.use('/static', express.static('errorFile'));
      return app;
 };
 

@@ -370,7 +370,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 async function generateErrorCSV(errorList) {
-     const errorFile = '/Users/Plaxonic/leaseplan-api/src/modules/errorFile'; // Set the desired directory path
+     const errorFile = '/Users/Plaxonic/leaseplan-api/errorFile'; // Set the desired directory path
      const csvWriter = createObjectCsvWriter({
           //  path: 'error_list.csv', // Set the file path to save the CSV file
           path: `${errorFile}/error_list.csv`,

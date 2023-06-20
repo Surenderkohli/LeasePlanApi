@@ -621,6 +621,21 @@ function isValidCarDetailData(carDetailData) {
           if (!carDetail.door) {
                missingFields.push('door');
           }
+          if (!carDetail.seat) {
+               missingFields.push('seat');
+          }
+          if (!carDetail.acceleration) {
+               missingFields.push('acceleration');
+          }
+          if (!carDetail.tankCapacity) {
+               missingFields.push('tankCapacity');
+          }
+          if (!carDetail.fuelType) {
+               missingFields.push('fuelType');
+          }
+          if (!carDetail.gears) {
+               missingFields.push('gears');
+          }
 
           if (missingFields.length > 0) {
                missingFields.forEach((fieldName) => {
@@ -655,23 +670,26 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
-          if (carDetail.mileage && typeof carDetail.mileage !== 'string') {
-               const columnIndex = getHeaderIndex('mileage');
+          if (
+               carDetail.transmission &&
+               typeof carDetail.transmission !== 'string'
+          ) {
+               const columnIndex = getHeaderIndex('transmission');
                const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
-                    column: 'mileage',
+                    column: 'transmission',
                     cell: cellAddress,
-                    message: 'Invalid mileage value.',
+                    message: 'Invalid transmission value.',
                });
           }
 
-          if (carDetail.color && typeof carDetail.color !== 'string') {
-               const columnIndex = getHeaderIndex('color');
+          if (carDetail.fuelType && typeof carDetail.fuelType !== 'string') {
+               const columnIndex = getHeaderIndex('fuelType');
                const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
-                    column: 'color',
+                    column: 'fuelType',
                     cell: cellAddress,
-                    message: 'Invalid color value.',
+                    message: 'Invalid fuelType value.',
                });
           }
 
@@ -752,6 +770,11 @@ function getHeaderIndex(fieldName) {
           'bodyType',
           'co2',
           'door',
+          'seat',
+          'acceleration',
+          'tankCapacity',
+          'fuelType',
+          'gears',
      ];
      return headers.indexOf(fieldName);
 }

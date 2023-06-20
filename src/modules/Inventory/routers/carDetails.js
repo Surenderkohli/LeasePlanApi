@@ -704,7 +704,7 @@ function isValidCarDetailData(carDetailData) {
                errors.push({
                     column: 'companyName',
                     cell: cellAddress,
-                    message: 'Company Name is already assigned to a different Make Code.',
+                    message: `Company Name ${carDetail.companyName} is already assigned to a different Make Code.`,
                });
           }
 

@@ -5,4 +5,4 @@ gears,O10, 'gears' is missing.
 transmission,G11, 'transmission' is missing.
 door,J11, 'door' is missing.
 gears,O11, 'gears' is missing.
-modelCode,B11,Model Code 35139 is already assigned.
+companyName,C11,Company Name Tata is already assigned to a different Make Code.

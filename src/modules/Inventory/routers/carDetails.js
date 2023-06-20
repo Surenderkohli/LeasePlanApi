@@ -373,7 +373,7 @@ async function generateErrorCSV(errorList) {
      const errorFile = '/Users/Plaxonic/leaseplan-api/errorFile'; // Set the desired directory path
      const csvWriter = createObjectCsvWriter({
           //  path: 'error_list.csv', // Set the file path to save the CSV file
-          path: `${errorFile}/error_list.csv`,
+          path: `${errorFile}/error_list_cardetails.csv`,
           header: [
                { id: 'column', title: 'Fields' },
                { id: 'cell', title: 'CellAddress' },

@@ -4,6 +4,7 @@ import multer from 'multer';
 import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
+import { createObjectCsvWriter } from 'csv-writer';
 
 dotenv.config();
 
@@ -72,9 +73,32 @@ const upload = multer({ storage });
 //      }
 // });
 
+async function generateErrorCSV(errorList) {
+     const errorFile = '/Users/Plaxonic/leaseplan-api/errorFile';
+     const csvWriter = createObjectCsvWriter({
+          path: `${errorFile}/error_list_caroffers.csv`,
+          header: [
+               { id: 'column', title: 'Fields' },
+               { id: 'cell', title: 'CellAddress' },
+               { id: 'message', title: 'Message' },
+          ],
+     });
+
+     try {
+          await csvWriter.writeRecords(errorList);
+
+          console.log('CSV file generated successfully');
+          return true; // Indicate successful generation
+     } catch (error) {
+          console.log('Error generating CSV file', error);
+          throw error; // Throw the error to be caught and handled
+     }
+}
+
 router.post('/car-offers', upload.single('file'), async (req, res) => {
      try {
           let carOffers = [];
+          let errorList = []; // Array to store the errors
 
           if (req.file && req.file.mimetype === 'text/csv') {
                // CSV upload
@@ -83,30 +107,54 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 
                // Validate the CSV data for car offers
                const validation = isValidCarOfferData(carOfferData);
+
                if (!validation.isValid) {
-                    throw new Error(`Invalid CSV format. ${validation.error}`);
-               }
+                    // Push the errors to the errorList array
+                    errorList = validation.errors.slice(0, 30); // Limiting to maximum 30 errors
+               } else {
+                    const calculationNos = new Set();
 
-               // delete existing car offers from database
-               // await carOfferService.deleteAllCarOffers();
+                    for (let i = 0; i < carOfferData.length; i++) {
+                         const { calculationNo } = carOfferData[i];
 
-               const calculationNos = new Set();
+                         if (calculationNos.has(calculationNo)) {
+                              return res.status(400).json({
+                                   message: `calculationNo '${calculationNo}' already exists in the uploaded CSV file`,
+                              });
+                         }
 
-               for (let i = 0; i < carOfferData.length; i++) {
-                    const { calculationNo } = carOfferData[i];
+                         calculationNos.add(calculationNo);
 
-                    if (calculationNos.has(calculationNo)) {
-                         return res.status(400).json({
-                              message: `calculationNo '${calculationNo}' already exists in the uploaded CSV file`,
-                         });
+                         const carOffer = await carOfferService.createCarOffer(
+                              carOfferData[i]
+                         );
+                         carOffers.push(carOffer);
                     }
+               }
+          }
 
-                    calculationNos.add(calculationNo);
+          if (errorList.length > 0) {
+               // Generate the error CSV file
+               const isCSVGenerated = await generateErrorCSV(errorList);
 
-                    const carOffer = await carOfferService.createCarOffer(
-                         carOfferData[i]
+               if (isCSVGenerated) {
+                    // Set the appropriate response headers
+                    res.setHeader('Content-Type', 'text/csv');
+                    res.setHeader(
+                         'Content-Disposition',
+                         'attachment; filename="error_list.csv"'
                     );
-                    carOffers.push(carOffer);
+
+                    // Return the CSV file as a download link
+                    return res.status(200).json({
+                         message: 'Invalid car offers CSV file',
+                         errorFile: 'error_list_caroffers.csv', // Provide the file name to be downloaded
+                    });
+               } else {
+                    // Handle the error if CSV generation fails
+                    return res.status(500).json({
+                         message: 'Error generating error CSV',
+                    });
                }
           }
 
@@ -322,37 +370,67 @@ function isValidCarOfferData(carOfferData) {
      if (!Array.isArray(carOfferData) || carOfferData.length === 0) {
           return {
                isValid: false,
-               error: 'No car offer data provided',
+               errors: ['No car offer data provided'],
           };
      }
 
-     const validationErrors = [];
+     const errors = [];
 
-     for (let i = 0; i < carOfferData.length; i++) {
-          const carOffer = carOfferData[i];
+     carOfferData.forEach((carOffer, index) => {
+          const missingFields = [];
 
           if (!carOffer.calculationNo) {
-               validationErrors.push('Missing calculationNo');
+               const columnIndex = getHeaderIndex('calculationNo');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'calculationNo',
+                    cell: cellAddress,
+                    message: `Missing calculationNo at index ${index}`,
+               });
           }
-
           if (!carOffer.duration) {
-               validationErrors.push('Missing duration');
+               const columnIndex = getHeaderIndex('duration');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'duration',
+                    cell: cellAddress,
+                    message: `Missing duration at index ${index}`,
+               });
           }
-
           if (!carOffer.annualMileage) {
-               validationErrors.push('Missing annualMileage');
+               const columnIndex = getHeaderIndex('annualMileage');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'annualMileage',
+                    cell: cellAddress,
+                    message: `Missing annualMileage at index ${index}`,
+               });
           }
-
           if (!carOffer.monthlyCost) {
-               validationErrors.push('Missing monthlyCost');
+               const columnIndex = getHeaderIndex('monthlyCost');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'monthlyCost',
+                    cell: cellAddress,
+                    message: `Missing monthlyCost at index ${index}`,
+               });
           }
 
-          if (
-               typeof carOffer.duration !== 'string' ||
-               isNaN(Number(carOffer.duration)) ||
-               Number(carOffer.duration) <= 0
-          ) {
-               validationErrors.push('Invalid duration');
+          if (missingFields.length > 0) {
+               missingFields.forEach((missingField) => {
+                    errors.push(missingField);
+               });
+          }
+
+          const duration = parseFloat(carOffer.duration);
+          if (isNaN(duration) || duration <= 0) {
+               const columnIndex = getHeaderIndex('duration');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'duration',
+                    cell: cellAddress,
+                    message: `Invalid duration at index ${index}`,
+               });
           }
 
           if (
@@ -360,7 +438,13 @@ function isValidCarOfferData(carOfferData) {
                isNaN(Number(carOffer.annualMileage)) ||
                Number(carOffer.annualMileage) <= 0
           ) {
-               validationErrors.push('Invalid annualMileage');
+               const columnIndex = getHeaderIndex('annualMileage');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'annualMileage',
+                    cell: cellAddress,
+                    message: `Invalid annualMileage at index ${index}`,
+               });
           }
 
           if (
@@ -368,20 +452,66 @@ function isValidCarOfferData(carOfferData) {
                isNaN(Number(carOffer.monthlyCost)) ||
                Number(carOffer.monthlyCost) <= 0
           ) {
-               validationErrors.push('Invalid monthlyCost');
+               const columnIndex = getHeaderIndex('monthlyCost');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'monthlyCost',
+                    cell: cellAddress,
+                    message: `Invalid monthlyCost at index ${index}`,
+               });
           }
-     }
+     });
 
-     if (validationErrors.length > 0) {
+     if (errors.length > 0) {
           return {
                isValid: false,
-               error: 'Invalid car offer data',
+               errors,
           };
      }
 
      return {
           isValid: true,
+          errors: [],
      };
+}
+
+// Function to get the cell address based on the column index and row number
+function getCellAddress(columnIndex, rowNumber) {
+     const columnName = getColumnName(columnIndex);
+     const adjustedRowNumber = rowNumber + 2; // Adding 2 to row number to account for header row
+     return columnName + adjustedRowNumber;
+}
+
+// Function to get the column name based on the column index
+function getColumnName(columnIndex) {
+     let dividend = columnIndex;
+     let columnName = '';
+
+     while (dividend >= 0) {
+          let modulo = dividend % 26;
+          columnName = String.fromCharCode(65 + modulo) + columnName;
+          dividend = Math.floor((dividend - modulo) / 26) - 1;
+     }
+
+     return columnName;
+}
+
+// Function to get the index of the header field in the CSV
+function getHeaderIndex(fieldName) {
+     // Replace this logic with your CSV header extraction logic
+     const headers = [
+          'leaseType',
+          'term',
+          'makeCode',
+          'modelCode',
+          'companyName',
+          'seriesName',
+          'duration',
+          'annualMileage',
+          'calculationNo',
+          'bestDeals',
+     ];
+     return headers.indexOf(fieldName);
 }
 
 router.get('/filter_cars', async (req, res) => {

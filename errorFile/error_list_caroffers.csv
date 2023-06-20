@@ -1,0 +1,4 @@
+Fields,CellAddress,Message
+duration,G2,Invalid duration at index 0
+annualMileage,H12,Invalid annualMileage at index 10
+duration,G16,Invalid duration at index 14

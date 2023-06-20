@@ -372,8 +372,8 @@ async function generateErrorCSV(errorList) {
      const csvWriter = createObjectCsvWriter({
           path: 'error_list.csv', // Set the file path to save the CSV file
           header: [
-               { id: 'column', title: 'Column' },
-               { id: 'cell', title: 'Cell' },
+               { id: 'column', title: 'Fields' },
+               { id: 'cell', title: 'CellAddress' },
                { id: 'message', title: 'Message' },
           ],
      });

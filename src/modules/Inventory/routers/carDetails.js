@@ -575,7 +575,6 @@ router.delete(
 
 //      return true;
 // }
-
 function isValidCarDetailData(carDetailData) {
      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
           return {
@@ -588,30 +587,50 @@ function isValidCarDetailData(carDetailData) {
      const modelCodes = {};
      const errors = [];
 
-     for (let i = 0; i < carDetailData.length; i++) {
-          const carDetail = carDetailData[i];
-          const rowNumber = i;
+     carDetailData.forEach((carDetail, rowNumber) => {
+          const missingFields = [];
 
-          if (
-               !carDetail.modelCode ||
-               !carDetail.companyName ||
-               !carDetail.seriesName ||
-               !carDetail.yearModel ||
-               !carDetail.description ||
-               !carDetail.transmission ||
-               !carDetail.bodyType ||
-               !carDetail.co2 ||
-               !carDetail.door ||
-               !carDetail.seat ||
-               !carDetail.acceleration ||
-               !carDetail.tankCapacity ||
-               !carDetail.fuelType ||
-               !carDetail.gears
-          ) {
-               errors.push({
-                    column: 'Required Fields',
-                    cell: getCellAddress(0, rowNumber), // Assuming column 0 is the first column (modelCode)
-                    message: 'One or more required fields are missing.',
+          // Check for missing fields
+          if (!carDetail.makeCode) {
+               missingFields.push('makeCode');
+          }
+          if (!carDetail.modelCode) {
+               missingFields.push('modelCode');
+          }
+          if (!carDetail.companyName) {
+               missingFields.push('companyName');
+          }
+          if (!carDetail.seriesName) {
+               missingFields.push('seriesName');
+          }
+          if (!carDetail.yearModel) {
+               missingFields.push('yearModel');
+          }
+          if (!carDetail.description) {
+               missingFields.push('description');
+          }
+          if (!carDetail.transmission) {
+               missingFields.push('transmission');
+          }
+          if (!carDetail.bodyType) {
+               missingFields.push('bodyType');
+          }
+          if (!carDetail.co2) {
+               missingFields.push('co2');
+          }
+          if (!carDetail.door) {
+               missingFields.push('door');
+          }
+
+          if (missingFields.length > 0) {
+               missingFields.forEach((fieldName) => {
+                    const columnIndex = getHeaderIndex(fieldName);
+                    const cellAddress = getCellAddress(columnIndex, rowNumber);
+                    errors.push({
+                         column: fieldName,
+                         cell: cellAddress,
+                         message: `Required field "${fieldName}" is missing.`,
+                    });
                });
           }
 
@@ -627,52 +646,63 @@ function isValidCarDetailData(carDetailData) {
                     'sports',
                ].includes(carDetail.bodyType)
           ) {
+               const columnIndex = getHeaderIndex('bodyType');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'bodyType',
-                    cell: getCellAddress(7, rowNumber), // Assuming column 7 is the eighth column (bodyType)
+                    cell: cellAddress,
                     message: 'Invalid body type.',
                });
           }
 
           if (carDetail.mileage && typeof carDetail.mileage !== 'string') {
+               const columnIndex = getHeaderIndex('mileage');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'mileage',
-                    cell: getCellAddress(10, rowNumber), // Assuming column 10 is the eleventh column (mileage)
+                    cell: cellAddress,
                     message: 'Invalid mileage value.',
                });
           }
 
           if (carDetail.color && typeof carDetail.color !== 'string') {
+               const columnIndex = getHeaderIndex('color');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'color',
-                    cell: getCellAddress(11, rowNumber), // Assuming column 11 is the twelfth column (color)
+                    cell: cellAddress,
                     message: 'Invalid color value.',
                });
           }
+
           // Other field validations...
 
           if (
                companyCodes[carDetail.companyName] &&
                companyCodes[carDetail.companyName] !== carDetail.makeCode
           ) {
+               const columnIndex = getHeaderIndex('companyName');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'companyName',
-                    cell: getCellAddress(2, rowNumber), // Assuming column 2 is the third column (companyName)
+                    cell: cellAddress,
                     message: 'Company Name is already assigned to a different Make Code.',
                });
           }
 
           if (modelCodes[carDetail.modelCode]) {
+               const columnIndex = getHeaderIndex('modelCode');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'modelCode',
-                    cell: getCellAddress(0, rowNumber), // Assuming column 0 is the first column (modelCode)
+                    cell: cellAddress,
                     message: 'Model Code is already assigned.',
                });
           }
 
           companyCodes[carDetail.companyName] = carDetail.makeCode;
           modelCodes[carDetail.modelCode] = true;
-     }
+     });
 
      if (errors.length > 0) {
           return {
@@ -687,7 +717,7 @@ function isValidCarDetailData(carDetailData) {
      };
 }
 
-// Function to get the cell address based on the column index and row number (e.g., 0, 1 -> A2, B3, etc.)
+// Function to get the cell address based on the column index and row number
 function getCellAddress(columnIndex, rowNumber) {
      const columnName = getColumnName(columnIndex);
      const adjustedRowNumber = rowNumber + 2; // Adding 2 to row number to account for header row
@@ -706,6 +736,24 @@ function getColumnName(columnIndex) {
      }
 
      return columnName;
+}
+
+// Function to get the index of the header field in the CSV
+function getHeaderIndex(fieldName) {
+     // Replace this logic with your CSV header extraction logic
+     const headers = [
+          'makeCode',
+          'modelCode',
+          'companyName',
+          'seriesName',
+          'yearModel',
+          'description',
+          'transmission',
+          'bodyType',
+          'co2',
+          'door',
+     ];
+     return headers.indexOf(fieldName);
 }
 
 export default router;

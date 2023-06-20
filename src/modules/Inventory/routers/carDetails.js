@@ -3,7 +3,7 @@ import { httpHandler } from '../../../helpers/error-handler.js';
 import { CarServices } from '../services/carDetails.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import mongoose from 'mongoose';
+import mongoose, { model } from 'mongoose';
 import csvtojson from 'csvtojson';
 import { createObjectCsvWriter } from 'csv-writer';
 import dotenv from 'dotenv';
@@ -714,7 +714,7 @@ function isValidCarDetailData(carDetailData) {
                errors.push({
                     column: 'modelCode',
                     cell: cellAddress,
-                    message: 'Model Code is already assigned.',
+                    message: `Model Code ${carDetail.modelCode} is already assigned.`,
                });
           }
 

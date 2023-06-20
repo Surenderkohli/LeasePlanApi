@@ -548,16 +548,16 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
           if (existingCategory) {
                const foundCategory = existingCategory.find(
                     (category) =>
-                         category.categoryDescription === categoryDescription &&
-                         category.categoryCode !== categoryCode
+                         category.categoryCode === categoryCode &&
+                         category.categoryDescription !== categoryDescription
                );
                if (foundCategory) {
-                    const columnIndex = getHeaderIndex('categoryDescription');
+                    const columnIndex = getHeaderIndex('categoryCode');
                     const cellAddress = getCellAddress(columnIndex, i);
                     errors.push({
-                         column: 'categoryDescription',
+                         column: 'categoryCode',
                          cell: cellAddress,
-                         message: `Duplicate categoryDescription '${categoryDescription}' assigned to different categoryCodes within makeCode '${makeCode}' and modelCode '${modelCode}'`,
+                         message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions within makeCode '${makeCode}' and modelCode '${modelCode}'`,
                     });
                }
           } else {

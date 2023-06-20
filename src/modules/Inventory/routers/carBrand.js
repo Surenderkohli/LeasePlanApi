@@ -32,7 +32,13 @@ router.post(
      upload.none(), // Use the `none()` function to accept form-data with no file uploads
      httpHandler(async (req, res) => {
           try {
-               const result = await carBrandService.addCarBrand(req.body);
+               const trimmedData = {
+                    ...req.body,
+                    companyName: req.body.companyName.trim(),
+                    makeCode: req.body.makeCode.trim(),
+               };
+
+               const result = await carBrandService.addCarBrand(trimmedData);
                res.json(result);
           } catch (error) {
                res.status(400).json({

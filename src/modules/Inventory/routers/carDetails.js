@@ -629,7 +629,7 @@ function isValidCarDetailData(carDetailData) {
                     errors.push({
                          column: fieldName,
                          cell: cellAddress,
-                         message: ` ${fieldName} is missing.`,
+                         message: ` '${fieldName}' is missing.`,
                     });
                });
           }

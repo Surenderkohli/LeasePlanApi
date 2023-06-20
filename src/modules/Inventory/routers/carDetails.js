@@ -634,6 +634,21 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
+          if (carDetail.mileage && typeof carDetail.mileage !== 'string') {
+               errors.push({
+                    column: 'mileage',
+                    cell: getCellAddress(10, rowNumber), // Assuming column 10 is the eleventh column (mileage)
+                    message: 'Invalid mileage value.',
+               });
+          }
+
+          if (carDetail.color && typeof carDetail.color !== 'string') {
+               errors.push({
+                    column: 'color',
+                    cell: getCellAddress(11, rowNumber), // Assuming column 11 is the twelfth column (color)
+                    message: 'Invalid color value.',
+               });
+          }
           // Other field validations...
 
           if (

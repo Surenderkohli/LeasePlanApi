@@ -1,5 +1,17 @@
 Fields,CellAddress,Message
-categoryCode,C87,Duplicate categoryCode '1' assigned to different categoryDescriptions within makeCode '24' and modelCode '35132'
-categoryCode,C96,Duplicate categoryCode '1' assigned to different categoryDescriptions within makeCode '24' and modelCode '35133'
-categoryCode,C179,Duplicate categoryCode '4' assigned to different categoryDescriptions within makeCode '56' and modelCode '35140'
-modelCode,B177,Missing modelCode at index 175
+makeCode,A2,Missing makeCode at index 0
+modelCode,B2,Missing modelCode at index 0
+categoryCode,C2,Missing categoryCode at index 0
+featureDescription,E2,Missing featureDescription at index 0
+makeCode,A3,Missing makeCode at index 1
+modelCode,B3,Missing modelCode at index 1
+categoryCode,C3,Missing categoryCode at index 1
+featureDescription,E3,Missing featureDescription at index 1
+makeCode,A4,Missing makeCode at index 2
+modelCode,B4,Missing modelCode at index 2
+categoryCode,C4,Missing categoryCode at index 2
+featureDescription,E4,Missing featureDescription at index 2
+makeCode,A5,Missing makeCode at index 3
+modelCode,B5,Missing modelCode at index 3
+categoryCode,C5,Missing categoryCode at index 3
+featureDescription,E5,Missing featureDescription at index 3

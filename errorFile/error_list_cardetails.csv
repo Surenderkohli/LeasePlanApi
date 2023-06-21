@@ -1,8 +1,31 @@
 Fields,CellAddress,Message
+yearModel,E2, 'yearModel' is missing.
+description,F2, 'description' is missing.
+transmission,G2, 'transmission' is missing.
+bodyType,H2, 'bodyType' is missing.
+co2,I2, 'co2' is missing.
+door,J2, 'door' is missing.
+seat,K2, 'seat' is missing.
+acceleration,L2, 'acceleration' is missing.
+tankCapacity,M2, 'tankCapacity' is missing.
+fuelType,N2, 'fuelType' is missing.
+gears,O2, 'gears' is missing.
 bodyType,H2,Invalid body type.
-bodyType,H7,Invalid body type.
-gears,O10, 'gears' is missing.
-transmission,G11, 'transmission' is missing.
-door,J11, 'door' is missing.
-gears,O11, 'gears' is missing.
-companyName,C11,Company Name Tata is already assigned to a different Make Code.
+yearModel,E3, 'yearModel' is missing.
+description,F3, 'description' is missing.
+transmission,G3, 'transmission' is missing.
+bodyType,H3, 'bodyType' is missing.
+co2,I3, 'co2' is missing.
+door,J3, 'door' is missing.
+seat,K3, 'seat' is missing.
+acceleration,L3, 'acceleration' is missing.
+tankCapacity,M3, 'tankCapacity' is missing.
+fuelType,N3, 'fuelType' is missing.
+gears,O3, 'gears' is missing.
+bodyType,H3,Invalid body type.
+modelCode,B3,Model Code 35130 is already assigned.
+yearModel,E4, 'yearModel' is missing.
+description,F4, 'description' is missing.
+transmission,G4, 'transmission' is missing.
+bodyType,H4, 'bodyType' is missing.
+co2,I4, 'co2' is missing.

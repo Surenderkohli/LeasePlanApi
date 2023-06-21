@@ -32,7 +32,12 @@ router.post(
      upload.none(),
      httpHandler(async (req, res) => {
           try {
-               const result = await carSeriesService.addCarSeries(req.body);
+               const trimmedData = {
+                    ...req.body,
+                    seriesName: req.body.seriesName.trim(),
+                    modelCode: req.body.modelCode.trim(),
+               };
+               const result = await carSeriesService.addCarSeries(trimmedData);
                res.json(result);
           } catch (error) {
                res.status(400).json({

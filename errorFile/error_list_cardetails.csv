@@ -1,4 +1,8 @@
 Fields,CellAddress,Message
+makeCode,A2, 'makeCode' is missing.
+modelCode,B2, 'modelCode' is missing.
+companyName,C2, 'companyName' is missing.
+seriesName,D2, 'seriesName' is missing.
 yearModel,E2, 'yearModel' is missing.
 description,F2, 'description' is missing.
 transmission,G2, 'transmission' is missing.
@@ -11,6 +15,10 @@ tankCapacity,M2, 'tankCapacity' is missing.
 fuelType,N2, 'fuelType' is missing.
 gears,O2, 'gears' is missing.
 bodyType,H2,Invalid body type.
+makeCode,A3, 'makeCode' is missing.
+modelCode,B3, 'modelCode' is missing.
+companyName,C3, 'companyName' is missing.
+seriesName,D3, 'seriesName' is missing.
 yearModel,E3, 'yearModel' is missing.
 description,F3, 'description' is missing.
 transmission,G3, 'transmission' is missing.
@@ -21,11 +29,3 @@ seat,K3, 'seat' is missing.
 acceleration,L3, 'acceleration' is missing.
 tankCapacity,M3, 'tankCapacity' is missing.
 fuelType,N3, 'fuelType' is missing.
-gears,O3, 'gears' is missing.
-bodyType,H3,Invalid body type.
-modelCode,B3,Model Code 35130 is already assigned.
-yearModel,E4, 'yearModel' is missing.
-description,F4, 'description' is missing.
-transmission,G4, 'transmission' is missing.
-bodyType,H4, 'bodyType' is missing.
-co2,I4, 'co2' is missing.

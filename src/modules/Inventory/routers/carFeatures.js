@@ -290,7 +290,7 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                );
 
                // Return the CSV file as a download link
-               return res.status(200).json({
+               return res.status(400).json({
                     message: 'Invalid car features CSV file',
                     errorFile: 'error_list.csv', // Provide the file name to be downloaded
                });

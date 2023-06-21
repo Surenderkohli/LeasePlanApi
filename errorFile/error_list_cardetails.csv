@@ -1,31 +1,3 @@
 Fields,CellAddress,Message
-makeCode,A2, 'makeCode' is missing.
-modelCode,B2, 'modelCode' is missing.
-companyName,C2, 'companyName' is missing.
-seriesName,D2, 'seriesName' is missing.
-yearModel,E2, 'yearModel' is missing.
-description,F2, 'description' is missing.
-transmission,G2, 'transmission' is missing.
-bodyType,H2, 'bodyType' is missing.
-co2,I2, 'co2' is missing.
-door,J2, 'door' is missing.
-seat,K2, 'seat' is missing.
-acceleration,L2, 'acceleration' is missing.
-tankCapacity,M2, 'tankCapacity' is missing.
-fuelType,N2, 'fuelType' is missing.
-gears,O2, 'gears' is missing.
-bodyType,H2,Invalid body type.
-makeCode,A3, 'makeCode' is missing.
-modelCode,B3, 'modelCode' is missing.
-companyName,C3, 'companyName' is missing.
-seriesName,D3, 'seriesName' is missing.
-yearModel,E3, 'yearModel' is missing.
-description,F3, 'description' is missing.
-transmission,G3, 'transmission' is missing.
-bodyType,H3, 'bodyType' is missing.
-co2,I3, 'co2' is missing.
-door,J3, 'door' is missing.
-seat,K3, 'seat' is missing.
-acceleration,L3, 'acceleration' is missing.
-tankCapacity,M3, 'tankCapacity' is missing.
-fuelType,N3, 'fuelType' is missing.
+yearModel,E8,Invalid yearModel as s
+companyName,C11,Company Name Tata is already assigned to a different Make Code.

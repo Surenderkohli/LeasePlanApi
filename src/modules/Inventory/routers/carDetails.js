@@ -703,6 +703,20 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
+          if (
+               typeof carDetail.yearModel !== 'string' ||
+               isNaN(Number(carDetail.yearModel)) ||
+               Number(carDetail.yearModel) <= 0
+          ) {
+               const columnIndex = getHeaderIndex('yearModel');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'yearModel',
+                    cell: cellAddress,
+                    message: `Invalid yearModel as ${carDetail.yearModel}`,
+               });
+          }
+
           // Other field validations...
 
           if (

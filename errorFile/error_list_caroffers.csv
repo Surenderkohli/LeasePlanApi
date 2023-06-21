@@ -27,3 +27,5 @@ monthlyCost,5,Missing monthlyCost at index 3
 duration,G5,Invalid duration at index 3
 annualMileage,H5,Invalid annualMileage at index 3
 monthlyCost,5,Invalid monthlyCost at index 3
+calculationNo,I6,Missing calculationNo at index 4
+duration,G6,Missing duration at index 4

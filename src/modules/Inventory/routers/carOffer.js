@@ -379,15 +379,6 @@ function isValidCarOfferData(carOfferData) {
      carOfferData.forEach((carOffer, index) => {
           const missingFields = [];
 
-          if (!carOffer.calculationNo) {
-               const columnIndex = getHeaderIndex('calculationNo');
-               const cellAddress = getCellAddress(columnIndex, index);
-               missingFields.push({
-                    column: 'calculationNo',
-                    cell: cellAddress,
-                    message: `Missing calculationNo at index ${index}`,
-               });
-          }
           if (!carOffer.duration) {
                const columnIndex = getHeaderIndex('duration');
                const cellAddress = getCellAddress(columnIndex, index);
@@ -413,6 +404,15 @@ function isValidCarOfferData(carOfferData) {
                     column: 'monthlyCost',
                     cell: cellAddress,
                     message: `Missing monthlyCost at index ${index}`,
+               });
+          }
+          if (!carOffer.calculationNo) {
+               const columnIndex = getHeaderIndex('calculationNo');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'calculationNo',
+                    cell: cellAddress,
+                    message: `Missing calculationNo at index ${index}`,
                });
           }
 
@@ -446,12 +446,8 @@ function isValidCarOfferData(carOfferData) {
                     message: `Invalid annualMileage at index ${index}`,
                });
           }
-
-          if (
-               typeof carOffer.monthlyCost !== 'string' ||
-               isNaN(Number(carOffer.monthlyCost)) ||
-               Number(carOffer.monthlyCost) <= 0
-          ) {
+          const monthlyCost = parseFloat(carOffer.monthlyCost);
+          if (isNaN(monthlyCost) || monthlyCost <= 0) {
                const columnIndex = getHeaderIndex('monthlyCost');
                const cellAddress = getCellAddress(columnIndex, index);
                errors.push({
@@ -508,6 +504,7 @@ function getHeaderIndex(fieldName) {
           'seriesName',
           'duration',
           'annualMileage',
+          'monthlyCost',
           'calculationNo',
           'bestDeals',
      ];

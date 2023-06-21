@@ -1,3 +1,2 @@
 Fields,CellAddress,Message
-yearModel,E8,Invalid yearModel as s
-companyName,C11,Company Name Tata is already assigned to a different Make Code.
+modelCode,B3,Model Code 35130 is already assigned.

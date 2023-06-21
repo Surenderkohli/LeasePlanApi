@@ -375,6 +375,7 @@ function isValidCarOfferData(carOfferData) {
      }
 
      const errors = [];
+     const calculationNos = [];
 
      carOfferData.forEach((carOffer, index) => {
           const missingFields = [];
@@ -385,7 +386,7 @@ function isValidCarOfferData(carOfferData) {
                missingFields.push({
                     column: 'duration',
                     cell: cellAddress,
-                    message: `Missing duration `,
+                    message: `Missing duration`,
                });
           }
           if (!carOffer.annualMileage) {
@@ -414,6 +415,16 @@ function isValidCarOfferData(carOfferData) {
                     cell: cellAddress,
                     message: `Missing calculationNo`,
                });
+          } else if (calculationNos.includes(carOffer.calculationNo)) {
+               const columnIndex = getHeaderIndex('calculationNo');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'calculationNo',
+                    cell: cellAddress,
+                    message: `Duplicate calculationNo: ${carOffer.calculationNo}`,
+               });
+          } else {
+               calculationNos.push(carOffer.calculationNo);
           }
 
           if (missingFields.length > 0) {

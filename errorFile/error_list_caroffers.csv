@@ -1,4 +1,5 @@
 Fields,CellAddress,Message
+calculationNo,J8,Duplicate calculationNo: 111
 monthlyCost,I9,Missing monthlyCost
 monthlyCost,I9,Invalid monthlyCost
-calculationNo,J9,Invalid calculationNo 
+calculationNo,J9,Invalid calculationNo

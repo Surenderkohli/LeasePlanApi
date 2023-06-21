@@ -1,5 +1,7 @@
 Fields,CellAddress,Message
 calculationNo,J8,Duplicate calculationNo: 111
 monthlyCost,I9,Missing monthlyCost
+term,B9,Missing term
 monthlyCost,I9,Invalid monthlyCost
 calculationNo,J9,Invalid calculationNo
+leaseType,A11,Missing leaseType

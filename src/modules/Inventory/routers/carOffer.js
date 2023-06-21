@@ -427,6 +427,26 @@ function isValidCarOfferData(carOfferData) {
                calculationNos.push(carOffer.calculationNo);
           }
 
+          if (!carOffer.leaseType) {
+               const columnIndex = getHeaderIndex('leaseType');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'leaseType',
+                    cell: cellAddress,
+                    message: `Missing leaseType`,
+               });
+          }
+
+          if (!carOffer.term) {
+               const columnIndex = getHeaderIndex('term');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'term',
+                    cell: cellAddress,
+                    message: `Missing term`,
+               });
+          }
+
           if (missingFields.length > 0) {
                missingFields.forEach((missingField) => {
                     errors.push(missingField);

@@ -1,10 +1,4 @@
 Fields,CellAddress,Message
-duration,G2,Missing duration at index 0
-duration,G2,Invalid duration at index 0
-duration,G3,Invalid duration at index 1
-calculationNo,J8,Missing calculationNo at index 6
-monthlyCost,I9,Missing monthlyCost at index 7
-monthlyCost,I9,Invalid monthlyCost at index 7
-annualMileage,H11,Missing annualMileage at index 9
-annualMileage,H11,Invalid annualMileage at index 9
-annualMileage,H12,Invalid annualMileage at index 10
+monthlyCost,I9,Missing monthlyCost
+monthlyCost,I9,Invalid monthlyCost
+calculationNo,J9,Invalid calculationNo 

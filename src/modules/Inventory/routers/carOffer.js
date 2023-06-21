@@ -385,7 +385,7 @@ function isValidCarOfferData(carOfferData) {
                missingFields.push({
                     column: 'duration',
                     cell: cellAddress,
-                    message: `Missing duration at index ${index}`,
+                    message: `Missing duration `,
                });
           }
           if (!carOffer.annualMileage) {
@@ -403,7 +403,7 @@ function isValidCarOfferData(carOfferData) {
                missingFields.push({
                     column: 'monthlyCost',
                     cell: cellAddress,
-                    message: `Missing monthlyCost at index ${index}`,
+                    message: `Missing monthlyCost`,
                });
           }
           if (!carOffer.calculationNo) {
@@ -412,7 +412,7 @@ function isValidCarOfferData(carOfferData) {
                missingFields.push({
                     column: 'calculationNo',
                     cell: cellAddress,
-                    message: `Missing calculationNo at index ${index}`,
+                    message: `Missing calculationNo`,
                });
           }
 
@@ -429,7 +429,7 @@ function isValidCarOfferData(carOfferData) {
                errors.push({
                     column: 'duration',
                     cell: cellAddress,
-                    message: `Invalid duration at index ${index}`,
+                    message: `Invalid duration`,
                });
           }
 
@@ -443,7 +443,7 @@ function isValidCarOfferData(carOfferData) {
                errors.push({
                     column: 'annualMileage',
                     cell: cellAddress,
-                    message: `Invalid annualMileage at index ${index}`,
+                    message: `Invalid annualMileage`,
                });
           }
           const monthlyCost = parseFloat(carOffer.monthlyCost);
@@ -453,7 +453,18 @@ function isValidCarOfferData(carOfferData) {
                errors.push({
                     column: 'monthlyCost',
                     cell: cellAddress,
-                    message: `Invalid monthlyCost at index ${index}`,
+                    message: `Invalid monthlyCost`,
+               });
+          }
+
+          const calculationNo = parseFloat(carOffer.calculationNo);
+          if (isNaN(calculationNo) || calculationNo <= 0) {
+               const columnIndex = getHeaderIndex('calculationNo');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'calculationNo',
+                    cell: cellAddress,
+                    message: `Invalid calculationNo`,
                });
           }
      });
@@ -475,6 +486,9 @@ function isValidCarOfferData(carOfferData) {
 function getCellAddress(columnIndex, rowNumber) {
      const columnName = getColumnName(columnIndex);
      const adjustedRowNumber = rowNumber + 2; // Adding 2 to row number to account for header row
+
+     console.log('columnName', columnName);
+     console.log('adjustedRowNumber', adjustedRowNumber);
      return columnName + adjustedRowNumber;
 }
 

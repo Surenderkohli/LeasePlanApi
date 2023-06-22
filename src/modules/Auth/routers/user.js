@@ -256,6 +256,14 @@ router.post('/forgot_password', profileUpload.none(), async (req, res) => {
      try {
           const { email } = req.body;
 
+          // Check if email is empty
+          if (!email) {
+               return res.status(400).send({
+                    success: false,
+                    msg: 'Email address is required',
+               });
+          }
+
           await userService.forgotPassword(email);
 
           res.status(200).send({

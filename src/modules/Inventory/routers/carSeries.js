@@ -57,7 +57,7 @@ router.post(
 
                // Check if any of the fields is missing
                if (!carBrand_id) {
-                    missingFields.push('carBrand_id');
+                    missingFields.push('carBrand');
                }
                if (!seriesName) {
                     missingFields.push('seriesName');

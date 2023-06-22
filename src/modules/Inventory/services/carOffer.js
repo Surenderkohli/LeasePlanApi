@@ -815,6 +815,75 @@ const getSingleCar = async (id, duration, annualMileage) => {
      }
 };
 
+const getSingleCarV2 = async (id, duration, annualMileage) => {
+     try {
+          const carOffer = await carOfferModel
+               .findOne({ _id: id })
+               .populate('carBrand_id')
+               .populate('carSeries_id');
+
+          if (!carOffer) {
+               throw new Error('Car not found');
+          }
+
+          let result = {
+               carOffer,
+               carDetails: null,
+               features: [],
+               monthlyCost: [],
+          };
+
+          if (duration) {
+               const selectedOffers = carOffer.offers.filter(
+                    (offer) => offer.duration === Number(duration)
+               );
+
+               if (selectedOffers.length === 0) {
+                    throw new Error('Offer not found');
+               }
+
+               if (annualMileage) {
+                    const selectedOffer = selectedOffers.find(
+                         (offer) =>
+                              offer.annualMileage === Number(annualMileage)
+                    );
+
+                    if (!selectedOffer) {
+                         throw new Error('Offer not found');
+                    }
+
+                    result.monthlyCost.push({
+                         annualMileage: selectedOffer.annualMileage,
+                         monthlyCost: selectedOffer.monthlyCost,
+                    });
+               } else {
+                    result.monthlyCost = selectedOffers.map((offer) => ({
+                         annualMileage: offer.annualMileage,
+                         monthlyCost: offer.monthlyCost,
+                    }));
+               }
+          }
+
+          const carFeatures = await carFeatureModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+          });
+
+          const carDetails = await carDetailsModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+          });
+
+          result.carDetails = carDetails;
+          result.features = carFeatures || [];
+
+          return result;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 const updateCar = async (
      id,
      carDetailsData,
@@ -1475,4 +1544,5 @@ export const carOfferService = {
      updateCarV2,
      deletedCarV2,
      getAllCarWithoutOffers,
+     getSingleCarV2,
 };

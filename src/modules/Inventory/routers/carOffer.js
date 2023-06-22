@@ -269,6 +269,28 @@ router.get('/fetch-single/:id', async (req, res) => {
      }
 });
 
+router.get('/fetch-single_V2/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          const { duration, annualMileage } = req.query;
+
+          const result = await carOfferService.getSingleCarV2(
+               id,
+               duration,
+               annualMileage
+          );
+          res.status(200).json({ success: true, data: result });
+     } catch (error) {
+          if (error.message === 'Car not found') {
+               res.status(404).json({ success: false, msg: 'Car not found' });
+          } else if (error.message === 'Offer not found') {
+               res.status(404).json({ success: false, msg: 'Offer not found' });
+          } else {
+               res.status(400).json({ success: false, msg: error.message });
+          }
+     }
+});
+
 router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
      try {
           const id = req.params.id;

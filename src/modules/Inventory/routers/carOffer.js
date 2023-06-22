@@ -135,27 +135,20 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 
           if (errorList.length > 0) {
                // Generate the error CSV file
-               const isCSVGenerated = await generateErrorCSV(errorList);
+               await generateErrorCSV(errorList);
 
-               if (isCSVGenerated) {
-                    // Set the appropriate response headers
-                    res.setHeader('Content-Type', 'text/csv');
-                    res.setHeader(
-                         'Content-Disposition',
-                         'attachment; filename="error_list.csv"'
-                    );
+               // Set the appropriate response headers
+               res.setHeader('Content-Type', 'text/csv');
+               res.setHeader(
+                    'Content-Disposition',
+                    'attachment; filename="error_list.csv"'
+               );
 
-                    // Return the CSV file as a download link
-                    return res.status(400).json({
-                         message: 'Invalid car offers CSV file',
-                         errorFile: 'error_list_caroffers.csv', // Provide the file name to be downloaded
-                    });
-               } else {
-                    // Handle the error if CSV generation fails
-                    return res.status(500).json({
-                         message: 'Error generating error CSV',
-                    });
-               }
+               // Return the CSV file as a download link
+               return res.status(400).json({
+                    message: 'Invalid car offers CSV file',
+                    errorFile: 'error_list_caroffers.csv', // Provide the file name to be downloaded
+               });
           }
 
           res.status(201).json({

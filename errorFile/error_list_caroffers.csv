@@ -1,7 +1,12 @@
 Fields,CellAddress,Message
-calculationNo,J8,Duplicate calculationNo: 111
+duration,G2,Missing duration
+duration,G2,Invalid duration
+duration,G3,Invalid duration
+calculationNo,J8,Missing calculationNo
+calculationNo,J8,Invalid calculationNo
+calculationNo,J9,Duplicate calculationNo: 111
 monthlyCost,I9,Missing monthlyCost
-term,B9,Missing term
 monthlyCost,I9,Invalid monthlyCost
-calculationNo,J9,Invalid calculationNo
-leaseType,A11,Missing leaseType
+annualMileage,H11,Missing annualMileage at index 9
+annualMileage,H11,Invalid annualMileage
+annualMileage,H12,Invalid annualMileage

@@ -149,12 +149,12 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                     message: 'Invalid car offers CSV file',
                     errorFile: 'error_list_caroffers.csv', // Provide the file name to be downloaded
                });
+          } else {
+               res.status(201).json({
+                    message: 'Car offers added successfully',
+                    data: carOffers,
+               });
           }
-
-          res.status(201).json({
-               message: 'Car offers added successfully',
-               data: carOffers,
-          });
      } catch (error) {
           console.log(error);
           res.status(400).json({ message: error.message });

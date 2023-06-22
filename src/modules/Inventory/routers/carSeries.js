@@ -47,17 +47,29 @@ router.get(
 //           }
 //      })
 // );
-
 router.post(
      '/add-carseries',
      upload.none(),
      httpHandler(async (req, res) => {
           try {
                const { carBrand_id, seriesName, modelCode } = req.body;
+               const missingFields = [];
 
-               // Check if carBrand_id is provided and is a valid ID
+               // Check if any of the fields is missing
                if (!carBrand_id) {
-                    throw new Error('Car Brand is required');
+                    missingFields.push('carBrand_id');
+               }
+               if (!seriesName) {
+                    missingFields.push('seriesName');
+               }
+               if (!modelCode) {
+                    missingFields.push('modelCode');
+               }
+
+               if (missingFields.length > 0) {
+                    throw new Error(
+                         `Missing required fields: ${missingFields.join(', ')}`
+                    );
                }
 
                const trimmedData = {

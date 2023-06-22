@@ -27,16 +27,44 @@ router.get(
      })
 );
 
+// router.post(
+//      '/add-carseries',
+//      upload.none(),
+//      httpHandler(async (req, res) => {
+//           try {
+//                const trimmedData = {
+//                     ...req.body,
+//                     seriesName: req.body.seriesName.trim(),
+//                     modelCode: req.body.modelCode.trim(),
+//                };
+//                const result = await carSeriesService.addCarSeries(trimmedData);
+//                res.json(result);
+//           } catch (error) {
+//                res.status(400).json({
+//                     success: false,
+//                     msg: error.message,
+//                });
+//           }
+//      })
+// );
+
 router.post(
      '/add-carseries',
      upload.none(),
      httpHandler(async (req, res) => {
           try {
+               const { carBrand_id, seriesName, modelCode } = req.body;
+
+               // Check if carBrand_id is provided and is a valid ID
+               if (!carBrand_id) {
+                    throw new Error('Car Brand is required');
+               }
+
                const trimmedData = {
-                    ...req.body,
-                    seriesName: req.body.seriesName.trim(),
-                    modelCode: req.body.modelCode.trim(),
+                    seriesName: seriesName.trim(),
+                    modelCode: modelCode.trim(),
                };
+
                const result = await carSeriesService.addCarSeries(trimmedData);
                res.json(result);
           } catch (error) {

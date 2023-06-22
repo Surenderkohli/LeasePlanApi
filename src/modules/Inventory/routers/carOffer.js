@@ -86,12 +86,9 @@ async function generateErrorCSV(errorList) {
 
      try {
           await csvWriter.writeRecords(errorList);
-
-          console.log('CSV file generated successfully');
-          return true; // Indicate successful generation
+          return console.log('CSV file generated successfully');
      } catch (error) {
           console.log('Error generating CSV file', error);
-          throw error; // Throw the error to be caught and handled
      }
 }
 
@@ -147,7 +144,7 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                // Return the CSV file as a download link
                return res.status(400).json({
                     message: 'Invalid car offers CSV file',
-                    errorFile: 'error_list_caroffers.csv', // Provide the file name to be downloaded
+                    errorFile: 'error_list', // Provide the file name to be downloaded
                });
           } else {
                res.status(201).json({

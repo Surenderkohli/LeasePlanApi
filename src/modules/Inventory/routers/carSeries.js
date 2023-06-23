@@ -73,6 +73,7 @@ router.post(
                }
 
                const trimmedData = {
+                    carBrand_id: carBrand_id,
                     seriesName: seriesName.trim(),
                     modelCode: modelCode.trim(),
                };

@@ -530,10 +530,17 @@ function getCellAddress(columnIndex, rowNumber) {
      const columnName = getColumnName(columnIndex);
      const adjustedRowNumber = rowNumber + 2; // Adding 2 to row number to account for header row
 
-     console.log('columnName', columnName);
-     console.log('adjustedRowNumber', adjustedRowNumber);
      return columnName + adjustedRowNumber;
 }
+
+/* 
+
+     console.log('columnName -', columnName);                                         || columnName - I
+     console.log('adjustedRowNumber -', adjustedRowNumber);                           || adjustedRowNumber - 9
+     console.log(
+          'columnIndex + adjustedRowNumber', columnName + adjustedRowNumber );        || columnIndex + adjustedRowNumber I9    || columnIndex + adjustedRowNumber G11
+
+*/
 
 // Function to get the column name based on the column index
 function getColumnName(columnIndex) {
@@ -545,9 +552,13 @@ function getColumnName(columnIndex) {
           columnName = String.fromCharCode(65 + modulo) + columnName;
           dividend = Math.floor((dividend - modulo) / 26) - 1;
      }
-
      return columnName;
 }
+
+/* 
+        console.log('columnName:', columnName);              columnName : I        ||     columnName : G    ||    columnName : B
+
+*/
 
 // Function to get the index of the header field in the CSV
 function getHeaderIndex(fieldName) {
@@ -565,8 +576,15 @@ function getHeaderIndex(fieldName) {
           'calculationNo',
           'bestDeals',
      ];
+
      return headers.indexOf(fieldName);
 }
+
+/* 
+        console.log('indexing :', headers.indexOf(fieldName))      indexing : 0               ||        indexing 9
+
+        console.log('fieldName : ', fieldName)                      fieldName :  leaseType      ||        fieldName calculationNo
+ */
 
 router.get('/filter_cars', async (req, res) => {
      try {

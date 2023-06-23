@@ -1294,7 +1294,9 @@ const filterCars = async (filterOptions) => {
                term,
                carBrand_id,
                carSeries_id,
-               monthlyCost,
+               // monthlyCost,
+               priceMin,
+               priceMax,
                annualMileage,
                fuelType,
                bodyType,
@@ -1311,8 +1313,20 @@ const filterCars = async (filterOptions) => {
                query['leaseType_id.term'] = term;
           }
 
-          if (monthlyCost) {
-               query['offers.monthlyCost'] = monthlyCost;
+          // if (monthlyCost) {
+          //      query['offers.monthlyCost'] = monthlyCost;
+          // }
+
+          if (priceMin || priceMax) {
+               query['offers.monthlyCost'] = {};
+
+               if (priceMin) {
+                    query['offers.monthlyCost']['$gte'] = priceMin;
+               }
+
+               if (priceMax) {
+                    query['offers.monthlyCost']['$lte'] = priceMax;
+               }
           }
 
           if (annualMileage) {

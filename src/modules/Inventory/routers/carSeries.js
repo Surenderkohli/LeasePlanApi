@@ -71,7 +71,7 @@ router.post(
                          `Missing required fields: ${missingFields.join(', ')}`
                     );
                }
-
+               //...req.body,
                const trimmedData = {
                     carBrand_id: carBrand_id,
                     seriesName: seriesName.trim(),

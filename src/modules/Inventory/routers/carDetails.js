@@ -717,6 +717,34 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
+          if (
+               typeof carDetail.door !== 'string' ||
+               isNaN(Number(carDetail.door)) ||
+               Number(carDetail.door) <= 0
+          ) {
+               const columnIndex = getHeaderIndex('door');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'door',
+                    cell: cellAddress,
+                    message: `Invalid door as ${carDetail.door}`,
+               });
+          }
+
+          if (
+               typeof carDetail.seat !== 'string' ||
+               isNaN(Number(carDetail.seat)) ||
+               Number(carDetail.seat) <= 0
+          ) {
+               const columnIndex = getHeaderIndex('seat');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'seat',
+                    cell: cellAddress,
+                    message: `Invalid seat as ${carDetail.seat}`,
+               });
+          }
+
           // Other field validations...
 
           if (

@@ -1471,17 +1471,48 @@ const deletedCarV2 = async (id) => {
                throw new Error('Car not found');
           }
 
-          // // Delete associated car offers
-          // await carDetailsModel.deleteMany({
-          //      carBrand_id: car.carBrand_id,
-          //      carSeries_id: car.carSeries_id,
-          // });
+          const otherCars = await carOfferModel.find({
+               makeCode: car.makeCode,
+               modelCode: car.modelCode,
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+               _id: { $ne: id },
+          });
 
-          // // Delete associated car features
-          // await carFeatureModel.deleteMany({
-          //      carBrand_id: car.carBrand_id,
-          //      carSeries_id: car.carSeries_id,
-          // });g
+          const sameCarExists = otherCars.some((otherCar) => {
+               return (
+                    otherCar.leaseType !== car.leaseType ||
+                    otherCar.term !== car.term
+               );
+          });
+
+          if (!sameCarExists) {
+               // Delete associated car offers
+               await carDetailsModel.deleteOne({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+
+               // Delete associated car features
+               await carFeatureModel.deleteOne({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+
+               // Delete associated car series if no other car offers exist
+               const otherCarOffersExist = await carOfferModel.exists({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+                    _id: { $ne: id },
+               });
+
+               if (!otherCarOffersExist) {
+                    await carSeriesModel.deleteOne({
+                         carBrand_id: car.carBrand_id,
+                         carSeries_id: car.carSeries_id,
+                    });
+               }
+          }
 
           await car.remove();
           return car;

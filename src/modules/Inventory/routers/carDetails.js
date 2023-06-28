@@ -11,6 +11,7 @@ import carOfferModel from '../models/carOffer.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import fs from 'fs';
+const errorFilePath = '/Users/Plaxonic/leaseplan-api/errorFile';
 
 dotenv.config();
 
@@ -370,10 +371,9 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 async function generateErrorCSV(errorList) {
-     const errorFile = '/Users/Plaxonic/leaseplan-api/errorFile'; // Set the desired directory path
      const csvWriter = createObjectCsvWriter({
           //  path: 'error_list.csv', // Set the file path to save the CSV file
-          path: `${errorFile}/error_list_cardetails.csv`,
+          path: `${errorFilePath}/error_list_cardetails.csv`,
           header: [
                { id: 'column', title: 'Fields' },
                { id: 'cell', title: 'CellAddress' },
@@ -393,6 +393,7 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
      try {
           let carDetails = [];
           let errorList = []; // Array to store the errors
+          const errorFilePath = '/Users/Plaxonic/leaseplan-api/errorFile'; // Set the desired directory path
 
           if (req.file && req.file.mimetype === 'text/csv') {
                // CSV upload
@@ -434,8 +435,9 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                //      message: 'Invalid car details CSV file',
                //      errors: errorList,
                // });
-               // Generate the error CSV file
-               await generateErrorCSV(errorList);
+
+               // Generate the error CSV file with the provided errorFilePath
+               await generateErrorCSV(errorList, errorFilePath);
 
                // Set the appropriate response headers
                res.setHeader('Content-Type', 'text/csv');

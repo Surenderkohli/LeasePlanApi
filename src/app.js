@@ -19,6 +19,8 @@ const modules = [
      QueryDetailsModule,
 ];
 
+const errorFilePath = '/Users/Plaxonic/leaseplan-api/errorFile'; // Set the desired directory path
+
 export const CreateApp = () => {
      const app = express();
      app.set('trust proxy', true);
@@ -31,7 +33,7 @@ export const CreateApp = () => {
                //credentials: true,
           })
      );
-     app.use('/static', express.static('errorFile'));
+     app.use('/static', express.static(errorFilePath));
      return app;
 };
 

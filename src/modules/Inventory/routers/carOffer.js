@@ -74,9 +74,9 @@ const upload = multer({ storage });
 // });
 
 async function generateErrorCSV(errorList) {
-     const errorFile = '/Users/Plaxonic/leaseplan-api/errorFile';
+     const errorFolder = 'errorFile'; // Update with the correct folder name
      const csvWriter = createObjectCsvWriter({
-          path: `${errorFile}/error_list_caroffers.csv`,
+          path: `${errorFolder}/error_list_caroffers.csv`,
           header: [
                { id: 'column', title: 'Fields' },
                { id: 'cell', title: 'CellAddress' },
@@ -135,11 +135,11 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                await generateErrorCSV(errorList);
 
                // Set the appropriate response headers
-               res.setHeader('Content-Type', 'text/csv');
-               res.setHeader(
-                    'Content-Disposition',
-                    'attachment; filename="error_list_caroffers.csv"'
-               );
+               // res.setHeader('Content-Type', 'text/csv');
+               // res.setHeader(
+               //      'Content-Disposition',
+               //      'attachment; filename="error_list_caroffers.csv"'
+               // );
 
                // Return the CSV file as a download link
                return res.status(400).json({

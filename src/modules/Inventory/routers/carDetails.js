@@ -370,10 +370,29 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 // const errorFilePath = '../../../../errorFile';
 
+// async function generateErrorCSV(errorList) {
+//      const csvWriter = createObjectCsvWriter({
+//           //  path: 'error_list.csv', // Set the file path to save the CSV file
+//           path: `${errorFile}/error_list_cardetails.csv`,
+//           header: [
+//                { id: 'column', title: 'Fields' },
+//                { id: 'cell', title: 'CellAddress' },
+//                { id: 'message', title: 'Message' },
+//           ],
+//      });
+
+//      try {
+//           await csvWriter.writeRecords(errorList);
+//           return console.log('CSV file generated successfully');
+//      } catch (error) {
+//           return console.log('Error generating CSV file:', error);
+//      }
+// }
+
 async function generateErrorCSV(errorList) {
+     const errorFolder = 'errorFile'; // Update with the correct folder name
      const csvWriter = createObjectCsvWriter({
-          //  path: 'error_list.csv', // Set the file path to save the CSV file
-          path: `${errorFile}/error_list_cardetails.csv`,
+          path: `${errorFolder}/error_list_cardetails.csv`,
           header: [
                { id: 'column', title: 'Fields' },
                { id: 'cell', title: 'CellAddress' },

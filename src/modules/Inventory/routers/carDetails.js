@@ -616,6 +616,7 @@ function isValidCarDetailData(carDetailData) {
      const companyCodes = {};
      const modelCodes = {};
      const errors = [];
+     const makeCodeToCompanyName = {};
 
      carDetailData.forEach((carDetail, rowNumber) => {
           const missingFields = [];
@@ -767,17 +768,28 @@ function isValidCarDetailData(carDetailData) {
 
           // Other field validations...
 
+          // Check if makeCode is already assigned to a different companyName
           if (
-               companyCodes[carDetail.companyName] &&
-               companyCodes[carDetail.companyName] !== carDetail.makeCode
+               carDetail.makeCode &&
+               makeCodeToCompanyName[carDetail.makeCode] &&
+               makeCodeToCompanyName[carDetail.makeCode] !==
+                    carDetail.companyName
           ) {
-               const columnIndex = getHeaderIndex('companyName');
+               const columnIndex = getHeaderIndex('makeCode');
                const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
-                    column: 'companyName',
+                    column: 'makeCode',
                     cell: cellAddress,
-                    message: `Company Name ${carDetail.companyName} is already assigned to a different Make Code.`,
+                    message: `Make Code ${carDetail.makeCode} is already assigned to a different Company Name.`,
                });
+          }
+
+          // ...
+
+          // Track assigned makeCode to companyName
+          if (carDetail.makeCode && carDetail.companyName) {
+               makeCodeToCompanyName[carDetail.makeCode] =
+                    carDetail.companyName;
           }
 
           if (modelCodes[carDetail.modelCode]) {

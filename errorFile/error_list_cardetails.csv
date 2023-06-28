@@ -1,3 +1,2 @@
 Fields,CellAddress,Message
-door,J7,Invalid door as k
-seat,K7,Invalid seat as k
+fuelType,N10, 'fuelType' is missing.

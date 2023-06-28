@@ -286,13 +286,13 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                res.setHeader('Content-Type', 'text/csv');
                res.setHeader(
                     'Content-Disposition',
-                    'attachment; filename="error_list.csv"'
+                    'attachment; filename="error_list_carfeatures.csv"'
                );
 
                // Return the CSV file as a download link
                return res.status(400).json({
                     message: 'Invalid car features CSV file',
-                    errorFile: 'error_list.csv', // Provide the file name to be downloaded
+                    errorFile: 'error_list_carfeatures.csv', // Provide the file name to be downloaded
                });
           }
 

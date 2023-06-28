@@ -11,7 +11,7 @@ import carOfferModel from '../models/carOffer.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import fs from 'fs';
-const errorFilePath = '/Users/Plaxonic/leaseplan-api/errorFile';
+const errorFilePath = '/errorFile';
 
 dotenv.config();
 

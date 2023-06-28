@@ -436,7 +436,7 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
                // });
 
                // Generate the error CSV file with the provided errorFilePath
-               await generateErrorCSV(errorList, errorFilePath);
+               await generateErrorCSV(errorList);
 
                // Set the appropriate response headers
                // res.setHeader('Content-Type', 'text/csv');

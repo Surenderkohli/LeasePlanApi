@@ -1187,6 +1187,134 @@ const updateCarV2 = async (
      }
 };
 
+const updateCarV3 = async (
+     id,
+     carDetailsData,
+     carFeaturesData,
+     carOffersData
+) => {
+     try {
+          // Validate input
+          if (!carDetailsData || !carFeaturesData || !carOffersData) {
+               throw new Error(
+                    'carDetails, carFeatures, and carOffers must be provided'
+               );
+          }
+
+          // Update car in CarFeatures collection
+          const carOffer = await carOfferModel.findById(id);
+
+          const { carBrand_id, carSeries_id, leaseType, term } = carOffer;
+
+          //////////////////////////////// Update carDetails
+          const carDetailsFilter = {
+               carBrand_id,
+               carSeries_id,
+          };
+
+          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+               carDetailsFilter,
+               { ...carDetailsData },
+               { new: true }
+          );
+
+          //////////////////////////////// Update carFeatures
+          const carFeaturesFilter = {
+               carBrand_id,
+               carSeries_id,
+          };
+          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
+               carFeaturesFilter,
+               { ...carFeaturesData },
+               { new: true }
+          );
+
+          //////////////////////////////// Update categories and features
+          if (carFeaturesData.categories) {
+               // Remove null categories
+               updatedCarFeatures.categories =
+                    updatedCarFeatures.categories.filter(
+                         (category) => category !== null
+                    );
+
+               for (const newCategory of carFeaturesData.categories) {
+                    if (!newCategory) {
+                         continue; // Skip null categories
+                    }
+
+                    const existingCategory = updatedCarFeatures.categories.find(
+                         (category) =>
+                              category.categoryCode === newCategory.categoryCode
+                    );
+
+                    if (existingCategory) {
+                         // If the category exists, replace its features with the new features
+                         existingCategory.features = newCategory.features;
+                    } else {
+                         // If the category does not exist, add it to the array
+                         updatedCarFeatures.categories.push(newCategory);
+                    }
+               }
+          }
+
+          // Save the updated car features
+          await updatedCarFeatures.save();
+
+          //////////////////////////////// Update carOffers
+          const existingOffers = await carOfferModel.findById(id, 'offers');
+
+          // Check if leaseType and term are provided
+          if (carOffersData.leaseType && carOffersData.term) {
+               // Create a new document in the carOffers collection
+               const newCarOffers = {
+                    carBrand_id,
+                    carSeries_id,
+                    leaseType: carOffersData.leaseType,
+                    term: carOffersData.term,
+                    offers: carOffersData.offers,
+               };
+
+               await carOfferModel.create(newCarOffers);
+
+               // Update the existing offers with an empty array
+               existingOffers.offers = [];
+          } else {
+               // Update the existing offers with the provided offers data
+               existingOffers.offers = carOffersData.offers || [];
+          }
+
+          // Save the updated offers array
+          await existingOffers.save();
+
+          // Prepare offers response
+          let carOffersResponse;
+
+          if (existingOffers.offers.length > 0) {
+               carOffersResponse = existingOffers.offers;
+          } else {
+               carOffersResponse = 'No offers available';
+          }
+
+          // Prepare car features response
+          let carFeaturesResponse;
+          if (updatedCarFeatures.categories.length > 0) {
+               carFeaturesResponse = updatedCarFeatures;
+          } else {
+               carFeaturesResponse = 'No car features available';
+          }
+
+          // Return the updated car object
+          return {
+               carOffers: carOffersResponse,
+               carFeatures: carFeaturesResponse,
+               inventoryData: updatedCarDetails,
+          };
+     } catch (error) {
+          console.error('Error in updating car:', error);
+          throw new Error(error.message);
+     }
+};
+
 const getDeals = async (query) => {
      try {
           const carOffers = await carOfferModel
@@ -1590,4 +1718,5 @@ export const carOfferService = {
      deletedCarV2,
      getAllCarWithoutOffers,
      getSingleCarV2,
+     updateCarV3,
 };

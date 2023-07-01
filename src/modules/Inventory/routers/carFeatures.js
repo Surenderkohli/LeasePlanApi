@@ -557,7 +557,8 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
                     errors.push({
                          column: 'categoryCode',
                          cell: cellAddress,
-                         message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions within makeCode '${makeCode}' and modelCode '${modelCode}'`,
+                         message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions: '${categoryDescription}'`,
+                         // message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions '${foundCategory.categoryDescription}' within makeCode '${makeCode}' and modelCode '${modelCode}'`,
                     });
                }
           } else {

@@ -790,12 +790,13 @@ function isValidCarDetailData(carDetailData) {
                companyCodes[carDetail.companyName] &&
                companyCodes[carDetail.companyName] !== carDetail.makeCode
           ) {
+               const assignedMakeCode = companyCodes[carDetail.companyName];
                const columnIndex = getHeaderIndex('companyName');
                const cellAddress = getCellAddress(columnIndex, rowNumber);
                errors.push({
                     column: 'companyName',
                     cell: cellAddress,
-                    message: `Company Name '${carDetail.companyName}' is already assigned to a different Make Code.`,
+                    message: `Company Name ${carDetail.companyName} is already assigned to Make Code ${assignedMakeCode}.`,
                });
           }
 

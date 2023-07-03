@@ -1,2 +1,2 @@
 Fields,CellAddress,Message
-fuelType,N10, 'fuelType' is missing.
+companyName,C12,Company Name 'Tata' is already assigned to a different Make Code.

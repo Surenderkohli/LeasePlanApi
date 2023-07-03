@@ -784,6 +784,21 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
+          // Check if companyName is already assigned to a different makeCode
+          if (
+               carDetail.companyName &&
+               companyCodes[carDetail.companyName] &&
+               companyCodes[carDetail.companyName] !== carDetail.makeCode
+          ) {
+               const columnIndex = getHeaderIndex('companyName');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'companyName',
+                    cell: cellAddress,
+                    message: `Company Name '${carDetail.companyName}' is already assigned to a different Make Code.`,
+               });
+          }
+
           // ...
 
           // Track assigned makeCode to companyName

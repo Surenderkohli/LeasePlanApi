@@ -495,80 +495,52 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
 
      const errors = [];
      const missingFields = new Set();
-     const categoryMap = new Map();
+
+     const validCategoryCodes = {
+          1: 'Exterior',
+          2: 'Interior',
+          3: 'Safety',
+          4: 'Audio And Entertainment System',
+     };
 
      for (let i = 0; i < featureDescriptionData.length; i++) {
           const featureDescription = featureDescriptionData[i];
 
-          if (!featureDescription.makeCode) {
-               const columnIndex = getHeaderIndex('makeCode');
-               const cellAddress = getCellAddress(columnIndex, i);
-               missingFields.add({
-                    column: 'makeCode',
-                    cell: cellAddress,
-                    message: `Missing makeCode at index ${i}`,
-               });
-          }
+          const missingFieldsInfo = [
+               { field: 'makeCode', header: 'makeCode' },
+               { field: 'modelCode', header: 'modelCode' },
+               { field: 'categoryCode', header: 'categoryCode' },
+               { field: 'featureDescription', header: 'featureDescription' },
+          ];
 
-          if (!featureDescription.modelCode) {
-               const columnIndex = getHeaderIndex('modelCode');
-               const cellAddress = getCellAddress(columnIndex, i);
-               missingFields.add({
-                    column: 'modelCode',
-                    cell: cellAddress,
-                    message: `Missing modelCode at index ${i}`,
-               });
-          }
-
-          if (!featureDescription.categoryCode) {
-               const columnIndex = getHeaderIndex('categoryCode');
-               const cellAddress = getCellAddress(columnIndex, i);
-               missingFields.add({
-                    column: 'categoryCode',
-                    cell: cellAddress,
-                    message: `Missing categoryCode at index ${i}`,
-               });
-          }
-
-          if (!featureDescription.featureDescription) {
-               const columnIndex = getHeaderIndex('featureDescription');
-               const cellAddress = getCellAddress(columnIndex, i);
-               missingFields.add({
-                    column: 'featureDescription',
-                    cell: cellAddress,
-                    message: `Missing featureDescription at index ${i}`,
-               });
-          }
-
-          const { makeCode, modelCode, categoryCode, categoryDescription } =
-               featureDescription;
-          const categoryKey = `${makeCode}_${modelCode}`;
-          const existingCategory = categoryMap.get(categoryKey);
-
-          if (existingCategory) {
-               const foundCategory = existingCategory.find(
-                    (category) =>
-                         category.categoryCode === categoryCode &&
-                         category.categoryDescription !== categoryDescription
-               );
-               if (foundCategory) {
-                    const columnIndex = getHeaderIndex('categoryCode');
+          for (const { field, header } of missingFieldsInfo) {
+               if (!featureDescription[field]) {
+                    const columnIndex = getHeaderIndex(header);
                     const cellAddress = getCellAddress(columnIndex, i);
-                    errors.push({
-                         column: 'categoryCode',
+                    missingFields.add({
+                         column: header,
                          cell: cellAddress,
-                         message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions: '${categoryDescription}'`,
-                         // message: `Duplicate categoryCode '${categoryCode}' assigned to different categoryDescriptions '${foundCategory.categoryDescription}' within makeCode '${makeCode}' and modelCode '${modelCode}'`,
+                         message: `Missing ${field} at index ${i}`,
                     });
                }
-          } else {
-               categoryMap.set(categoryKey, []);
           }
 
-          categoryMap.get(categoryKey).push({
-               categoryCode,
-               categoryDescription,
-          });
+          const categoryCode = featureDescription.categoryCode;
+          const categoryDescription = featureDescription.categoryDescription;
+          const expectedCategoryDescription = validCategoryCodes[categoryCode];
+
+          if (
+               expectedCategoryDescription &&
+               categoryDescription !== expectedCategoryDescription
+          ) {
+               const columnIndex = getHeaderIndex('categoryCode');
+               const cellAddress = getCellAddress(columnIndex, i);
+               errors.push({
+                    column: 'categoryCode',
+                    cell: cellAddress,
+                    message: `Invalid categoryCode '${categoryCode}' for categoryDescription '${categoryDescription}'. Expected: ${expectedCategoryDescription}`,
+               });
+          }
      }
 
      if (missingFields.size > 0) {
@@ -577,16 +549,9 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
           });
      }
 
-     if (errors.length > 0) {
-          return {
-               isValid: false,
-               errors,
-          };
-     }
-
      return {
-          isValid: true,
-          errors: [],
+          isValid: errors.length === 0,
+          errors,
      };
 }
 

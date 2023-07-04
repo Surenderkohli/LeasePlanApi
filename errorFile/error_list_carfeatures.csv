@@ -1,2 +1,4 @@
 Fields,CellAddress,Message
-categoryCode,C10,Duplicate categoryCode '1' assigned to different categoryDescriptions: 'Interior'
+categoryCode,C6,Invalid categoryCode '3' for categoryDescription 'Exterior'. Expected: Safety
+categoryCode,C176,Invalid categoryCode '3' for categoryDescription 'Audio And Entertainment System'. Expected: Safety
+categoryCode,C183,Invalid categoryCode '2' for categoryDescription 'xyz'. Expected: Interior

@@ -1516,7 +1516,6 @@ const filterCars = async (filterOptions) => {
                }
           }
 
-          console.log('car', cars);
           if (bodyType) {
                const carsWithBodyType = cars.filter(
                     (car) => car.details.bodyType === bodyType

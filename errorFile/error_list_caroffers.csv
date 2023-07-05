@@ -1,5 +1,2 @@
 Fields,CellAddress,Message
-makeCode,C8,Invalid makeCode
-term,B8,Missing term
-modelCode,D11,Invalid modelCode
-companyName,E15,Missing companyName
+makeCode,C21,Combination of makeCode (24) and modelCode (35130) already exists with a different companyName and seriesName

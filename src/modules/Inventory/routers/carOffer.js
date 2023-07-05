@@ -388,9 +388,35 @@ function isValidCarOfferData(carOfferData) {
 
      const errors = [];
      const calculationNos = [];
+     const makeModelCombinations = {};
 
      carOfferData.forEach((carOffer, index) => {
           const missingFields = [];
+
+          // Validate makeCode and modelCode
+          const makeCode = carOffer.makeCode.toString();
+          const modelCode = carOffer.modelCode.toString();
+          const combinationKey = `${makeCode}-${modelCode}`;
+
+          if (!makeModelCombinations[combinationKey]) {
+               makeModelCombinations[combinationKey] = {
+                    companyName: carOffer.companyName,
+                    seriesName: carOffer.seriesName,
+               };
+          } else if (
+               makeModelCombinations[combinationKey].companyName !==
+                    carOffer.companyName ||
+               makeModelCombinations[combinationKey].seriesName !==
+                    carOffer.seriesName
+          ) {
+               const columnIndex = getHeaderIndex('makeCode');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'makeCode',
+                    cell: cellAddress,
+                    message: `Combination of makeCode (${makeCode}) and modelCode (${modelCode}) already exists with a different companyName and seriesName`,
+               });
+          }
 
           if (!carOffer.duration) {
                const columnIndex = getHeaderIndex('duration');

@@ -617,6 +617,18 @@ function isValidCarDetailData(carDetailData) {
      const modelCodes = {};
      const errors = [];
      const makeCodeToCompanyName = {};
+     const validBodyTypes = [
+          'city-car',
+          'coupe',
+          'estate',
+          'sedan',
+          'hatchback',
+          'mpv',
+          'saloon',
+          'sports',
+     ];
+     const validFuelTypes = ['petrol', 'diesel', 'hybrid', 'electric'];
+     const validTransmissions = ['automatic', 'manual'];
 
      carDetailData.forEach((carDetail, rowNumber) => {
           const missingFields = [];
@@ -681,50 +693,6 @@ function isValidCarDetailData(carDetailData) {
           }
 
           if (
-               ![
-                    'city-car',
-                    'coupe',
-                    'estate',
-                    'sedan',
-                    'hatchback',
-                    'mpv',
-                    'saloon',
-                    'sports',
-               ].includes(carDetail.bodyType)
-          ) {
-               const columnIndex = getHeaderIndex('bodyType');
-               const cellAddress = getCellAddress(columnIndex, rowNumber);
-               errors.push({
-                    column: 'bodyType',
-                    cell: cellAddress,
-                    message: 'Invalid body type.',
-               });
-          }
-
-          if (
-               carDetail.transmission &&
-               typeof carDetail.transmission !== 'string'
-          ) {
-               const columnIndex = getHeaderIndex('transmission');
-               const cellAddress = getCellAddress(columnIndex, rowNumber);
-               errors.push({
-                    column: 'transmission',
-                    cell: cellAddress,
-                    message: 'Invalid transmission value.',
-               });
-          }
-
-          if (carDetail.fuelType && typeof carDetail.fuelType !== 'string') {
-               const columnIndex = getHeaderIndex('fuelType');
-               const cellAddress = getCellAddress(columnIndex, rowNumber);
-               errors.push({
-                    column: 'fuelType',
-                    cell: cellAddress,
-                    message: 'Invalid fuelType value.',
-               });
-          }
-
-          if (
                typeof carDetail.yearModel !== 'string' ||
                isNaN(Number(carDetail.yearModel)) ||
                Number(carDetail.yearModel) <= 0
@@ -763,6 +731,39 @@ function isValidCarDetailData(carDetailData) {
                     column: 'seat',
                     cell: cellAddress,
                     message: `Invalid seat as ${carDetail.seat}`,
+               });
+          }
+
+          // Validate bodyType
+          if (!validBodyTypes.includes(carDetail.bodyType)) {
+               const columnIndex = getHeaderIndex('bodyType');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'bodyType',
+                    cell: cellAddress,
+                    message: `Invalid body type '${carDetail.bodyType}'.`,
+               });
+          }
+
+          // Validate transmission
+          if (!validTransmissions.includes(carDetail.transmission)) {
+               const columnIndex = getHeaderIndex('transmission');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'transmission',
+                    cell: cellAddress,
+                    message: `Invalid transmission value '${carDetail.transmission}'.`,
+               });
+          }
+
+          // Validate fuelType
+          if (!validFuelTypes.includes(carDetail.fuelType)) {
+               const columnIndex = getHeaderIndex('fuelType');
+               const cellAddress = getCellAddress(columnIndex, rowNumber);
+               errors.push({
+                    column: 'fuelType',
+                    cell: cellAddress,
+                    message: `Invalid fuelType value '${carDetail.fuelType}'.`,
                });
           }
 

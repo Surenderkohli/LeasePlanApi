@@ -1264,6 +1264,29 @@ const updateCarV3 = async (
           const existingOffers = await carOfferModel.findById(id, 'offers');
 
           // Check if leaseType and term are provided
+          // if (carOffersData.leaseType && carOffersData.term) {
+          //      // Create a new document in the carOffers collection
+          //      const newCarOffers = {
+          //           carBrand_id,
+          //           carSeries_id,
+          //           leaseType: carOffersData.leaseType,
+          //           term: carOffersData.term,
+          //           offers: carOffersData.offers,
+          //      };
+
+          //      await carOfferModel.create(newCarOffers);
+
+          //      // Update the existing offers with an empty array
+          //      existingOffers.offers = [];
+          // } else {
+          //      // Update the existing offers with the provided offers data
+          //      existingOffers.offers = carOffersData.offers || [];
+          // }
+
+          // // Save the updated offers array
+          // await existingOffers.save();
+
+          // Check if leaseType and term are provided
           if (carOffersData.leaseType && carOffersData.term) {
                // Create a new document in the carOffers collection
                const newCarOffers = {
@@ -1275,16 +1298,13 @@ const updateCarV3 = async (
                };
 
                await carOfferModel.create(newCarOffers);
-
-               // Update the existing offers with an empty array
-               existingOffers.offers = [];
           } else {
                // Update the existing offers with the provided offers data
-               existingOffers.offers = carOffersData.offers || [];
+               if (existingOffers) {
+                    existingOffers.offers = carOffersData.offers || [];
+                    await existingOffers.save();
+               }
           }
-
-          // Save the updated offers array
-          await existingOffers.save();
 
           // Prepare offers response
           let carOffersResponse;

@@ -459,6 +459,54 @@ function isValidCarOfferData(carOfferData) {
                });
           }
 
+          if (
+               typeof carOffer.makeCode !== 'string' ||
+               isNaN(Number(carOffer.makeCode)) ||
+               Number(carOffer.makeCode) <= 0
+          ) {
+               const columnIndex = getHeaderIndex('makeCode');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'makeCode',
+                    cell: cellAddress,
+                    message: `Invalid makeCode`,
+               });
+          }
+
+          if (
+               typeof carOffer.modelCode !== 'string' ||
+               isNaN(Number(carOffer.modelCode)) ||
+               Number(carOffer.modelCode) <= 0
+          ) {
+               const columnIndex = getHeaderIndex('modelCode');
+               const cellAddress = getCellAddress(columnIndex, index);
+               errors.push({
+                    column: 'modelCode',
+                    cell: cellAddress,
+                    message: `Invalid modelCode`,
+               });
+          }
+
+          if (!carOffer.companyName) {
+               const columnIndex = getHeaderIndex('companyName');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'companyName',
+                    cell: cellAddress,
+                    message: `Missing companyName`,
+               });
+          }
+
+          if (!carOffer.seriesName) {
+               const columnIndex = getHeaderIndex('seriesName');
+               const cellAddress = getCellAddress(columnIndex, index);
+               missingFields.push({
+                    column: 'seriesName',
+                    cell: cellAddress,
+                    message: `Missing seriesName`,
+               });
+          }
+
           if (missingFields.length > 0) {
                missingFields.forEach((missingField) => {
                     errors.push(missingField);

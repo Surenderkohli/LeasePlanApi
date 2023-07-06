@@ -16,6 +16,16 @@ const carDetailSchema = new mongoose.Schema(
           //           ref: 'leaseType',
           //      },
           // ],
+          makeCode: {
+               type: Number,
+               required: false,
+          },
+          modelCode: {
+               type: Number,
+
+               required: false,
+          },
+
           yearModel: {
                type: Number,
                required: false,

@@ -1,4 +1,2 @@
 Fields,CellAddress,Message
-categoryCode,C6,Invalid categoryCode '3' for categoryDescription 'Exterior'. Expected: Safety
-categoryCode,C176,Invalid categoryCode '3' for categoryDescription 'Audio And Entertainment System'. Expected: Safety
-categoryCode,C183,Invalid categoryCode '2' for categoryDescription 'xyz'. Expected: Interior
+"makeCode, modelCode",A180,Car details not found for makeCode '24' and modelCode '35901'

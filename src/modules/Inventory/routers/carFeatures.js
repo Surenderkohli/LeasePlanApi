@@ -5,6 +5,7 @@ import multer from 'multer';
 import csvtojson from 'csvtojson';
 import { carFeatureModel } from '../models/carFeatures.js';
 import { createObjectCsvWriter } from 'csv-writer';
+import carDetailModel from '../models/carDetails.js';
 
 const router = Router();
 
@@ -256,6 +257,37 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           const featureDescriptionData = await csvtojson().fromString(
                csvString
           );
+
+          // Check if the carDetails document exists for any of the feature descriptions
+          const missingCarDetails = [];
+
+          for (let i = 0; i < featureDescriptionData.length; i++) {
+               const featureDescription = featureDescriptionData[i];
+
+               const carDetails = await carDetailModel.findOne({
+                    makeCode: featureDescription.makeCode,
+                    modelCode: featureDescription.modelCode,
+               });
+
+               if (!carDetails) {
+                    const columnIndexMakeCode = getHeaderIndex('makeCode');
+                    const columnIndexModelCode = getHeaderIndex('modelCode');
+                    const cellAddress = getCellAddress(columnIndexMakeCode, i);
+                    missingCarDetails.push({
+                         column: 'makeCode, modelCode',
+                         cell: cellAddress,
+                         message: `Car details not found for makeCode '${featureDescription.makeCode}' and modelCode '${featureDescription.modelCode}'`,
+                    });
+               }
+          }
+
+          if (missingCarDetails.length > 0) {
+               errorList = missingCarDetails.map((missingCarDetail) => ({
+                    column: missingCarDetail.column,
+                    cell: missingCarDetail.cell,
+                    message: missingCarDetail.message,
+               }));
+          }
 
           // Validate the CSV data for car features
           const validationResult = isValidFeatureDescriptionData(

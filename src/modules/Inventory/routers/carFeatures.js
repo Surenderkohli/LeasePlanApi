@@ -572,6 +572,14 @@ function isValidFeatureDescriptionData(featureDescriptionData) {
                     cell: cellAddress,
                     message: `Invalid categoryCode '${categoryCode}' for categoryDescription '${categoryDescription}'. Expected: ${expectedCategoryDescription}`,
                });
+          } else if (!expectedCategoryDescription) {
+               const columnIndex = getHeaderIndex('categoryCode');
+               const cellAddress = getCellAddress(columnIndex, i);
+               errors.push({
+                    column: 'categoryCode',
+                    cell: cellAddress,
+                    message: `Invalid categoryCode '${categoryCode}'. No expected category description found.`,
+               });
           }
      }
 

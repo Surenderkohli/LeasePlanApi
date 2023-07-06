@@ -1,2 +1,3 @@
 Fields,CellAddress,Message
-"makeCode, modelCode",A180,Car details not found for makeCode '24' and modelCode '35901'
+categoryCode,C10,Invalid categoryCode '76'. No expected category description found.
+categoryCode,C180,Invalid categoryCode '4' for categoryDescription 'Safety'. Expected: Audio And Entertainment System

@@ -1,2 +1,6 @@
 Fields,CellAddress,Message
-"makeCode, modelCode",C21,Car details not found for makeCode '55' and modelCode '359010'
+"makeCode, modelCode",C20,Car details not found for makeCode '91' and modelCode '35139'
+"makeCode, modelCode",C21,Car details not found for makeCode '55' and modelCode '35139'
+"makeCode, modelCode",C22,Car details not found for makeCode '60' and modelCode '3590100'
+"makeCode, modelCode",C23,Car details not found for makeCode '55' and modelCode '35200'
+calculationNo,J23,Duplicate calculationNo: 124848900

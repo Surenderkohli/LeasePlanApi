@@ -131,11 +131,13 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                }
 
                if (missingCarDetails.length > 0) {
-                    errorList = missingCarDetails.map((missingCarDetail) => ({
-                         column: missingCarDetail.column,
-                         cell: missingCarDetail.cell,
-                         message: missingCarDetail.message,
-                    }));
+                    errorList = errorList.concat(
+                         missingCarDetails.map((missingCarDetail) => ({
+                              column: missingCarDetail.column,
+                              cell: missingCarDetail.cell,
+                              message: missingCarDetail.message,
+                         }))
+                    );
                }
 
                // Validate the CSV data for car offers
@@ -143,7 +145,9 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
 
                if (!validation.isValid) {
                     // Push the errors to the errorList array
-                    errorList = validation.errors.slice(0, 30); // Limiting to maximum 30 errors
+                    errorList = errorList.concat(
+                         validation.errors.slice(0, 30)
+                    ); // Limiting to maximum 30 errors
                } else {
                     const calculationNos = new Set();
 

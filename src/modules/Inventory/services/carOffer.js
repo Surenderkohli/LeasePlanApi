@@ -191,11 +191,15 @@ const createCarOffer = async (carOfferData) => {
           });
 
           if (!companyName) {
-               companyName = await carBrandModel.create({
-                    companyName: carOfferData.companyName,
-                    makeCode: carOfferData.makeCode,
-                    leaseType_id: leaseTypes,
-               });
+               // companyName = await carBrandModel.create({
+               //      companyName: carOfferData.companyName,
+               //      makeCode: carOfferData.makeCode,
+               //      leaseType_id: leaseTypes,
+               // });
+               return {
+                    message: `Invalid companyName: ${carOfferData.companyName}`,
+                    data: null,
+               };
           } else if (leaseTypes.length > 0) {
                const leaseTypeIdsToAdd = leaseTypes
                     .map((leaseType) => leaseType._id)
@@ -220,12 +224,16 @@ const createCarOffer = async (carOfferData) => {
           });
 
           if (!seriesName) {
-               seriesName = await carSeriesModel.create({
-                    carBrand_id: companyName._id,
-                    leaseType_id: leaseTypes,
-                    seriesName: carOfferData.seriesName,
-                    modelCode: carOfferData.modelCode,
-               });
+               // seriesName = await carSeriesModel.create({
+               //      carBrand_id: companyName._id,
+               //      leaseType_id: leaseTypes,
+               //      seriesName: carOfferData.seriesName,
+               //      modelCode: carOfferData.modelCode,
+               // });
+               return {
+                    message: `Invalid seriesName: ${carOfferData.seriesName}`,
+                    data: null,
+               };
           } else if (leaseTypes.length > 0) {
                const leaseTypeIdsToAdd = leaseTypes
                     .map((leaseType) => leaseType._id)

@@ -1,2 +1,31 @@
 Fields,CellAddress,Message
-makeCode,C21,Combination of makeCode (24) and modelCode (35130) already exists with a different companyName and seriesName
+makeCode,C22,Invalid makeCode
+modelCode,D22,Invalid modelCode
+duration,G22,Missing duration
+annualMileage,H22,Missing annualMileage at index 20
+monthlyCost,I22,Missing monthlyCost
+calculationNo,J22,Missing calculationNo
+leaseType,A22,Missing leaseType
+term,B22,Missing term
+companyName,E22,Missing companyName
+seriesName,F22,Missing seriesName
+duration,G22,Invalid duration
+annualMileage,H22,Invalid annualMileage
+monthlyCost,I22,Invalid monthlyCost
+calculationNo,J22,Invalid calculationNo
+makeCode,C23,Invalid makeCode
+modelCode,D23,Invalid modelCode
+duration,G23,Missing duration
+annualMileage,H23,Missing annualMileage at index 21
+monthlyCost,I23,Missing monthlyCost
+calculationNo,J23,Missing calculationNo
+leaseType,A23,Missing leaseType
+term,B23,Missing term
+companyName,E23,Missing companyName
+seriesName,F23,Missing seriesName
+duration,G23,Invalid duration
+annualMileage,H23,Invalid annualMileage
+monthlyCost,I23,Invalid monthlyCost
+calculationNo,J23,Invalid calculationNo
+makeCode,C24,Invalid makeCode
+modelCode,D24,Invalid modelCode

@@ -5,6 +5,7 @@ import csvtojson from 'csvtojson';
 import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 import { createObjectCsvWriter } from 'csv-writer';
+import carDetailModel from '../models/carDetails.js';
 
 dotenv.config();
 
@@ -101,6 +102,41 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                // CSV upload
                const csvString = req.file.buffer.toString('utf8');
                const carOfferData = await csvtojson().fromString(csvString);
+
+               // Check if the carDetails document exists for any of the feature descriptions
+               const missingCarDetails = [];
+
+               for (let i = 0; i < carOfferData.length; i++) {
+                    const carOffer = carOfferData[i];
+
+                    const carDetails = await carDetailModel.findOne({
+                         makeCode: carOffer.makeCode,
+                         modelCode: carOffer.modelCode,
+                    });
+
+                    if (!carDetails) {
+                         const columnIndexMakeCode = getHeaderIndex('makeCode');
+                         const columnIndexModelCode =
+                              getHeaderIndex('modelCode');
+                         const cellAddress = getCellAddress(
+                              columnIndexMakeCode,
+                              i
+                         );
+                         missingCarDetails.push({
+                              column: 'makeCode, modelCode',
+                              cell: cellAddress,
+                              message: `Car details not found for makeCode '${carOffer.makeCode}' and modelCode '${carOffer.modelCode}'`,
+                         });
+                    }
+               }
+
+               if (missingCarDetails.length > 0) {
+                    errorList = missingCarDetails.map((missingCarDetail) => ({
+                         column: missingCarDetail.column,
+                         cell: missingCarDetail.cell,
+                         message: missingCarDetail.message,
+                    }));
+               }
 
                // Validate the CSV data for car offers
                const validation = isValidCarOfferData(carOfferData);

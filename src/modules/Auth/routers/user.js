@@ -209,6 +209,36 @@ router.post(
           try {
                const { oldPassword, newPassword, confirmPassword } = req.body;
 
+               // // Check if any of the required fields are empty
+               // if (!oldPassword || !newPassword || !confirmPassword) {
+               //      return res.status(400).send({
+               //           success: false,
+               //           msg: 'All fields must be filled',
+               //      });
+               // }
+
+               // Check if any of the required fields are empty
+               if (!oldPassword) {
+                    return res.status(400).send({
+                         success: false,
+                         msg: 'Please provide the old password',
+                    });
+               }
+
+               if (!newPassword) {
+                    return res.status(400).send({
+                         success: false,
+                         msg: 'Please provide the new password',
+                    });
+               }
+
+               if (!confirmPassword) {
+                    return res.status(400).send({
+                         success: false,
+                         msg: 'Please provide the confirmation password',
+                    });
+               }
+
                const response = await userService.changePassword(
                     req.user.id,
                     oldPassword,

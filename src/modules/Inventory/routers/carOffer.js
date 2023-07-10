@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 import { createObjectCsvWriter } from 'csv-writer';
 import carDetailModel from '../models/carDetails.js';
+import carOfferModel from '../models/carOffer.js';
 
 dotenv.config();
 
@@ -336,23 +337,24 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
           const id = req.params.id;
           const carDetailsData = req.body;
 
-          // const inventoryData = {
-          //      bodyType: req.body.bodyType,
-          //      door: req.body.door,
-          //      seat: req.body.seat,
-          //      gears: req.body.gears,
-          //      acceleration: req.body.acceleration,
-          //      co2: req.body.co2,
-          //      fuelType: req.body.fuelType,
-          //      transmission: req.body.transmission,
-          //      tankCapacity: req.body.tankCapacity,
-          //      image: req.body.image,
-          //      imageUrl: req.body.imageUrl,
-          //      publicId: req.body.publicId,
-          // };
-
           const carOffersData = req.body;
           const carFeaturesData = req.body;
+
+          const offers = req.body.offers; // Get the offers array from the request body
+
+          // Check if any other offer has the same calculationNo
+          const calculationNos = offers.map((offer) => offer.calculationNo);
+          const carWithCalculationNo = await carOfferModel.findOne({
+               _id: { $ne: id }, // Exclude the current offer being updated
+               'offers.calculationNo': { $in: calculationNos },
+          });
+
+          if (carWithCalculationNo) {
+               return res.status(400).json({
+                    success: false,
+                    msg: 'Calculation number already exists in other offers.',
+               });
+          }
 
           const images = [];
 

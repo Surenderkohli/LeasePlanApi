@@ -343,17 +343,27 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
           const offers = req.body.offers; // Get the offers array from the request body
 
           // Check if any other offer has the same calculationNo
-          const calculationNos = offers.map((offer) => offer.calculationNo);
-          const carWithCalculationNo = await carOfferModel.findOne({
-               _id: { $ne: id }, // Exclude the current offer being updated
-               'offers.calculationNo': { $in: calculationNos },
-          });
+          const existingCar = await carOfferModel.findById(id);
 
-          if (carWithCalculationNo) {
-               return res.status(400).json({
-                    success: false,
-                    msg: 'Calculation number already exists in other offers.',
+          if (offers && offers.length > 0) {
+               const calculationNos = offers.map(
+                    (offer) => offer.calculationNo
+               );
+               const carWithCalculationNo = await carOfferModel.findOne({
+                    _id: { $ne: id }, // Exclude the current offer being updated
+                    'offers.calculationNo': { $in: calculationNos },
                });
+
+               if (carWithCalculationNo) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Calculation number already exists in other offers.',
+                    });
+               }
+
+               carOffersData.offers = offers; // Update the offers data
+          } else if (existingCar && existingCar.offers) {
+               carOffersData.offers = existingCar.offers; // Retain the existing offers
           }
 
           const images = [];
@@ -381,6 +391,12 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
 
                // update the images array in the request body
                carDetailsData.image = images;
+          } else {
+               // If no new files uploaded, retain the existing image array
+               const existingCar = await carOfferService.getSingleCar(id);
+               if (existingCar && existingCar.image) {
+                    carDetailsData.image = existingCar.image;
+               }
           }
 
           const result = await carOfferService.updateCarV3(

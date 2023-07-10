@@ -35,7 +35,7 @@ kaniko-build:
           - echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n ${CI_REGISTRY_USER}:${CI_REGISTRY_PASSWORD} | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
           # Build and push the container. To disable push add --no-push
           - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$VERSION $KANIKO_ARGS
-          - eval [ "$CI_BUILD_REF_NAME" = $CI_DEFAULT_BRANCH ] && wget "https://kuberestart.kloudlite.io/hook/restart/$KUBECONFIG/$NAMESPACE/$DEPLOYMENT_NAME"
+          - wget "https://kuberestart.kloudlite.io/hook/restart/$KUBECONFIG/$NAMESPACE/$DEPLOYMENT_NAME"
           - echo "Pipeline Succeed";
 
      # Run this job in a branch/tag where a Dockerfile exists

@@ -351,7 +351,6 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           enquireFormData.htmlTemplate = message;
           const enquiry = new enquiryFormModel(enquireFormData);
 
-          console.log(enquiry);
           const res = await enquiry.save();
           return res.id;
      } catch (error) {

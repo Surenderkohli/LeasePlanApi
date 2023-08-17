@@ -1,6 +1,7 @@
 import enquiryFormModel from '../models/enquiryForm.js';
 import mongoose from 'mongoose';
 import sgMail from '@sendgrid/mail';
+import moment from 'moment';
 import puppeteer from 'puppeteer';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -15,7 +16,14 @@ const getAllForm = async () => {
           const response = await enquiryFormModel
                .find()
                .select('-htmlTemplate');
-          return response;
+
+          // Modify the response to include formatted createdAt dates
+          const formattedResponse = response.map((item) => ({
+               ...item._doc,
+               dateAdded: moment(item.createdAt).format('DD/MM/YYYY'),
+          }));
+
+          return formattedResponse;
      } catch (error) {
           throw new Error('Error in get all forms');
      }

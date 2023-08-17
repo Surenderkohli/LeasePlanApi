@@ -13,13 +13,6 @@ router.post(
      httpHandler(async (req, res) => {
           try {
                try {
-                    /* 
-                    - Need to add the following fields to the enquiryForm collection:
-                         -  name : firstName + lastName
-                         -  mobileNumber : mobileNumber
-                         -  emailAddress : emailAddress
-                    */
-
                     // Retrieve car offers using relevant query and criteria
                     const { carOffers_id } = req.body;
 
@@ -27,13 +20,7 @@ router.post(
                     const carOffers = await carOfferModel.findById({
                          _id: carOffers_id,
                     });
-                    // .populate({
-                    //      path: 'leaseType_id',
-                    //      model: 'leaseType',
-                    // })
-                    // .exec();
 
-                    // Extract relevant fields from carOffers documentq
                     const { carBrand_id, carSeries_id, leaseType, term } =
                          carOffers;
 
@@ -41,17 +28,6 @@ router.post(
                          throw new Error('Car offers not found');
                     }
 
-                    // Extract the leaseType data from the populated carOffer document
-                    // const leaseTypes = carOffers.leaseType_id;
-
-                    // const leaseTypeValues = leaseTypes.map(
-                    //      (type) => type.leaseType
-                    // );
-
-                    //  const term = carOffers.leaseType_id;
-                    //  let terms = term.map((type) => type.term);
-
-                    // Use find() method to retrieve the matching carOffers document with populated leaseType data
                     const carDetails = await carDetailModel.findOne({
                          carBrand_id: carBrand_id,
                          carSeries_id: carSeries_id,
@@ -76,14 +52,10 @@ router.post(
                     const { companyName } = carBrand;
 
                     const enquiryData = {
-                         // upfrontCost: req.query.upfrontCost,
-                         // upfrontPayment: req.query.upfrontPayment,
                          fuelType,
                          gears,
                          leaseType,
                          term,
-                         // leaseTypeValues,
-                         // terms,
                          companyName,
                          duration: req.query.duration,
                          annualMileage: req.query.annualMileage,
@@ -96,7 +68,10 @@ router.post(
                          enquireFormData
                     );
                     if (!enquiryId) {
-                         throw new Error('Error sending enquiry email');
+                         res.status(400).json({
+                              success: false,
+                              msg: 'Error sending enquiry email, Missing Enquiry Id',
+                         });
                     }
                     res.status(200).json({
                          success: true,
@@ -106,7 +81,7 @@ router.post(
                     });
                } catch (error) {
                     console.log(error);
-                    res.status(500).send('Error sending enquiry email');
+                    res.status(500).send('Error sending enquiry email ');
                }
           } catch (error) {
                res.send({ status: 400, success: false, msg: error.message });

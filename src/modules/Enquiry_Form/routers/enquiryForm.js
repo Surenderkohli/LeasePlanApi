@@ -68,7 +68,7 @@ router.post(
                          enquireFormData
                     );
                     if (!enquiryId) {
-                         res.status(400).json({
+                         return res.status(400).json({
                               success: false,
                               msg: 'Error sending enquiry email, Missing Enquiry Id',
                          });

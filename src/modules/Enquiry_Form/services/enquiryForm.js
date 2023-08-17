@@ -11,8 +11,14 @@ const addForm = async (data) => {
 };
 
 const getAllForm = async () => {
-     const response = await enquiryFormModel.find();
-     return response;
+     try {
+          const response = await enquiryFormModel
+               .find()
+               .select('-htmlTemplate');
+          return response;
+     } catch (error) {
+          throw new Error('Error in get all forms');
+     }
 };
 
 const getSingleForm = async (id) => {

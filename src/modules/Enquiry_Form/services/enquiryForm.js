@@ -350,24 +350,10 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
           // Save the enquiry data to MongoDB
           enquireFormData.htmlTemplate = message;
           const enquiry = new enquiryFormModel(enquireFormData);
+
+          console.log(enquiry);
           const res = await enquiry.save();
           return res.id;
-
-          // let mailOptions = {
-          //      from: 'dhananjay@plaxonic.com',
-          //      to: [enquireFormData.emailAddress],
-          //      subject: 'Enquiry Form Submission',
-          //      html: message,
-          // };
-
-          // // Send the email using the transporter object
-          // await sgMail.send(mailOptions);
-
-          // //Save the enquiry data to MongoDB
-          // enquireFormData.htmlTemplate = message;
-          // const enquiry = new enquiryFormModel(enquireFormData);
-          // const res = await enquiry.save();
-          // return res.id;
      } catch (error) {
           console.error(error);
           return false;

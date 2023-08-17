@@ -12,79 +12,86 @@ router.post(
      '/add-enquireForm',
      httpHandler(async (req, res) => {
           try {
-               try {
-                    // Retrieve car offers using relevant query and criteria
-                    const { carOffers_id } = req.body;
-
-                    // Retrieve car details using carId from carOffers collection
-                    const carOffers = await carOfferModel.findById({
-                         _id: carOffers_id,
+               // Validate incoming data
+               const { carOffers_id } = req.body;
+               if (!carOffers_id) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Missing carOffers_id in the request body',
                     });
-
-                    const { carBrand_id, carSeries_id, leaseType, term } =
-                         carOffers;
-
-                    if (!carOffers) {
-                         throw new Error('Car offers not found');
-                    }
-
-                    const carDetails = await carDetailModel.findOne({
-                         carBrand_id: carBrand_id,
-                         carSeries_id: carSeries_id,
-                         //yearModel: yearModel,
-                    });
-
-                    const { fuelType, gears } = carDetails;
-
-                    if (!carDetails) {
-                         throw new Error('Car  details not found');
-                    }
-
-                    // Retrieve carBrand name using carBrandId from carbrands collection
-                    const carBrand = await carBrandModel.findById({
-                         _id: carBrand_id,
-                    });
-
-                    if (!carBrand) {
-                         throw new Error('Lease type details not found');
-                    }
-
-                    const { companyName } = carBrand;
-
-                    const enquiryData = {
-                         fuelType,
-                         gears,
-                         leaseType,
-                         term,
-                         companyName,
-                         duration: req.query.duration,
-                         annualMileage: req.query.annualMileage,
-                         monthlyCost: req.query.monthlyCost,
-                    };
-                    const enquireFormData = req.body;
-
-                    const enquiryId = await enquiryFormService.sendEnquiryEmail(
-                         enquiryData,
-                         enquireFormData
-                    );
-                    if (!enquiryId) {
-                         return res.status(400).json({
-                              success: false,
-                              msg: 'Error sending enquiry email, Missing Enquiry Id',
-                         });
-                    }
-                    res.status(200).json({
-                         success: true,
-                         msg: 'Thank you for your enquiry!',
-                         enquiryId,
-                         data: enquiryData,
-                    });
-               } catch (error) {
-                    console.log(error);
-                    res.status(500).send('Error sending enquiry email ');
                }
+
+               // Retrieve car offers using relevant query and criteria
+               const carOffers = await carOfferModel.findById({
+                    _id: carOffers_id,
+               });
+
+               if (!carOffers) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Car offers not found with the provided carOffers_id',
+                    });
+               }
+
+               const { carBrand_id, carSeries_id, leaseType, term } = carOffers;
+
+               const carDetails = await carDetailModel.findOne({
+                    carBrand_id: carBrand_id,
+                    carSeries_id: carSeries_id,
+               });
+
+               if (!carDetails) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Car details not found for the given carBrand_id and carSeries_id',
+                    });
+               }
+
+               const carBrand = await carBrandModel.findById({
+                    _id: carBrand_id,
+               });
+
+               if (!carBrand) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Car brand not found with the provided carBrand_id',
+                    });
+               }
+
+               const { fuelType, gears } = carDetails;
+               const { companyName } = carBrand;
+
+               const enquiryData = {
+                    fuelType,
+                    gears,
+                    leaseType,
+                    term,
+                    companyName,
+                    duration: req.query.duration,
+                    annualMileage: req.query.annualMileage,
+                    monthlyCost: req.query.monthlyCost,
+               };
+               const enquireFormData = req.body;
+
+               const enquiryId = await enquiryFormService.sendEnquiryEmail(
+                    enquiryData,
+                    enquireFormData
+               );
+               if (!enquiryId) {
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Error sending enquiry email, Missing Enquiry Id',
+                    });
+               }
+               return res.status(200).json({
+                    success: true,
+                    msg: 'Thank you for your enquiry!',
+                    enquiryId,
+                    data: enquiryData,
+               });
           } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
+               console.log(error);
+               return res.status(500).send('Error sending enquiry email');
           }
      })
 );

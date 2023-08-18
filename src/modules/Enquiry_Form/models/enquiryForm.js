@@ -8,7 +8,7 @@ const EnquiryFormSchema = new mongoose.Schema(
           },
           firstName: String,
           lastName: String,
-          mobileNumber: Number,
+          mobileNumber: String,
           emailAddress: String,
           questions: String,
           receiveUpdates: { type: Boolean, default: false },

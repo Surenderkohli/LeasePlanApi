@@ -15,6 +15,7 @@ const getAllForm = async () => {
      try {
           const response = await enquiryFormModel
                .find()
+               .sort({ createdAt: -1 }) // Sort by createdAt in descending order
                .select('-htmlTemplate');
 
           // Modify the response to include formatted createdAt dates

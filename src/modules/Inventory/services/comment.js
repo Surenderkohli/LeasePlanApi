@@ -1170,3 +1170,72 @@
 //           throw new Error(error.message);
 //      }
 // };
+
+/* const createCarFeature = async (carDetailData) => {
+    try {
+         // Extract the exterior and interior features from the row
+         const exteriorFeatures = [];
+         const interiorFeatures = [];
+         const safetySecurityFeatures = [];
+         const comfortConvenienceFeatures = [];
+         const audioEntertainmentFeatures = [];
+
+         Object.keys(carDetailData).forEach((key) => {
+              if (key.startsWith('exterior_')) {
+                   exteriorFeatures.push({
+                        value: carDetailData[key],
+                        categoryCode: 1,
+                   });
+              } else if (key.startsWith('interior_')) {
+                   interiorFeatures.push({
+                        value: carDetailData[key],
+                        categoryCode: 2,
+                   });
+              } else if (key.startsWith('safety_security_')) {
+                   safetySecurityFeatures.push({
+                        value: carDetailData[key],
+                        categoryCode: 3,
+                   });
+              } else if (key.startsWith('comfort_convenience_')) {
+                   comfortConvenienceFeatures.push({
+                        value: carDetailData[key],
+                        categoryCode: 4,
+                   });
+              } else if (key.startsWith('audio_entertainment_')) {
+                   audioEntertainmentFeatures.push({
+                        value: carDetailData[key],
+                        categoryCode: 5,
+                   });
+              }
+         });
+
+         // Query the database for matching carBrand and carSeries documents
+         const carBrand = await carBrandModel.findOne({
+              makeCode: carDetailData.makeCode,
+         });
+         const carSeries = await carSeriesModel.findOne({
+              modelCode: carDetailData.modelCode,
+         });
+
+         // Create the new car feature entry using the retrieved IDs
+         const newCarFeature = new carFeatureModel({
+              carBrand_id: carBrand ? carBrand._id : null,
+              carSeries_id: carSeries ? carSeries._id : null,
+              makeCode: carDetailData.makeCode,
+              modelCode: carDetailData.modelCode,
+              yearModel: carDetailData.yearModel,
+              exteriorFeatures: exteriorFeatures,
+              interiorFeatures: interiorFeatures,
+              safetySecurityFeatures: safetySecurityFeatures,
+              comfortConvenienceFeatures: comfortConvenienceFeatures,
+              audioEntertainmentFeatures: audioEntertainmentFeatures,
+         });
+
+         const savedCarFeature = await newCarFeature.save();
+
+         return savedCarFeature;
+    } catch (error) {
+         console.log(error);
+         throw new Error('Car features upload failed');
+    }
+}; */

@@ -9,6 +9,9 @@ import carDetailModel from '../models/carDetails.js';
 
 const router = Router();
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 router.get(
      '/',
      httpHandler(async (req, res) => {
@@ -21,117 +24,6 @@ router.get(
                res.status(500).send('Server error');
           }
      })
-);
-
-router.get(
-     '/:id',
-     httpHandler(async (req, res) => {
-          try {
-               const { id } = req.params;
-               const result = await carFeatureService.getSingleCarFeature(id);
-               res.status(200).json({
-                    success: true,
-                    data: result,
-               });
-          } catch (error) {
-               console.error(error);
-               res.status(400).json({ success: false, error: error.message });
-          }
-     })
-);
-
-router.post('/car-features-manual', async (req, res) => {
-     try {
-          const carFeatureData = req.body;
-          const carFeature = await carFeatureService.createCarFeatureManual(
-               carFeatureData
-          );
-          res.status(201).json({
-               message: 'Car feature added successfully',
-               data: carFeature,
-          });
-     } catch (error) {
-          console.log(error);
-          res.status(400).json({ message: error.message });
-     }
-});
-
-router.put(
-     '/update/:id',
-     httpHandler(async (req, res) => {
-          try {
-               const data = req.body;
-               const { id } = req.params;
-
-               const result = await carFeatureService.updateCarFeatures(
-                    id,
-                    data
-               );
-               res.status(200).json({ success: true, data: result });
-          } catch {
-               console.log(error);
-               res.status(500).send('Server error');
-          }
-     })
-);
-
-router.delete(
-     '/delete/:id',
-     httpHandler(async (req, res) => {
-          const data = req.body;
-          const { id } = req.params;
-          const result = await carFeatureService.deleteCarFeatures(
-               id,
-               req.body
-          );
-          res.send(result);
-     })
-);
-
-const storage = multer.memoryStorage();
-
-const upload = multer({ storage });
-
-// Route for uploading car feature category CSV file
-router.post(
-     '/car-feature-category',
-     upload.single('file'),
-     async (req, res) => {
-          try {
-               if (!req.file || req.file.mimetype !== 'text/csv') {
-                    return res.status(400).json({
-                         message: 'Invalid file format. Please upload a CSV file',
-                    });
-               }
-
-               const csvString = req.file.buffer.toString('utf8');
-               const carFeatureCategoryData = await csvtojson().fromString(
-                    csvString
-               );
-
-               // Validate the CSV data for car feature categories
-               const validation = isValidCarFeatureCategoryData(
-                    carFeatureCategoryData
-               );
-               if (!validation.isValid) {
-                    return res.status(400).json({
-                         message: `Invalid CSV format. ${validation.error}`,
-                    });
-               }
-
-               for (const data of carFeatureCategoryData) {
-                    await carFeatureService.createCarFeatureCategory(data);
-               }
-
-               res.status(201).json({
-                    message: 'Car feature categories added successfully',
-                    data: carFeatureCategoryData,
-               });
-          } catch (error) {
-               console.log(error);
-               res.status(400).json({ message: error.message });
-          }
-     }
 );
 
 async function generateErrorCSV(errorList) {
@@ -227,13 +119,6 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
                // Generate the error CSV file
                await generateErrorCSV(errorList);
 
-               // Set the appropriate response headers
-               // res.setHeader('Content-Type', 'text/csv');
-               // res.setHeader(
-               //      'Content-Disposition',
-               //      'attachment; filename="error_list_carfeatures.csv"'
-               // );
-
                // Return the CSV file as a download link
                return res.status(400).json({
                     message: 'Invalid car features CSV file',
@@ -259,53 +144,6 @@ router.post('/feature-description', upload.single('file'), async (req, res) => {
           res.status(400).json({ message: error.message });
      }
 });
-
-// Helper function to validate the CSV data for car feature categories
-function isValidCarFeatureCategoryData(carFeatureCategoryData) {
-     if (
-          !Array.isArray(carFeatureCategoryData) ||
-          carFeatureCategoryData.length === 0
-     ) {
-          return {
-               isValid: false,
-               error: 'No car feature category data provided',
-          };
-     }
-
-     const missingFields = new Set();
-
-     for (let i = 0; i < carFeatureCategoryData.length; i++) {
-          const carFeatureCategory = carFeatureCategoryData[i];
-
-          if (!carFeatureCategory.makeCode) {
-               missingFields.add('makeCode');
-          }
-
-          if (!carFeatureCategory.modelCode) {
-               missingFields.add('modelCode');
-          }
-
-          if (!carFeatureCategory.categoryCode) {
-               missingFields.add('categoryCode');
-          }
-
-          if (!carFeatureCategory.categoryDescription) {
-               missingFields.add('categoryDescription');
-          }
-     }
-
-     if (missingFields.size > 0) {
-          const missingFieldsList = Array.from(missingFields).join(', ');
-          return {
-               isValid: false,
-               error: `Missing or invalid fields: ${missingFieldsList}`,
-          };
-     }
-
-     return {
-          isValid: true,
-     };
-}
 
 function isValidFeatureDescriptionData(featureDescriptionData) {
      if (

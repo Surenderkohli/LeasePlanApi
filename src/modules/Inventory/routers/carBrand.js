@@ -1,31 +1,12 @@
 import { Router } from 'express';
-import mongoose from 'mongoose';
 import { httpHandler } from '../../../helpers/error-handler.js';
 import { carBrandService } from '../services/carBrand.js';
-import leaseTypeModel from '../models/leaseType.js';
+
 import multer from 'multer';
 
 const upload = multer(); // Create an instance of the multer middleware
 
 const router = Router();
-
-router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          // const {id} = req.params
-          const result = await carBrandService.getAllCarBrand();
-          res.send(result);
-     })
-);
-
-router.get(
-     '/carbrand-single/:id',
-     httpHandler(async (req, res) => {
-          const { id } = req.params;
-          const result = await carBrandService.getSingleCarBrand(id);
-          res.send(result);
-     })
-);
 
 router.post(
      '/add-carbrand',
@@ -49,20 +30,21 @@ router.post(
      })
 );
 
-router.delete(
-     '/delete/:id',
+router.get(
+     '/',
      httpHandler(async (req, res) => {
-          try {
-               const data = req.body;
-               const { id } = req.params;
-               const result = await carBrandService.deleteCarBrand(id, data);
-               res.status(200).json({
-                    success: true,
-                    msg: 'carBrand deleted successfully',
-               });
-          } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
-          }
+          // const {id} = req.params
+          const result = await carBrandService.getAllCarBrand();
+          res.send(result);
+     })
+);
+
+router.get(
+     '/carbrand-single/:id',
+     httpHandler(async (req, res) => {
+          const { id } = req.params;
+          const result = await carBrandService.getSingleCarBrand(id);
+          res.send(result);
      })
 );
 
@@ -108,5 +90,22 @@ router.get('/list', async (req, res) => {
           res.status(500).json({ error: 'Internal server error' });
      }
 });
+
+router.delete(
+     '/delete/:id',
+     httpHandler(async (req, res) => {
+          try {
+               const data = req.body;
+               const { id } = req.params;
+               const result = await carBrandService.deleteCarBrand(id, data);
+               res.status(200).json({
+                    success: true,
+                    msg: 'carBrand deleted successfully',
+               });
+          } catch (error) {
+               res.send({ status: 400, success: false, msg: error.message });
+          }
+     })
+);
 
 export default router;

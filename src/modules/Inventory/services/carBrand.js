@@ -1,15 +1,5 @@
 import carBrandModel from '../models/carBrand.js';
 
-const getAllCarBrand = async () => {
-     const response = await carBrandModel.find().populate('leaseType_id');
-     return response;
-};
-
-// const addCarBrand = async (data) => {
-//      const response = await carBrandModel.create(data);
-//      return response;
-// };
-
 const addCarBrand = async (data) => {
      try {
           // Find car brand by makeCode
@@ -54,6 +44,11 @@ const addCarBrand = async (data) => {
      }
 };
 
+const getAllCarBrand = async () => {
+     const response = await carBrandModel.find().populate('leaseType_id');
+     return response;
+};
+
 const getSingleCarBrand = async (id) => {
      const response = await carBrandModel.findById(id);
      return response;
@@ -78,22 +73,6 @@ const getAllCarBrandByLeaseType = async (leaseType_id) => {
           throw new Error('Unable to retrieve car brands by lease type');
      }
 };
-
-// const getCarsByLeaseTypeAndTerm = async (leaseType, term) => {
-//      const carBrands = await carBrandModel.find().populate({
-//           path: 'leaseType_id',
-//           match: {
-//                leaseType: leaseType,
-//                term: term,
-//           },
-//      });
-
-//      const filteredCars = carBrands.filter(
-//           (carBrand) => carBrand.leaseType_id !== null
-//      );
-
-//      return filteredCars;
-// };
 
 const getCarsByLeaseTypeAndTerm = async (leaseType, term) => {
      const cars = await carBrandModel.aggregate([

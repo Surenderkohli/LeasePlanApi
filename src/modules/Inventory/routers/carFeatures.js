@@ -3,7 +3,7 @@ import { httpHandler } from '../../../helpers/error-handler.js';
 import { carFeatureService } from '../services/carFeatures.js';
 import multer from 'multer';
 import csvtojson from 'csvtojson';
-import { carFeatureModel } from '../models/carFeatures.js';
+import carFeatureModel from '../models/carFeatures.js';
 import { createObjectCsvWriter } from 'csv-writer';
 import carDetailModel from '../models/carDetails.js';
 

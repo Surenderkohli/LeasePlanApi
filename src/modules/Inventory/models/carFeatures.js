@@ -3,11 +3,11 @@ import mongoose, { Schema } from 'mongoose';
 const carFeatureSchema = new Schema({
      carSeries_id: {
           type: Schema.ObjectId,
-          ref: 'carSeries',
+          ref: 'carseries',
      },
      carBrand_id: {
           type: Schema.ObjectId,
-          ref: 'carBrand',
+          ref: 'carbrands',
      },
      modelCode: String,
      makeCode: String,
@@ -33,4 +33,6 @@ const carFeatureSchema = new Schema({
      },
 });
 
-export const carFeatureModel = mongoose.model('carFeature', carFeatureSchema);
+const carFeatureModel = mongoose.model('carfeatures', carFeatureSchema);
+
+export default carFeatureModel;

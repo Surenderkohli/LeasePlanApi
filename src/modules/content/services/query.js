@@ -1,22 +1,22 @@
-import queryDetailsModel from '../models/query.js';
+import queryDetailModel from '../models/query.js';
 
 const addQueryDetails = async (data) => {
-     const response = await queryDetailsModel.create(data);
+     const response = await queryDetailModel.create(data);
      return response;
 };
 
 const getAllQueryDetails = async () => {
-     const response = await queryDetailsModel.find();
+     const response = await queryDetailModel.find();
      return response;
 };
 
 const getSingleQueryDetails = async (id) => {
-     const response = await queryDetailsModel.findById(id);
+     const response = await queryDetailModel.findById(id);
      return response;
 };
 
 const deleteQueryDetails = async (id) => {
-     const response = await queryDetailsModel.findOneAndDelete(
+     const response = await queryDetailModel.findOneAndDelete(
           {
                _id: id,
           },

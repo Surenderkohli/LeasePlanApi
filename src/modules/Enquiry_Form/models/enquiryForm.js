@@ -14,7 +14,7 @@ const EnquiryFormSchema = new mongoose.Schema(
           receiveUpdates: { type: Boolean, default: false },
           carOffers_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carOffer',
+               ref: 'caroffers',
                required: false,
           },
           htmlTemplate: String,
@@ -24,4 +24,6 @@ const EnquiryFormSchema = new mongoose.Schema(
      }
 );
 
-export default mongoose.model('enquiryForm', EnquiryFormSchema);
+const enquiryFormModel = mongoose.model('enquiryforms', EnquiryFormSchema);
+
+export default enquiryFormModel;

@@ -2,8 +2,8 @@ import leaseTypeModel from '../models/leaseType.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
-import carDetailsModel from '../models/carDetails.js';
-import { carFeatureModel } from '../models/carFeatures.js';
+import carDetailModel from '../models/carDetails.js';
+import carFeatureModel from '../models/carFeatures.js';
 
 const createCarOffer = async (carOfferData) => {
      try {
@@ -421,7 +421,7 @@ const getAllCarWithOffersV2 = async (
 
           if (fuelType) {
                const carDetailsFilter = { fuelType: fuelType };
-               const carDetails = await carDetailsModel.find(carDetailsFilter);
+               const carDetails = await carDetailModel.find(carDetailsFilter);
                const carSeriesIds = carDetails.map(
                     (detail) => detail.carSeries_id
                );
@@ -430,7 +430,7 @@ const getAllCarWithOffersV2 = async (
 
           if (bodyType) {
                const carDetailsFilter = { bodyType: bodyType };
-               const carDetails = await carDetailsModel.find(carDetailsFilter);
+               const carDetails = await carDetailModel.find(carDetailsFilter);
                const carSeriesIds = carDetails.map(
                     (detail) => detail.carSeries_id
                );
@@ -562,7 +562,7 @@ const getSingleCar = async (id, duration, annualMileage) => {
                carSeries_id: carOffer.carSeries_id,
           });
 
-          const carDetails = await carDetailsModel.findOne({
+          const carDetails = await carDetailModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
                // yearModel: carOffer.yearModel,
@@ -636,7 +636,7 @@ const getSingleCarV2 = async (id, duration, annualMileage) => {
                carSeries_id: carOffer.carSeries_id,
           });
 
-          const carDetails = await carDetailsModel.findOne({
+          const carDetails = await carDetailModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
           });
@@ -676,7 +676,7 @@ const updateCar = async (
                carSeries_id,
           };
 
-          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+          const updatedCarDetails = await carDetailModel.findOneAndUpdate(
                carDetailsFilter,
                { ...carDetailsData },
                { new: true }
@@ -791,7 +791,7 @@ const updateCarV2 = async (
                carSeries_id,
           };
 
-          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+          const updatedCarDetails = await carDetailModel.findOneAndUpdate(
                carDetailsFilter,
                { ...carDetailsData },
                { new: true }
@@ -905,7 +905,7 @@ const updateCarV3 = async (
                carSeries_id,
           };
 
-          const updatedCarDetails = await carDetailsModel.findOneAndUpdate(
+          const updatedCarDetails = await carDetailModel.findOneAndUpdate(
                carDetailsFilter,
                { ...carDetailsData },
                { new: true }
@@ -1041,7 +1041,7 @@ const getDeals = async (query) => {
           const carsWithDetails = [];
           for (const carOffer of offersWithBestDeals) {
                const car = carOffer;
-               const carDetails = await carDetailsModel.find({
+               const carDetails = await carDetailModel.find({
                     carBrand_id: car.carBrand_id,
                     carSeries_id: car.carSeries_id,
                });
@@ -1143,7 +1143,7 @@ const filterCars = async (filterOptions) => {
 
           for (const carOffer of carOffers) {
                const car = carOffer.toObject();
-               const carDetails = await carDetailsModel.find({
+               const carDetails = await carDetailModel.find({
                     carBrand_id: car.carBrand_id,
                     carSeries_id: car.carSeries_id,
                });
@@ -1231,7 +1231,7 @@ const deletedCarV2 = async (id) => {
 
           if (!sameCarExists) {
                // Delete associated car offers
-               await carDetailsModel.deleteOne({
+               await carDetailModel.deleteOne({
                     carBrand_id: car.carBrand_id,
                     carSeries_id: car.carSeries_id,
                });
@@ -1267,7 +1267,7 @@ const deletedCarV2 = async (id) => {
 
 const getAllCarWithoutOffers = async () => {
      try {
-          const carDetails = await carDetailsModel.find({}, '-_id');
+          const carDetails = await carDetailModel.find({}, '-_id');
           const carFeatures = await carFeatureModel.find({}, '-_id');
           const carOffers = await carOfferModel.find(
                {},

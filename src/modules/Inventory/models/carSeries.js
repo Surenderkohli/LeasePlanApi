@@ -4,12 +4,12 @@ const carSeriesSchema = new mongoose.Schema(
      {
           carBrand_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carBrand',
+               ref: 'carbrands',
           },
           leaseType_id: [
                {
                     type: mongoose.Schema.ObjectId,
-                    ref: 'leaseType',
+                    ref: 'leasetypes',
                     required: false,
                },
           ],
@@ -30,4 +30,6 @@ const carSeriesSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('carSeries', carSeriesSchema);
+const carSeriesModel = mongoose.model('carseries', carSeriesSchema);
+
+export default carSeriesModel;

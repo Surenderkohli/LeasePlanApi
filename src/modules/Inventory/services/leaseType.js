@@ -35,7 +35,6 @@ const deleteLeaseType = async (id) => {
 export const leaseTypeService = {
      getAllLeaseType,
      getSingleLeaseType,
-
      deleteLeaseType,
      addLeaseType,
      getCount,

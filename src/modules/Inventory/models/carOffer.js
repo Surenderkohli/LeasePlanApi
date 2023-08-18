@@ -4,11 +4,11 @@ const carOfferSchema = new mongoose.Schema(
      {
           carBrand_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carBrand',
+               ref: 'carbrands',
           },
           carSeries_id: {
                type: mongoose.Schema.ObjectId,
-               ref: 'carSeries',
+               ref: 'carseries',
           },
           leaseType: {
                type: String,
@@ -73,4 +73,6 @@ carOfferSchema.methods.isExpired = function () {
      });
 };
 
-export default mongoose.model('carOffer', carOfferSchema);
+const carOfferModel = mongoose.model('caroffers', carOfferSchema);
+
+export default carOfferModel;

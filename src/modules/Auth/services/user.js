@@ -1,5 +1,4 @@
 import userModel from '../models/user.js';
-import bcrypt from 'bcrypt';
 import sgMail from '@sendgrid/mail';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);

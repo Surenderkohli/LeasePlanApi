@@ -5,7 +5,7 @@ const carBrandSchema = new mongoose.Schema(
           leaseType_id: [
                {
                     type: mongoose.Schema.ObjectId,
-                    ref: 'leaseType',
+                    ref: 'leasetypes',
                     required: false,
                },
           ],
@@ -27,4 +27,6 @@ const carBrandSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-export default mongoose.model('carBrand', carBrandSchema);
+const carBrandModel = mongoose.model('carbrands', carBrandSchema);
+
+export default carBrandModel;

@@ -9,4 +9,6 @@ const QueryDetailsSchema = new mongoose.Schema({
      },
 });
 
-export default mongoose.model('queryDetails', QueryDetailsSchema);
+const queryDetailModel = mongoose.model('querydetails', QueryDetailsSchema);
+
+export default queryDetailModel;

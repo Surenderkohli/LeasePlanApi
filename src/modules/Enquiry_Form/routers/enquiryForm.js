@@ -182,5 +182,4 @@ router.get(
      })
 );
 
-//https://gitlab.com/plaxoniclabs/projects/leaseplan/api/-/commit/e910bce87c4a043ec75bd7c4ebf479a71c852766 - In this commit, I have changed carDetails_id to carOffers_id in the enquiryForm model
 export default router;

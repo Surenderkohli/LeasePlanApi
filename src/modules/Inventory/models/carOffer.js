@@ -10,19 +10,6 @@ const carOfferSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'carSeries',
           },
-          // leaseType_id: [
-          //      {
-          //           leaseType: {
-          //                type: String,
-          //                required: true,
-          //           },
-          //           term: {
-          //                type: String,
-          //                enum: ['Short Term', 'Long Term'],
-          //                required: false,
-          //           },
-          //      },
-          // ],
           leaseType: {
                type: String,
                required: false,
@@ -42,11 +29,6 @@ const carOfferSchema = new mongoose.Schema(
                     annualMileage: Number,
                     monthlyCost: Number,
                     calculationNo: Number,
-                    // bestDeals: {
-                    //      type: String,
-                    //      enum: ['Yes', 'No'],
-                    //      default: 'No',
-                    // },
                     bestDeals: {
                          type: String,
                          validate: {
@@ -71,11 +53,6 @@ const carOfferSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
-          // deals: {
-          //      type: String,
-          //      enum: ['active', 'inactive'],
-          //      default: 'inactive',
-          // },
           isDeleted: {
                type: Boolean,
                default: false,

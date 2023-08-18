@@ -1,12 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
 
-// const carFeatureCategorySchema = new Schema({
-//      makeCode: String,
-//      modelCode: String,
-//      categoryCode: String,
-//      categoryDescription: String,
-// });
-
 const carFeatureSchema = new Schema({
      carSeries_id: {
           type: Schema.ObjectId,
@@ -39,10 +32,5 @@ const carFeatureSchema = new Schema({
           required: false,
      },
 });
-
-// export const CarFeatureCategory = mongoose.model(
-//      'CarFeatureCategory',
-//      carFeatureCategorySchema
-// );
 
 export const carFeatureModel = mongoose.model('carFeature', carFeatureSchema);

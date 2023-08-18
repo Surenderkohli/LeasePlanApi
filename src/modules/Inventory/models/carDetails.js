@@ -10,12 +10,6 @@ const carDetailSchema = new mongoose.Schema(
                type: mongoose.Schema.ObjectId,
                ref: 'carBrand',
           },
-          // leaseType_id: [
-          //      {
-          //           type: mongoose.Schema.ObjectId,
-          //           ref: 'leaseType',
-          //      },
-          // ],
           makeCode: {
                type: Number,
                required: false,
@@ -83,11 +77,6 @@ const carDetailSchema = new mongoose.Schema(
                type: Boolean,
                default: false,
           },
-          // deals: {
-          //      type: String,
-          //      enum: ['active', 'inactive'],
-          //      default: 'inactive',
-          // },
      },
 
      { timestamps: true }

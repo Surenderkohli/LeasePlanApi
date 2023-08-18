@@ -45,36 +45,6 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
-// router.post('/car-offers', upload.single('file'), async (req, res) => {
-//      try {
-//           let carOffers = [];
-
-//           if (req.file && req.file.mimetype === 'text/csv') {
-//                // CSV upload
-//                const csvString = req.file.buffer.toString('utf8');
-//                const carOfferData = await csvtojson().fromString(csvString);
-
-//                // delete existing car offers from database
-//                // await carOfferService.deleteAllCarOffers();
-
-//                for (let i = 0; i < carOfferData.length; i++) {
-//                     const carOffer = await carOfferService.createCarOffer(
-//                          carOfferData[i]
-//                     );
-//                     carOffers.push(carOffer);
-//                }
-//           }
-
-//           res.status(201).json({
-//                message: 'Car offers added successfully',
-//                data: carOffers,
-//           });
-//      } catch (error) {
-//           console.log(error);
-//           res.status(400).json({ message: error.message });
-//      }
-// });
-
 async function generateErrorCSV(errorList) {
      const errorFolder = 'errorFile'; // Update with the correct folder name
      const csvWriter = createObjectCsvWriter({
@@ -175,13 +145,6 @@ router.post('/car-offers', upload.single('file'), async (req, res) => {
                // Generate the error CSV file
                await generateErrorCSV(errorList);
 
-               // Set the appropriate response headers
-               // res.setHeader('Content-Type', 'text/csv');
-               // res.setHeader(
-               //      'Content-Disposition',
-               //      'attachment; filename="error_list_caroffers.csv"'
-               // );
-
                // Return the CSV file as a download link
                return res.status(400).json({
                     message: 'Invalid car offers CSV file',
@@ -272,21 +235,6 @@ router.get('/counts', async (req, res) => {
           res.status(400).json({ success: false, error: error.message });
      }
 });
-
-// router.get('/fetch-single/:id', async (req, res) => {
-//      try {
-//           const { id } = req.params;
-
-//           const result = await carOfferService.getSingleCar(id);
-//           res.status(200).json({ success: true, data: result });
-//      } catch (error) {
-//           if (error.message === 'Car not found') {
-//                res.status(404).json({ success: false, msg: 'Car not found' });
-//           } else {
-//                res.status(400).json({ success: false, msg: error.message });
-//           }
-//      }
-// });
 
 router.get('/fetch-single/:id', async (req, res) => {
      try {
@@ -725,11 +673,9 @@ router.get('/filter_cars', async (req, res) => {
                term,
                carBrand_id,
                carSeries_id,
-               // monthlyCost,
                priceMin,
                priceMax,
                annualMileage,
-               fuelType,
                bodyType,
                querySearch,
           } = req.query;
@@ -739,11 +685,9 @@ router.get('/filter_cars', async (req, res) => {
                term,
                carBrand_id,
                carSeries_id,
-               // monthlyCost,
                priceMin,
                priceMax,
                annualMileage,
-               fuelType,
                bodyType,
                querySearch,
           };

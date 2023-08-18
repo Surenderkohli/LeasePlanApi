@@ -118,7 +118,6 @@ router.delete(
 router.get(
      '/',
      httpHandler(async (req, res) => {
-          // const {id} = req.params
           const result = await carSeriesService.getAllCarSeries();
           res.send(result);
      })

@@ -3,14 +3,12 @@ import { httpHandler } from '../../../helpers/error-handler.js';
 import { CarServices } from '../services/carDetails.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import mongoose, { model } from 'mongoose';
 import csvtojson from 'csvtojson';
 import { createObjectCsvWriter } from 'csv-writer';
 import dotenv from 'dotenv';
 import carOfferModel from '../models/carOffer.js';
 import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
-import fs from 'fs';
 
 dotenv.config();
 
@@ -45,64 +43,12 @@ const carUpload = multer({
 
 const router = Router();
 
-router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          try {
-               const {
-                    carBrand,
-                    carSeries,
-                    fuelType,
-                    priceMin,
-                    priceMax,
-                    bodyType,
-                    annualMileage,
-                    yearModel,
-                    querySrch,
-               } = req.query;
-
-               const limit = parseInt(req.query.limit) || 1000000;
-               const skip = parseInt(req.query.skip) || 0;
-
-               const result = await CarServices.getAllCar(
-                    carBrand,
-                    carSeries,
-                    fuelType,
-                    priceMin,
-                    priceMax,
-                    bodyType,
-                    annualMileage,
-                    yearModel,
-                    querySrch,
-                    limit,
-                    skip
-               );
-
-               if (result.length) {
-                    res.status(200).json({ success: true, data: result });
-               } else {
-                    res.status(200).json({
-                         success: false,
-                         message: 'No cars found with the given filters.',
-                         data: [],
-                    });
-               }
-          } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
-          }
-     })
-);
-
+//Manually car details ,features and offers upload
 router.post(
      '/add',
      carUpload.array('image', 6),
      httpHandler(async (req, res) => {
           try {
-               // const { deals } = req.body;
-               // if (deals && !['active', 'inactive'].includes(deals)) {
-               //      throw new Error('Invalid deals status');
-               // }
-
                const { carBrand_id, carSeries_id } = req.body;
 
                // Retrieve makeCode and modelCode based on carBrand_id and carSeries_id
@@ -125,38 +71,6 @@ router.post(
                     source: 'manual', // Set the source to 'manual' for manual upload
                };
 
-               // const leaseType = req.body.leaseType;
-               // const term = req.body.term;
-
-               // const carOffersData = {
-               //      carBrand_id: carDetailsData.carBrand_id,
-               //      carSeries_id: carDetailsData.carSeries_id,
-               //      leaseType: leaseType,
-               //      term: term,
-               //      offers: [],
-               //      deals: req.body.deals,
-               // };
-
-               // for (let i = 1; i <= 20; i++) {
-               //      const duration = req.body[`duration${i}`];
-               //      const annualMileage = req.body[`annualMileage${i}`];
-               //      const monthlyCost = req.body[`monthlyCost${i}`];
-               //      const calculationNo = req.body[`calculationNo${i}`];
-
-               //      if (
-               //           duration &&
-               //           annualMileage &&
-               //           monthlyCost &&
-               //           calculationNo
-               //      ) {
-               //           carOffersData.offers.push({
-               //                duration: duration,
-               //                annualMileage: annualMileage,
-               //                monthlyCost: monthlyCost,
-               //                calculationNo: req.body[`calculationNo${i}`],
-               //           });
-               //      }
-               // }
                const carOffersData = [];
 
                // Iterate over carOffersData objects
@@ -247,21 +161,6 @@ router.post(
                     });
                }
 
-               // Check if id is a valid ObjectId
-               // const fieldsToCheck = ['carBrand_id', 'carSeries_id'];
-               // for (let field of fieldsToCheck) {
-               //      if (
-               //           !mongoose.Types.ObjectId.isValid(carDetailsData[field])
-               //      ) {
-               //           return res.status(400).send({
-               //                success: false,
-               //                msg: `Invalid ObjectId `,
-               //           });
-               //      }
-               // }
-
-               //const carOffer = await carOfferModel.create(carOffersData[i]);
-
                const result = await CarServices.addNewCar(
                     carDetailsData,
                     carImage,
@@ -280,66 +179,11 @@ router.post(
           } catch (error) {
                console.log(error);
                console.error('Error in adding new carDetails:', error);
-               //  res.send({ status: 400, success: false, msg: error.message });
+
                res.status(400).json({ success: false, error: error.message });
           }
      })
 );
-
-router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
-     try {
-          const carId = req.params.id;
-          const carDetailsData = req.body;
-
-          const carFeaturesData = {
-               exteriorFeatures: req.body.exteriorFeatures,
-               interiorFeatures: req.body.interiorFeatures,
-               safetySecurityFeatures: req.body.safetySecurityFeatures,
-               comfortConvenienceFeatures: req.body.comfortConvenienceFeatures,
-               audioEntertainmentFeatures: req.body.audioEntertainmentFeatures,
-          };
-
-          const carOffersData = req.body;
-
-          const images = [];
-
-          // check if there are new files uploaded
-          if (req.files && req.files.length > 0) {
-               // delete old images from cloudinary
-               const car = await CarServices.getSingleCars(carId);
-
-               if (car && car.image) {
-                    for (const image of car.image) {
-                         await cloudinary.uploader.destroy(image.publicId);
-                    }
-               }
-
-               // upload new image files to cloudinary
-               for (const file of req.files) {
-                    const result = await cloudinary.uploader.upload(file.path);
-
-                    images.push({
-                         imageUrl: result.secure_url,
-                         publicId: result.public_id,
-                    });
-               }
-
-               // update the images array in the request body
-               carDetailsData.image = images;
-          }
-
-          const result = await CarServices.updateCar(
-               carId,
-               carDetailsData,
-               carFeaturesData,
-               carOffersData
-          );
-          res.send(result);
-     } catch (error) {
-          console.error('Error in updating car details:', error);
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
 
 router.get('/best-deals', async (req, res) => {
      try {
@@ -363,31 +207,11 @@ router.get('/best-deals', async (req, res) => {
      }
 });
 
-// ---------------------------------------------------------------- >>>>>>>>>>>  CSV upload
+//   CSV upload
 
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
-// const errorFilePath = '../../../../errorFile';
-
-// async function generateErrorCSV(errorList) {
-//      const csvWriter = createObjectCsvWriter({
-//           //  path: 'error_list.csv', // Set the file path to save the CSV file
-//           path: `${errorFile}/error_list_cardetails.csv`,
-//           header: [
-//                { id: 'column', title: 'Fields' },
-//                { id: 'cell', title: 'CellAddress' },
-//                { id: 'message', title: 'Message' },
-//           ],
-//      });
-
-//      try {
-//           await csvWriter.writeRecords(errorList);
-//           return console.log('CSV file generated successfully');
-//      } catch (error) {
-//           return console.log('Error generating CSV file:', error);
-//      }
-// }
 
 async function generateErrorCSV(errorList) {
      const errorFolder = 'errorFile'; // Update with the correct folder name
@@ -449,20 +273,8 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
           }
 
           if (errorList.length > 0) {
-               // res.status(400).json({
-               //      message: 'Invalid car details CSV file',
-               //      errors: errorList,
-               // });
-
                // Generate the error CSV file with the provided errorFilePath
                await generateErrorCSV(errorList);
-
-               // Set the appropriate response headers
-               // res.setHeader('Content-Type', 'text/csv');
-               // res.setHeader(
-               //      'Content-Disposition',
-               //      'attachment; filename="error_list_cardetails.csv"'
-               // );
 
                // Return the CSV file as a download link
                res.status(400).json({
@@ -481,130 +293,6 @@ router.post('/car-details', upload.single('file'), async (req, res) => {
      }
 });
 
-router.get('/fetch-singles/:id', async (req, res) => {
-     try {
-          const { id } = req.params;
-          // const { leaseTypeId } = req.query;
-
-          const result = await CarServices.getSingleCars(id);
-
-          res.status(200).json({ success: true, data: result });
-     } catch (error) {
-          if (error.message === 'Car not found') {
-               res.status(404).json({ success: false, msg: 'Car not found' });
-          } else {
-               res.status(400).json({ success: false, msg: error.message });
-          }
-     }
-});
-
-//get all cars by brand, series and lease type but different yearModel
-router.get('/list', async (req, res) => {
-     const { carBrand_id, carSeries_id } = req.query;
-     try {
-          const cars = await CarServices.getCarsByBrandSeriesLeaseType(
-               carBrand_id,
-               carSeries_id
-               //leaseType_id
-          );
-          res.json(cars);
-     } catch (err) {
-          console.error(err);
-          res.status(500).json({ message: 'Internal server error' });
-     }
-});
-
-router.delete(
-     '/deleted/:id',
-     httpHandler(async (req, res) => {
-          const data = req.body;
-          const { id } = req.params;
-          const result = await CarServices.deletedCar(id, req.body);
-          res.send({
-               success: true,
-               message: 'Car with offers and features deleted successfully',
-               data: result,
-          });
-     })
-);
-
-// Helper function to validate the CSV data for car details
-// function isValidCarDetailData(carDetailData) {
-//      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
-//           return false;
-//      }
-
-//      const companyCodes = {}; // Object to store the assigned company codes
-
-//      // Iterate over each car detail record and validate the fields
-//      for (let i = 0; i < carDetailData.length; i++) {
-//           const carDetail = carDetailData[i];
-
-//           // Check if required fields exist
-//           if (
-//                !carDetail.modelCode ||
-//                !carDetail.makeCode ||
-//                !carDetail.companyName ||
-//                !carDetail.seriesName ||
-//                !carDetail.yearModel ||
-//                !carDetail.tankCapacity ||
-//                !carDetail.fuelType ||
-//                !carDetail.transmission
-//           ) {
-//                return false;
-//           }
-
-//           // Validate the enum values
-//           if (
-//                ![
-//                     'city-car',
-//                     'coupe',
-//                     'estate',
-//                     'sedan',
-//                     'hatchback',
-//                     'mpv',
-//                     'saloon',
-//                     'sports',
-//                ].includes(carDetail.bodyType)
-//           ) {
-//                return false;
-//           }
-
-//           // Example validation for numeric fields
-//           if (carDetail.yearModel && typeof carDetail.yearModel !== 'string') {
-//                return false;
-//           }
-
-//           if (carDetail.door && typeof carDetail.door !== 'string') {
-//                return false;
-//           }
-
-//           if (carDetail.seat && typeof carDetail.seat !== 'string') {
-//                return false;
-//           }
-
-//           // Example validation for string fields
-//           if (
-//                carDetail.acceleration &&
-//                typeof carDetail.acceleration !== 'string'
-//           ) {
-//                return false;
-//           }
-
-//           // Check if the companyName is already assigned to a different makeCode
-//           if (
-//                companyCodes[carDetail.companyName] &&
-//                companyCodes[carDetail.companyName] !== carDetail.makeCode
-//           ) {
-//                return false;
-//           }
-
-//           // Store the companyName and makeCode in the companyCodes object
-//           companyCodes[carDetail.companyName] = carDetail.makeCode;
-//      }
-
-//      return true;
-// }
 function isValidCarDetailData(carDetailData) {
      if (!Array.isArray(carDetailData) || carDetailData.length === 0) {
           return {
@@ -879,5 +567,20 @@ function getHeaderIndex(fieldName) {
      ];
      return headers.indexOf(fieldName);
 }
+
+//get all cars by brand, series and lease type but different yearModel
+router.get('/list', async (req, res) => {
+     const { carBrand_id, carSeries_id } = req.query;
+     try {
+          const cars = await CarServices.getCarsByBrandSeriesLeaseType(
+               carBrand_id,
+               carSeries_id
+          );
+          res.json(cars);
+     } catch (err) {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+     }
+});
 
 export default router;

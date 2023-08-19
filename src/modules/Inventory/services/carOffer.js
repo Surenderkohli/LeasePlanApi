@@ -532,29 +532,20 @@ const getCount = async () => {
 
 const getSingleCar = async (id, duration, annualMileage) => {
      try {
+          // Retrieve the car offer based on the provided id
           const carOffer = await carOfferModel
                .findOne({ _id: id })
-               .populate('carBrand_id')
-               .populate('carSeries_id');
+               .populate({
+                    path: 'carBrand_id',
+                    select: 'makeCode companyName',
+               })
+               .populate({
+                    path: 'carSeries_id',
+                    select: 'modelCode seriesName',
+               });
 
           if (!carOffer) {
                throw new Error('Car not found');
-          }
-
-          let monthlyCost;
-
-          if (duration && annualMileage) {
-               const selectedOffer = carOffer.offers.find(
-                    (offer) =>
-                         offer.duration === Number(duration) &&
-                         offer.annualMileage === Number(annualMileage)
-               );
-
-               if (!selectedOffer) {
-                    throw new Error('Offer not found');
-               }
-
-               monthlyCost = selectedOffer.monthlyCost;
           }
 
           const carFeatures = await carFeatureModel.findOne({
@@ -565,15 +556,33 @@ const getSingleCar = async (id, duration, annualMileage) => {
           const carDetails = await carDetailModel.findOne({
                carBrand_id: carOffer.carBrand_id,
                carSeries_id: carOffer.carSeries_id,
-               // yearModel: carOffer.yearModel,
           });
 
           const result = {
                carOffer,
                carDetails,
-               features: carFeatures || [],
-               monthlyCost: monthlyCost,
+               carFeatures: carFeatures || [],
           };
+
+          if (duration && annualMileage) {
+               // If both duration and annualMileage are provided, find the matching offer
+               const selectedOffer = carOffer.offers.find(
+                    (offer) =>
+                         offer.duration === Number(duration) &&
+                         offer.annualMileage === Number(annualMileage)
+               );
+
+               if (!selectedOffer) {
+                    throw new Error('Offer not found');
+               }
+
+               result.monthlyCost = selectedOffer.monthlyCost;
+          } else if (duration) {
+               // If only duration is provided, return all associated annualMileage values
+               result.availableMileages = carOffer.offers
+                    .filter((offer) => offer.duration === Number(duration))
+                    .map((offer) => offer.annualMileage);
+          }
 
           return result;
      } catch (error) {

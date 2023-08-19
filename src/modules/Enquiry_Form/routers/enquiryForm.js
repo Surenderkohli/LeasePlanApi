@@ -182,4 +182,33 @@ router.get(
      })
 );
 
+router.put('/status/:formId', async (req, res) => {
+     const { formId } = req.params;
+     const { status } = req.body; // Changed variable name to "status"
+
+     try {
+          const updatedForm = await enquiryFormService.updateEnquiryStatus(
+               formId,
+               status
+          );
+          res.status(200).json({ success: true, data: updatedForm });
+     } catch (error) {
+          res.status(400).json({ success: false, error: error.message });
+     }
+});
+
+// Get enquiry forms by status route
+router.get('/enquiry-status/list', async (req, res) => {
+     const { status } = req.query;
+
+     try {
+          const forms = await enquiryFormService.getEnquiryFormsByStatus(
+               status
+          );
+          res.status(200).json({ success: true, data: forms });
+     } catch (error) {
+          res.status(400).json({ success: false, error: error.message });
+     }
+});
+
 export default router;

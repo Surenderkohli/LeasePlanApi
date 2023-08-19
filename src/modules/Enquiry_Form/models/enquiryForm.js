@@ -18,6 +18,12 @@ const EnquiryFormSchema = new mongoose.Schema(
                required: false,
           },
           htmlTemplate: String,
+          status: {
+               type: String,
+               // enum: ['active', 'inactive'],
+               enum: ['pending', 'approved', 'rejected'],
+               default: 'pending',
+          },
      },
      {
           timestamps: true,

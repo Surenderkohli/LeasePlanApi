@@ -380,10 +380,41 @@ const getCount = async (query) => {
      return count;
 };
 
+const updateEnquiryStatus = async (formId, newStatus) => {
+     try {
+          const updatedForm = await enquiryFormModel.findByIdAndUpdate(
+               formId,
+               { status: newStatus },
+               { new: true }
+          );
+
+          return updatedForm;
+     } catch (error) {
+          throw new Error('Error updating form status');
+     }
+};
+
+const getEnquiryFormsByStatus = async (status) => {
+     try {
+          let query = {};
+
+          if (status) {
+               query.status = status;
+          }
+
+          const forms = await enquiryFormModel.find(query);
+          return forms;
+     } catch (error) {
+          throw new Error('Error fetching enquiry forms by status');
+     }
+};
+
 export const enquiryFormService = {
      addForm,
      getAllForm,
      getSingleForm,
      sendEnquiryEmail,
      getCount,
+     updateEnquiryStatus,
+     getEnquiryFormsByStatus,
 };

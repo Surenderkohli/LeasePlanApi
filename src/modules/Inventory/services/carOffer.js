@@ -1145,8 +1145,14 @@ const filterCars = async (filterOptions) => {
                     ...query,
                     isDeleted: false, //  line to filter based on isDeleted property
                })
-               .populate('carBrand_id')
-               .populate('carSeries_id');
+               .populate({
+                    path: 'carBrand_id',
+                    select: 'makeCode companyName',
+               })
+               .populate({
+                    path: 'carSeries_id',
+                    select: 'modelCode seriesName',
+               });
 
           const cars = [];
 

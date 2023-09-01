@@ -5,6 +5,8 @@ import carDetailModel from '../../Inventory/models/carDetails.js';
 import carBrandModel from '../../Inventory/models/carBrand.js';
 import carOfferModel from '../../Inventory/models/carOffer.js';
 import puppeteer from 'puppeteer';
+import carSeriesModel from '../../Inventory/models/carSeries.js';
+
 
 const router = new Router();
 
@@ -58,8 +60,21 @@ router.post(
                     });
                }
 
+               const carSeries = await carSeriesModel.findById({
+                    _id:carSeries_id
+               })
+
+               if(!carSeries){
+                    return res.status(400).json({
+                         success: false,
+                         msg: 'Car series not found with the provided carSeries_id',
+                    });
+
+               }
+
                const { fuelType, gears } = carDetails;
                const { companyName } = carBrand;
+               const { seriesName } = carSeries;
 
                const enquiryData = {
                     fuelType,
@@ -67,6 +82,7 @@ router.post(
                     leaseType,
                     term,
                     companyName,
+                    seriesName,
                     duration: req.query.duration,
                     annualMileage: req.query.annualMileage,
                     monthlyCost: req.query.monthlyCost,

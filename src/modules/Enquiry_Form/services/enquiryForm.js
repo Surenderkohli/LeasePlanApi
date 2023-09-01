@@ -57,6 +57,7 @@ const getSingleForm = async (id) => {
 
 const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
      try {
+          console.log('enquireFormData',enquireFormData);
           const message = `
          
           <!DOCTYPE html>
@@ -147,12 +148,26 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                    <th>Mobile Number:</th>
                                    <td>${enquireFormData.mobileNumber}</td>
                               </tr>
+                                  <tr  class="detail"
+                              style="
+                                  text-align: left;
+                              ">
+                                   <th>Email Address:</th>
+                                   <td>${enquireFormData.emailAddress}</td>
+                              </tr>
                                    <tr  class="detail"
                                    style="
                                        text-align: left;
                                    ">
-                                        <th>Car Brand Name:</th>
+                                        <th>Car Make:</th>
                                         <td>${enquiryData.companyName}</td>
+                                   </tr>
+                                    <tr  class="detail"
+                                   style="
+                                       text-align: left;
+                                   ">
+                                        <th>Car Model:</th>
+                                        <td>${enquiryData.seriesName}</td>
                                    </tr>
                                    <tr  class="detail"
                                    style="
@@ -180,21 +195,21 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                    style="
                                    text-align: left;
                                ">
-                                        <th>Gearbox Type::</th>
+                                        <th>No. of Gears :</th>
                                         <td>${enquiryData.gears} </td>
                                    </tr>
                                    <tr class="detail"
                                    style="
                                    text-align: left;
                                ">
-                                        <th>Contract Type:</th>
+                                        <th>Contract Duration:</th>
                                         <td>${enquiryData.duration} </td>
                                    </tr>
                                    <tr class="detail"
                                    style="
                                    text-align: left;
                                ">
-                                        <th>Annual Mileage:</th>
+                                        <th>Contract Annual Mileage:</th>
                                         <td>${enquiryData.annualMileage} </td>
                                    </tr>
                                    <tr class="detail"
@@ -202,7 +217,7 @@ const sendEnquiryEmail = async (enquiryData, enquireFormData) => {
                                    text-align: left;
                                ">
                                         <th>Monthly Payment:</th>
-                                        <td>${enquiryData.monthlyCost} DHS</td>
+                                        <td>AED ${enquiryData.monthlyCost} </td>
                                    </tr>
                               </table>
                          </div>

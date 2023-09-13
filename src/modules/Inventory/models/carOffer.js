@@ -39,20 +39,21 @@ const carOfferSchema = new mongoose.Schema(
                          },
                          default: 'No',
                     },
+                   validFrom: {
+                       type: Date,
+                       required: false,
+                   },
+                   validTo: {
+                       type: Date,
+                       required: false,
+                   },
+                   expired: {
+                       type: Boolean,
+                       default: false,
+                   },
                },
           ],
-          validFrom: {
-               type: Date,
-               required: false,
-          },
-          validTo: {
-               type: Date,
-               required: false,
-          },
-          expired: {
-               type: Boolean,
-               default: false,
-          },
+
           isDeleted: {
                type: Boolean,
                default: false,

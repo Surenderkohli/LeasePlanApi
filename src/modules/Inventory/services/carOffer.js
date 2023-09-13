@@ -5,6 +5,19 @@ import carOfferModel from '../models/carOffer.js';
 import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
 
+
+
+// Function to convert "dd/mm/yy" format to "YYYY-MM-DD"
+function convertDateToYYYYMMDD(dateString) {
+     const parts = dateString.split('/');
+     if (parts.length === 3) {
+          const day = parts[0];
+          const month = parts[1];
+          const year = `20${parts[2]}`; // Assuming the year is in "yy" format
+          return `${year}-${month}-${day}`;
+     }
+     throw new Error('Invalid date format. Please use "dd/mm/yy".');
+}
 const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
@@ -120,6 +133,8 @@ const createCarOffer = async (carOfferData) => {
                     existingOffer.bestDeals = carOfferData.bestDeals
                          ? carOfferData.bestDeals
                          : 'No';
+                    existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
+                    existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
                } else {
                     const newOffer = {
                          duration: carOfferData.duration,
@@ -129,6 +144,8 @@ const createCarOffer = async (carOfferData) => {
                          bestDeals: carOfferData.bestDeals
                               ? carOfferData.bestDeals
                               : 'No',
+                         validFrom : convertDateToYYYYMMDD(carOfferData.validFrom),
+                         validTo : convertDateToYYYYMMDD(carOfferData.validTo)
                     };
 
                     if (carOfferData.leaseType && carOfferData.term) {
@@ -159,10 +176,11 @@ const createCarOffer = async (carOfferData) => {
                               bestDeals: carOfferData.bestDeals
                                    ? carOfferData.bestDeals
                                    : 'No',
+                              validFrom:  convertDateToYYYYMMDD(carOfferData.validFrom),
+                              validTo:  convertDateToYYYYMMDD(carOfferData.validTo),
                          },
                     ],
-                    validFrom: carOfferData.validFrom,
-                    validTo: carOfferData.validTo,
+
                });
 
                return newCarOffer;

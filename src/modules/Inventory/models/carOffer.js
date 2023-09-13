@@ -53,7 +53,6 @@ const carOfferSchema = new mongoose.Schema(
                    },
                },
           ],
-
           isDeleted: {
                type: Boolean,
                default: false,
@@ -64,15 +63,18 @@ const carOfferSchema = new mongoose.Schema(
 );
 
 carOfferSchema.methods.isExpired = function () {
-     if (this.validTo && this.validTo < Date.now()) {
-          this.expired = true;
-     }
-     this.offers.forEach((offer) => {
-          if (offer.validTo && offer.validTo < Date.now()) {
-               offer.expired = true;
-          }
-     });
+    const currentDate = Date.now();
+
+    // if (this.validTo && this.validTo < currentDate) {
+    //     this.expired = true;
+    // }
+    this.offers.forEach((offer) => {
+        if (offer.validTo && offer.validTo < currentDate) {
+            offer.expired = true;
+        }
+    });
 };
+
 
 const carOfferModel = mongoose.model('caroffers', carOfferSchema);
 

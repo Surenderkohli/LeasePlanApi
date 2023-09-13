@@ -135,6 +135,9 @@ const createCarOffer = async (carOfferData) => {
                          : 'No';
                     existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
                     existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
+
+                    // Call isExpired here to update expired field
+                    existingCarOffer.isExpired();
                } else {
                     const newOffer = {
                          duration: carOfferData.duration,
@@ -183,6 +186,8 @@ const createCarOffer = async (carOfferData) => {
 
                });
 
+               // Call isExpired here to update expired field
+               newCarOffer.isExpired();
                return newCarOffer;
           }
      } catch (error) {

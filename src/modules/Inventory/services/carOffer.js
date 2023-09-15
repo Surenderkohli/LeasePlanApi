@@ -1384,7 +1384,7 @@ const deleteOffer = async (offerId) => {
      try {
           const carOffer = await carOfferModel.findOneAndUpdate(
               { "offers._id": offerId },
-              { "$pull": { "offers": { "_id": offerId } } },
+              { $pull: { "offers": { "_id": offerId } } },
               { new: true }
           );
 
@@ -1397,6 +1397,18 @@ const deleteOffer = async (offerId) => {
           throw error;
      }
 };
+
+
+const deleteOffer2 =async(offerId)=>{
+
+     const carOffer = await carOfferModel.findByIdAndUpdate(
+         {'offers._id':offerId},
+         {
+
+         }
+     )
+
+}
 
 
 export const carOfferService = {

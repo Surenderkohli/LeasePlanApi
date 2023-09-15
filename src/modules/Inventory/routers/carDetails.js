@@ -43,6 +43,19 @@ const carUpload = multer({
 
 const router = Router();
 
+
+// Function to convert "dd/mm/yyyy" format to "YYYY-MM-DD"
+function convertDateToYYYYMMDD(dateString) {
+     const parts = dateString.split('/');
+     if (parts.length === 3) {
+          const day = parts[0];
+          const month = parts[1];
+          const year = parts[2];
+          return `${year}/${month}/${day}`;
+     }
+     throw new Error('Invalid date format. Please use "dd/mm/yyyy".');
+}
+
 //Manually car details ,features and offers upload
 router.post(
      '/add',
@@ -98,18 +111,26 @@ router.post(
                               const calculationNo =
                                    req.body.carOffersData[i].offers[j]
                                         .calculationNo;
+                              const validFrom =
+                                   req.body.carOffersData[i].offers[j].validFrom;
+                              const validTo =
+                                  req.body.carOffersData[i].offers[j].validTo
 
                               if (
                                    duration &&
                                    annualMileage &&
                                    monthlyCost &&
-                                   calculationNo
+                                   calculationNo &&
+                                   validFrom &&
+                                   validTo
                               ) {
                                    offers.push({
                                         duration: duration,
                                         annualMileage: annualMileage,
                                         monthlyCost: monthlyCost,
                                         calculationNo: calculationNo,
+                                        validFrom: convertDateToYYYYMMDD(validFrom),
+                                        validTo:convertDateToYYYYMMDD(validTo)
                                    });
                               }
                          }

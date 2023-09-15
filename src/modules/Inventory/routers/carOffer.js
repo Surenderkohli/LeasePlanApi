@@ -692,7 +692,7 @@ router.get('/filter_cars', async (req, res) => {
                querySearch,
           };
 
-          const cars = await carOfferService.filterCars(filterOptions);
+          const cars = await carOfferService.filterCarsV9(filterOptions);
 
           if (cars.length > 0) {
                res.status(200).json({ success: true, data: cars });

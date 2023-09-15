@@ -1202,7 +1202,7 @@ const filterCars = async (filterOptions) => {
                     (car) => car.details.bodyType === bodyType
                );
                return carsWithBodyType;
-          }
+          }w
 
           // if (fuelType) {
           //      const carsWithFuelType = cars.filter(
@@ -1351,6 +1351,54 @@ const getAllCarWithoutOffers = async () => {
           throw new Error('Failed to get offers without cars');
      }
 };
+
+
+// Function to edit an offer by _id
+const editOffer = async (offerId, newData) => {
+     try {
+          const updateFields = {};
+
+          if (newData.duration) updateFields["offers.$.duration"] = newData.duration;
+          if (newData.annualMileage) updateFields["offers.$.annualMileage"] = newData.annualMileage;
+          if (newData.monthlyCost) updateFields["offers.$.monthlyCost"] = newData.monthlyCost;
+          if (newData.validFrom) updateFields["offers.$.validFrom"] = newData.validFrom;
+          if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
+
+          const carOffer = await carOfferModel.findOneAndUpdate(
+              { "offers._id": offerId },
+              { "$set": updateFields },
+              { new: true }
+          );
+
+          if (!carOffer) {
+               throw new Error('Offer not found');
+          }
+
+          return carOffer;
+     } catch (error) {
+          throw error;
+     }
+};
+// Function to delete an offer
+const deleteOffer = async (offerId) => {
+     try {
+          const carOffer = await carOfferModel.findOneAndUpdate(
+              { "offers._id": offerId },
+              { "$pull": { "offers": { "_id": offerId } } },
+              { new: true }
+          );
+
+          if (!carOffer) {
+               throw new Error('Offer not found');
+          }
+
+          return carOffer;
+     } catch (error) {
+          throw error;
+     }
+};
+
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -1366,4 +1414,6 @@ export const carOfferService = {
      getAllCarWithoutOffers,
      getSingleCarV2,
      updateCarV3,
+     editOffer,
+     deleteOffer
 };

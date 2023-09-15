@@ -1202,7 +1202,7 @@ const filterCars = async (filterOptions) => {
                     (car) => car.details.bodyType === bodyType
                );
                return carsWithBodyType;
-          }w
+          }
 
           // if (fuelType) {
           //      const carsWithFuelType = cars.filter(
@@ -1363,10 +1363,11 @@ const editOffer = async (offerId, newData) => {
           if (newData.monthlyCost) updateFields["offers.$.monthlyCost"] = newData.monthlyCost;
           if (newData.validFrom) updateFields["offers.$.validFrom"] = newData.validFrom;
           if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
+          if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
 
           const carOffer = await carOfferModel.findOneAndUpdate(
               { "offers._id": offerId },
-              { "$set": updateFields },
+              { $set: updateFields },
               { new: true }
           );
 
@@ -1384,7 +1385,7 @@ const deleteOffer = async (offerId) => {
      try {
           const carOffer = await carOfferModel.findOneAndUpdate(
               { "offers._id": offerId },
-              { $pull: { "offers": { "_id": offerId } } },
+              { $pull: { offers: { _id: offerId } } },
               { new: true }
           );
 

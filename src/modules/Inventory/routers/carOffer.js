@@ -733,13 +733,13 @@ router.get('/list_not_offers', async (req, res) => {
 // Route to edit an offer
 router.put('/editOffer/:offerId', async (req, res) => {
      const { offerId } = req.params;
-     const { duration, annualMileage, monthlyCost, validFrom, validTo } = req.body;
+     const { duration, annualMileage, monthlyCost, validFrom, validTo, bestDeals } = req.body;
 
      try {
-          const updatedCarOffer = await carOfferService.editOffer(offerId, { duration, annualMileage, monthlyCost, validFrom, validTo });
-          res.json({ message: 'Offer updated successfully',updatedCarOffer });
+          const updatedCarOffer = await carOfferService.editOffer(offerId, { duration, annualMileage, monthlyCost, validFrom, validTo, bestDeals });
+         return res.json({ message: 'Offer updated successfully',updatedCarOffer });
      } catch (error) {
-          res.status(500).json({ message: error.message });
+          return res.status(500).json({ message: error.message });
      }
 });
 
@@ -750,9 +750,9 @@ router.delete('/deleteoffer/:offerId', async (req, res) => {
 
      try {
           const updatedCarOffer = await carOfferService.deleteOffer(offerId);
-          res.json({ message: 'Offer deleted successfully' });
+          return res.json({ message: 'Offer deleted successfully' });
      } catch (error) {
-          res.status(500).json({ message: error.message });
+          return res.status(500).json({ message: error.message });
      }
 });
 export default router;

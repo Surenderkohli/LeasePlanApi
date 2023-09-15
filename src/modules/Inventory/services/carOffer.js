@@ -1399,18 +1399,6 @@ const deleteOffer = async (offerId) => {
 };
 
 
-const deleteOffer2 =async(offerId)=>{
-
-     const carOffer = await carOfferModel.findByIdAndUpdate(
-         {'offers._id':offerId},
-         {
-
-         }
-     )
-
-}
-
-
 export const carOfferService = {
      createCarOffer,
      getAllOffer,

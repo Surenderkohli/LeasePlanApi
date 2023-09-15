@@ -137,7 +137,7 @@ const createCarOffer = async (carOfferData) => {
                     existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
 
                     // Call isExpired here to update expired field
-                    existingCarOffer.isExpired();
+                   await existingCarOffer.isExpired();
                } else {
                     const newOffer = {
                          duration: carOfferData.duration,
@@ -187,7 +187,7 @@ const createCarOffer = async (carOfferData) => {
                });
 
                // Call isExpired here to update expired field
-               newCarOffer.isExpired();
+              await newCarOffer.isExpired();
                return newCarOffer;
           }
      } catch (error) {
@@ -1554,6 +1554,165 @@ const deleteOffer = async (offerId) => {
 };
 
 
+const filterCarsV18 = async (filterOptions) => {
+     try {
+          const {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+               priceMin,
+               priceMax,
+               annualMileage,
+               bodyType,
+               querySearch,
+          } = filterOptions;
+
+          const query = {};
+
+          if (leaseType) {
+               query['leaseType_id.leaseType'] = leaseType;
+          }
+
+          if (term) {
+               query['leaseType_id.term'] = term;
+          }
+
+          if (priceMin || priceMax) {
+               query['offers.monthlyCost'] = {};
+
+               if (priceMin) {
+                    query['offers.monthlyCost']['$gte'] = priceMin;
+               }
+
+               if (priceMax) {
+                    query['offers.monthlyCost']['$lte'] = priceMax;
+               }
+          }
+
+          if (annualMileage) {
+               query['offers.annualMileage'] = annualMileage;
+          }
+
+          if (carBrand_id) {
+               query.carBrand_id = carBrand_id;
+          }
+
+          if (carSeries_id) {
+               query.carSeries_id = carSeries_id;
+          }
+
+          if (querySearch) {
+               const carBrands = await carBrandModel.find({
+                    companyName: { $regex: querySearch, $options: 'i' },
+               });
+
+               const carBrandIds = carBrands.map((brand) => brand._id);
+
+               const carSeries = await carSeriesModel.find({
+                    seriesName: { $regex: querySearch, $options: 'i' },
+               });
+
+               const carSeriesIds = carSeries.map((series) => series._id);
+
+               query.$or = [
+                    { carBrand_id: { $in: carBrandIds } },
+                    { carSeries_id: { $in: carSeriesIds } },
+               ];
+
+               if (bodyType) {
+                    query['details.bodyType'] = bodyType;
+               }
+
+               if (annualMileage) {
+                    query['offers.annualMileage'] = annualMileage;
+               }
+
+               if (priceMin || priceMax) {
+                    query['offers.monthlyCost'] = {};
+
+                    if (priceMin) {
+                         query['offers.monthlyCost']['$gte'] = priceMin;
+                    }
+
+                    if (priceMax) {
+                         query['offers.monthlyCost']['$lte'] = priceMax;
+                    }
+               }
+          } else {
+               // Apply global filters if querySearch is not provided
+               if (bodyType) {
+                    query['details.bodyType'] = bodyType;
+               }
+
+               if (annualMileage) {
+                    query['offers.annualMileage'] = annualMileage;
+               }
+
+               if (priceMin || priceMax) {
+                    query['offers.monthlyCost'] = {};
+
+                    if (priceMin) {
+                         query['offers.monthlyCost']['$gte'] = priceMin;
+                    }
+
+                    if (priceMax) {
+                         query['offers.monthlyCost']['$lte'] = priceMax;
+                    }
+               }
+          }
+
+          const carOffers = await carOfferModel
+              .find({
+                   ...query,
+                   isDeleted: false, //  line to filter based on isDeleted property
+              })
+              .populate({
+                   path: 'carBrand_id',
+                   select: 'makeCode companyName',
+              })
+              .populate({
+                   path: 'carSeries_id',
+                   select: 'modelCode seriesName',
+              });
+
+          const cars = [];
+
+          for (const carOffer of carOffers) {
+               const car = carOffer.toObject();
+               const carDetails = await carDetailModel.find({
+                    carBrand_id: car.carBrand_id,
+                    carSeries_id: car.carSeries_id,
+               });
+
+               car.details = carDetails[0]; // Assuming there is only one matching car detail
+
+               if (!leaseType || carOffer.leaseType === leaseType) {
+                    if (!term || carOffer.term === term) {
+                         // Check if any offer for the specified term is expired
+                         const hasActiveOffer = carOffer.offers.some(offer => !offer.expired);
+
+                         if (hasActiveOffer) {
+                              cars.push(car);
+                         }
+                    }
+               }
+          }
+
+          if (bodyType) {
+               const carsWithBodyType = cars.filter(
+                   (car) => car.details.bodyType === bodyType
+               );
+               return carsWithBodyType;
+          }
+
+          return cars;
+     } catch (error) {
+          throw error;
+     }
+};
+
+
 export const carOfferService = {
      createCarOffer,
      getAllOffer,
@@ -1571,5 +1730,6 @@ export const carOfferService = {
      updateCarV3,
      editOffer,
      deleteOffer,
-     filterCarsV9
+     filterCarsV9,
+     filterCarsV18
 };

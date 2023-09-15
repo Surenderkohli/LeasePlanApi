@@ -62,18 +62,22 @@ const carOfferSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-carOfferSchema.methods.isExpired = function () {
+carOfferSchema.methods.isExpired = async function () {
     const currentDate = Date.now();
 
-    // if (this.validTo && this.validTo < currentDate) {
-    //     this.expired = true;
-    // }
+    if (this.validTo && this.validTo < currentDate) {
+        this.expired = true;
+    }
     this.offers.forEach((offer) => {
         if (offer.validTo && offer.validTo < currentDate) {
             offer.expired = true;
         }
     });
+
+    // Save the updated document
+    await this.save();
 };
+
 
 
 const carOfferModel = mongoose.model('caroffers', carOfferSchema);

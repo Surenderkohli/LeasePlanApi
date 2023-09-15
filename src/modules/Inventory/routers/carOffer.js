@@ -755,4 +755,47 @@ router.delete('/deleteoffer/:offerId', async (req, res) => {
           return res.status(500).json({ message: error.message });
      }
 });
+
+
+router.get('/active_filter_cars', async (req, res) => {
+     try {
+          const {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+               priceMin,
+               priceMax,
+               annualMileage,
+               bodyType,
+               querySearch,
+          } = req.query;
+
+          const filterOptions = {
+               leaseType,
+               term,
+               carBrand_id,
+               carSeries_id,
+               priceMin,
+               priceMax,
+               annualMileage,
+               bodyType,
+               querySearch,
+          };
+
+          const cars = await carOfferService.filterCarsV18(filterOptions);
+
+          if (cars.length > 0) {
+               res.status(200).json({ success: true, data: cars });
+          } else {
+               res.status(200).json({
+                    success: false,
+                    message: 'No cars found with the given filters.',
+                    data: [],
+               });
+          }
+     } catch (error) {
+          res.status(400).json({ success: false, message: error.message });
+     }
+});
 export default router;

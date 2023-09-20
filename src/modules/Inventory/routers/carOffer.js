@@ -7,6 +7,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { createObjectCsvWriter } from 'csv-writer';
 import carDetailModel from '../models/carDetails.js';
 import carOfferModel from '../models/carOffer.js';
+import moment from 'moment';
 
 dotenv.config();
 
@@ -167,19 +168,46 @@ router.get('/', async (req, res) => {
           const result = await carOfferService.getAllOffer();
           const transformedResult = result.map((offer) => {
                const makeCode = offer.carBrand_id
-                    ? offer.carBrand_id.makeCode
-                    : null;
+                   ? offer.carBrand_id.makeCode
+                   : null;
                const modelCode = offer.carSeries_id
-                    ? offer.carSeries_id.modelCode
-                    : null;
-               return { ...offer.toObject(), makeCode, modelCode };
+                   ? offer.carSeries_id.modelCode
+                   : null;
+
+               const formattedOffers = offer.offers.map(o=> {
+                      return {
+                         ...o.toObject(),
+                             validFrom:moment(o.validFrom).format('DD/MM/YYYY'),
+                             validTo:moment(o.validTo).format('DD/MM/YYYY')
+                    }
+               })
+               return {
+                    ...offer.toObject(),
+                    makeCode,
+                    modelCode,
+                    offers:formattedOffers };
           });
-          res.send(transformedResult);
+
+          const filteredResult = carOfferService.filterOffersDirect(transformedResult, req.query);
+
+
+          res.status(200).send({msg:"Offer retrieved successfully",filteredResult});
      } catch (error) {
           console.error(error);
           res.status(500).send('Internal Server Error');
      }
 });
+
+router.get('/single_offer/:id',async(req,res)=>{
+     try {
+          const { id } = req.params
+          const getOfferById = await carOfferService.getOfferById(id)
+          
+          return res.status(200).json({msg:"OfferById retrieved successfully ",getOfferById})
+     }catch (error){
+          return  res.status(500).json({msg: 'Internal Server Error',error})
+     }
+})
 
 router.get('/all-cars', async (req, res) => {
      try {

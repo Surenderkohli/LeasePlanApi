@@ -4,6 +4,7 @@ import carSeriesModel from '../models/carSeries.js';
 import carOfferModel from '../models/carOffer.js';
 import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
+import mongoose from 'mongoose';
 
 
 
@@ -202,6 +203,45 @@ const getAllOffer = async () => {
           .populate(['carBrand_id', 'carSeries_id']);
      return response;
 };
+
+const filterOffersDirect = (offers, query) => {
+     const { calculationNo, makeCode, modelCode } = query;
+
+     return offers.filter((offer) => {
+          return (!calculationNo || offer.offers.some(o => o.calculationNo == calculationNo)) &&
+              (!makeCode || offer.makeCode == makeCode) &&
+              (!modelCode || offer.modelCode == modelCode);
+     });
+};
+
+const getOfferById = async (id) => {
+     try {
+          const allDocuments = await carOfferModel.find({}); // Get all documents
+
+          let matchingOffers = [];
+
+          allDocuments.forEach(document => {
+               const matchingOffer = document.offers.find(offer => offer._id.toString() == id);
+               
+
+               if (matchingOffer) {
+                    matchingOffers.push(matchingOffer);
+               }
+          });
+
+          if (matchingOffers.length === 0) {
+               throw new Error('Offer by id not found');
+          }
+
+          return matchingOffers[0];
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+}
+
+
+
 
 const getAllCarWithOffers = async (
      fuelType,
@@ -624,6 +664,9 @@ const getSingleCarV2 = async (id, duration, annualMileage) => {
           if (!carOffer) {
                throw new Error('Car not found');
           }
+
+          // Filter out expired offers
+          carOffer.offers = carOffer.offers.filter(offer=>!offer.expired)
 
           let result = {
                carOffer,
@@ -1731,5 +1774,7 @@ export const carOfferService = {
      editOffer,
      deleteOffer,
      filterCarsV9,
-     filterCarsV18
+     filterCarsV18,
+     filterOffersDirect,
+     getOfferById
 };

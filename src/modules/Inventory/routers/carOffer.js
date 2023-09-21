@@ -398,7 +398,7 @@ router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
 
 router.get('/best-deal', async (req, res) => {
      try {
-          const { limit = 5, skip = 0 } = req.query;
+          const { limit = 10000000, skip = 0 } = req.query;
           const result = await carOfferService.getDeals(
                parseInt(limit),
                parseInt(skip)

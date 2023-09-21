@@ -1092,7 +1092,10 @@ const getDeals = async (query) => {
           const offersWithBestDeals = carOffers
                .map((carOffer) => {
                     const offers = carOffer.offers.filter(
-                         (offer) => /^yes$/i.test(offer.bestDeals) // Case-insensitive matching
+                         (offer) =>
+                         {
+                              return /^yes$/i.test(offer.bestDeals) && !offer.expired; // Check for bestDeals and expired
+                         } // Case-insensitive matching
                     );
                     return {
                          ...carOffer.toObject(),

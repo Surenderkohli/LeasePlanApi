@@ -198,16 +198,23 @@ router.get('/', async (req, res) => {
      }
 });
 
-router.get('/single_offer/:id',async(req,res)=>{
+router.get('/single_offer/:id', async (req, res) => {
      try {
-          const { id } = req.params
-          const getOfferById = await carOfferService.getOfferById(id)
-          
-          return res.status(200).json({msg:"OfferById retrieved successfully ",getOfferById})
-     }catch (error){
-          return  res.status(500).json({msg: 'Internal Server Error',error})
+          const { id } = req.params;
+          const getOfferById = await carOfferService.getOfferById(id);
+
+          // Format validFrom and validTo
+          const formattedOffer = {
+               ...getOfferById.toObject(),
+               validFrom: moment(getOfferById.validFrom).format('DD/MM/YYYY'),
+               validTo: moment(getOfferById.validTo).format('DD/MM/YYYY')
+          };
+
+          return res.status(200).json({ msg: "OfferById retrieved successfully", getOfferById: formattedOffer });
+     } catch (error) {
+          return res.status(500).json({ msg: 'Internal Server Error', error });
      }
-})
+});
 
 router.get('/all-cars', async (req, res) => {
      try {

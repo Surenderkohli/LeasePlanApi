@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import cron from 'node-cron';
+
 
 const carOfferSchema = new mongoose.Schema(
      {

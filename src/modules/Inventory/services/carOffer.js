@@ -5,6 +5,31 @@ import carOfferModel from '../models/carOffer.js';
 import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
 import mongoose from 'mongoose';
+import { parse, isPast, isAfter, format } from 'date-fns';
+import cron from 'node-cron';
+
+
+// Define a function to update expired status
+const updateExpiredStatus = async () => {
+     const currentDate = new Date();
+     try {
+          const carOffers = await carOfferModel.find();
+          for (const carOffer of carOffers) {
+               for (const offer of carOffer.offers) {
+                    offer.expired = currentDate > offer.validTo;
+               }
+               await carOffer.save();
+          }
+          console.log('Expired status updated successfully.');
+     } catch (error) {
+          console.error('Error updating expired status:', error);
+     }
+};
+
+// Schedule the update to run every day at midnight
+cron.schedule('0 0 * * *', () => {
+     updateExpiredStatus();
+});
 
 
 
@@ -20,7 +45,9 @@ import mongoose from 'mongoose';
 //      throw new Error('Invalid date format. Please use "dd/mm/yy".');
 // }
 
-import { parse, isPast, isAfter, format } from 'date-fns';
+
+
+
 
 const convertAndCheckDate = async (dateString) => {
      try {

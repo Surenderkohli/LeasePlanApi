@@ -66,6 +66,7 @@ const carOfferSchema = new mongoose.Schema(
 carOfferSchema.methods.isExpired = async function () {
     try {
         const carOffers = await this.constructor.find({}); // Fetch all documents
+
         const currentDate = Date.now();
 
         carOffers.forEach(offer => {
@@ -82,10 +83,8 @@ carOfferSchema.methods.isExpired = async function () {
                 }
             });
 
-            offer.isDeleted = offer.offers.every(offerItem => offerItem.expired);
+            await offer.save();
         });
-
-        await Promise.all(carOffers.map(offer => offer.save()));
 
         console.log('Expired field updated successfully for all documents.');
     } catch (error) {

@@ -9,19 +9,58 @@ import mongoose from 'mongoose';
 
 
 // Function to convert "dd/mm/yy" format to "YYYY-MM-DD"
-function convertDateToYYYYMMDD(dateString) {
-     const parts = dateString.split('/');
-     if (parts.length === 3) {
-          const day = parts[0];
-          const month = parts[1];
-          const year = `20${parts[2]}`; // Assuming the year is in "yy" format
-          return `${year}-${month}-${day}`;
+// function convertDateToYYYYMMDD(dateString) {
+//      const parts = dateString.split('/');
+//      if (parts.length === 3) {
+//           const day = parts[0];
+//           const month = parts[1];
+//           const year = `20${parts[2]}`; // Assuming the year is in "yy" format
+//           return `${year}-${month}-${day}`;
+//      }
+//      throw new Error('Invalid date format. Please use "dd/mm/yy".');
+// }
+
+import { parse, isPast, isAfter, format } from 'date-fns';
+
+const convertAndCheckDate = async (dateString) => {
+     try {
+          const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/; // Define the date regex
+
+          const match = dateString.match(dateRegex);
+
+          if (match) {
+               const day = parseInt(match[1], 10);
+               const month = parseInt(match[2], 10) - 1;
+               const year = parseInt(match[3].padStart(4, '20'), 10); // Convert two-digit year to four-digit
+
+               const date = new Date(year, month, day);
+
+               const expired = isPast(date);
+
+               return {
+                    date: format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+                    expired: expired
+               };
+          } else {
+               throw new Error(`Invalid date format: ${dateString}`);
+          }
+     } catch (error) {
+          throw new Error(`Error processing date: ${error.message}`);
      }
-     throw new Error('Invalid date format. Please use "dd/mm/yy".');
-}
+};
+
 const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
+
+          const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
+          const validToResult = await convertAndCheckDate(carOfferData.validTo);
+
+          const validFrom = new Date(validFromResult.date);
+          const validTo = new Date(validToResult.date);
+
+          const currentDate = new Date();
+          const expired = currentDate > validTo
 
           if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({
@@ -111,6 +150,8 @@ const createCarOffer = async (carOfferData) => {
                }
           }
 
+
+
           const existingCarOffer = await carOfferModel.findOne({
                carBrand_id: companyName._id,
                carSeries_id: seriesName._id,
@@ -134,11 +175,14 @@ const createCarOffer = async (carOfferData) => {
                     existingOffer.bestDeals = carOfferData.bestDeals
                          ? carOfferData.bestDeals
                          : 'No';
-                    existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
-                    existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
+                    existingOffer.validFrom = validFrom
+                    existingOffer.validTo = validTo,
+                    expired= expired // Add this line
+                    // existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
+                    // existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
 
-                    // Call isExpired here to update expired field
-                   await existingCarOffer.isExpired();
+
+
                } else {
                     const newOffer = {
                          duration: carOfferData.duration,
@@ -148,8 +192,12 @@ const createCarOffer = async (carOfferData) => {
                          bestDeals: carOfferData.bestDeals
                               ? carOfferData.bestDeals
                               : 'No',
-                         validFrom : convertDateToYYYYMMDD(carOfferData.validFrom),
-                         validTo : convertDateToYYYYMMDD(carOfferData.validTo)
+                          validFrom :validFrom,
+                          validTo : validTo,
+                         expired: expired, // Add this line
+
+                         // validFrom : convertDateToYYYYMMDD(carOfferData.validFrom),
+                         // validTo : convertDateToYYYYMMDD(carOfferData.validTo)
                     };
 
                     if (carOfferData.leaseType && carOfferData.term) {
@@ -180,15 +228,16 @@ const createCarOffer = async (carOfferData) => {
                               bestDeals: carOfferData.bestDeals
                                    ? carOfferData.bestDeals
                                    : 'No',
-                              validFrom:  convertDateToYYYYMMDD(carOfferData.validFrom),
-                              validTo:  convertDateToYYYYMMDD(carOfferData.validTo),
+                              validFrom:  validFrom,
+                              validTo:  validTo,
+                              expired: expired, // Add this line
                          },
                     ],
 
                });
 
-               // Call isExpired here to update expired field
-              await newCarOffer.isExpired();
+
+
                return newCarOffer;
           }
      } catch (error) {

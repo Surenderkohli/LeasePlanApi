@@ -87,7 +87,7 @@ const createCarOffer = async (carOfferData) => {
           const validTo = new Date(validToResult.date);
 
           const currentDate = new Date();
-          const expired = currentDate > validTo
+          const expired = currentDate >= validTo
 
           if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({
@@ -204,7 +204,7 @@ const createCarOffer = async (carOfferData) => {
                          : 'No';
                     existingOffer.validFrom = validFrom
                     existingOffer.validTo = validTo,
-                    expired= expired // Add this line
+                    existingOffer.expired= expired // Add this line
                     // existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
                     // existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
 
@@ -221,7 +221,7 @@ const createCarOffer = async (carOfferData) => {
                               : 'No',
                           validFrom :validFrom,
                           validTo : validTo,
-                         expired: expired, // Add this line
+                          expired: expired, // Add this line
 
                          // validFrom : convertDateToYYYYMMDD(carOfferData.validFrom),
                          // validTo : convertDateToYYYYMMDD(carOfferData.validTo)

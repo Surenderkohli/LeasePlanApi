@@ -1565,6 +1565,30 @@ const editOffer = async (offerId, newData) => {
           if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
           if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
 
+          //  UAE time (UTC+4)
+
+
+          /*
+
+            if (newData.validTo) {
+               const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+               const currentDate = new Date();
+               validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+
+               // Adjust currentDate to UAE time (UTC+4)
+               const uaeTimeOffset = 4; // UTC+4
+               currentDate.setHours(currentDate.getHours() + uaeTimeOffset);
+
+               if (validToDate >= currentDate) {
+                    updateFields["offers.$.expired"] = false;
+               } else {
+                    updateFields["offers.$.expired"] = true;
+               }
+          }
+
+           */
+
+
           if (newData.validTo) {
                const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
                const currentDate = new Date();
@@ -1576,8 +1600,6 @@ const editOffer = async (offerId, newData) => {
                     updateFields["offers.$.expired"] = true;
                }
           }
-
-
 
           const carOffer = await carOfferModel.findOneAndUpdate(
               { "offers._id": offerId },

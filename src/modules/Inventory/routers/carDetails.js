@@ -45,16 +45,16 @@ const router = Router();
 
 
 // Function to convert "dd/mm/yyyy" format to "YYYY-MM-DD"
-function convertDateToYYYYMMDD(dateString) {
-     const parts = dateString.split('/');
-     if (parts.length === 3) {
-          const day = parts[0];
-          const month = parts[1];
-          const year = parts[2];
-          return `${year}/${month}/${day}`;
-     }
-     throw new Error('Invalid date format. Please use "dd/mm/yyyy".');
-}
+// function convertDateToYYYYMMDD(dateString) {
+//      const parts = dateString.split('/');
+//      if (parts.length === 3) {
+//           const day = parts[0];
+//           const month = parts[1];
+//           const year = parts[2];
+//           return `${year}/${month}/${day}`;
+//      }
+//      throw new Error('Invalid date format. Please use "dd/mm/yyyy".');
+// }
 
 //Manually car details ,features and offers upload
 router.post(
@@ -116,6 +116,21 @@ router.post(
                               const validTo =
                                   req.body.carOffersData[i].offers[j].validTo
 
+
+                              // const validToDate = new Date(validTo.replace(/-/g, '/'));
+                              // const validFromDate = new Date(validFrom.replace(/-/g, '/'));
+                              // const currentDate = new Date();
+                              // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+                              //
+                              // let expired;
+                              //
+                              // if (validToDate >= currentDate ) {
+                              //      expired = true;
+                              // } else {
+                              //      expired = false;
+                              // }
+
+
                               if (
                                    duration &&
                                    annualMileage &&
@@ -129,8 +144,9 @@ router.post(
                                         annualMileage: annualMileage,
                                         monthlyCost: monthlyCost,
                                         calculationNo: calculationNo,
-                                        validFrom: convertDateToYYYYMMDD(validFrom),
-                                        validTo:convertDateToYYYYMMDD(validTo)
+                                        validFrom: validFrom,
+                                        validTo:validTo,
+
                                    });
                               }
                          }

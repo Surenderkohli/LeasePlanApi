@@ -1590,7 +1590,11 @@ const editOffer = async (offerId, newData) => {
 
 
           if (newData.validTo) {
-               const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+               console.log('newData.validTo',newData.validTo);
+
+               // const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+                    const validToDate = new Date(newData.validTo);
+               console.log('validToDate',validToDate);
                const currentDate = new Date();
                validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
 
@@ -1606,6 +1610,7 @@ const editOffer = async (offerId, newData) => {
               { $set: updateFields },
               { new: true }
           );
+          console.log(updateFields,'updatedFields');
 
           if (!carOffer) {
                throw new Error('Offer not found');
@@ -1787,6 +1792,7 @@ const filterCarsV18 = async (filterOptions) => {
                );
                return carsWithBodyType;
           }
+
 
           return cars;
      } catch (error) {

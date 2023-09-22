@@ -64,25 +64,32 @@ const carOfferSchema = new mongoose.Schema(
 );
 
 carOfferSchema.methods.isExpired = async function () {
-    const currentDate = Date.now();
-
-    this.offers.forEach(offer => {
-        if (offer.validTo) {
-            const validTo = new Date(offer.validTo);
-            validTo.setHours(23, 59, 59, 999); // Set to end of day
-
-            if (validTo >= currentDate) {
-                offer.expired = false;
-            } else {
-                offer.expired = true;
-            }
-        }
-    });
-
     try {
-        await this.save();
+        const carOffers = await this.constructor.find({}); // Fetch all documents
+        const currentDate = Date.now();
+
+        carOffers.forEach(offer => {
+            offer.offers.forEach(offerItem => {
+                if (offerItem.validTo) {
+                    const validTo = new Date(offerItem.validTo);
+                    validTo.setHours(23, 59, 59, 999); // Set to end of day
+
+                    if (validTo >= currentDate) {
+                        offerItem.expired = false;
+                    } else {
+                        offerItem.expired = true;
+                    }
+                }
+            });
+
+            offer.isDeleted = offer.offers.every(offerItem => offerItem.expired);
+        });
+
+        await Promise.all(carOffers.map(offer => offer.save()));
+
+        console.log('Expired field updated successfully for all documents.');
     } catch (error) {
-        throw new Error(`Error saving document: ${error.message}`);
+        throw new Error(`Error updating expiry: ${error.message}`);
     }
 };
 

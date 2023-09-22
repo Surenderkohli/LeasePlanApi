@@ -1593,10 +1593,10 @@ const editOffer = async (offerId, newData) => {
                console.log('newData.validTo',newData.validTo);
 
                // const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
-                    const validToDate = new Date(newData.validTo);
-               console.log('validToDate',validToDate);
+               const validToDate = new Date(newData.validTo);
+
                const currentDate = new Date();
-               validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+              // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
 
                if (validToDate >= currentDate) {
                     updateFields["offers.$.expired"] = false;
@@ -1610,7 +1610,7 @@ const editOffer = async (offerId, newData) => {
               { $set: updateFields },
               { new: true }
           );
-          console.log(updateFields,'updatedFields');
+
 
           if (!carOffer) {
                throw new Error('Offer not found');

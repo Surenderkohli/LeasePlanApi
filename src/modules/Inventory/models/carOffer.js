@@ -73,8 +73,7 @@ carOfferSchema.methods.isExpired = async function () {
             offer.offers.forEach(offerItem => {
                 if (offerItem.validTo) {
                     const validTo = new Date(offerItem.validTo);
-                    validTo.setHours(23, 59, 59, 999); // Set to end of day
-
+                  // validTo.setHours(23, 59, 59, 999); // Set to end of day
                     if (validTo >= currentDate) {
                         offerItem.expired = false;
                     } else {
@@ -107,7 +106,7 @@ cron.schedule('0 0 * * *', async () => {
     }
 }, {
     scheduled: true,
-    timezone: "Asia/Kolkata"
+  //  timezone: "Asia/Kolkata"
 });
 
 export default carOfferModel;

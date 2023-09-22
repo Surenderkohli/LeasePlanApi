@@ -464,7 +464,7 @@ function isValidCarOfferData(carOfferData) {
                const cellAddress = getCellAddress(columnIndex, index);
                missingFields.push({
                     column: 'duration',
-                    cell: cellAddress,
+                    cell: cellAdtress,
                     message: `Missing duration`,
                });
           }

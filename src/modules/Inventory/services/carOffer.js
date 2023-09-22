@@ -1565,13 +1565,19 @@ const editOffer = async (offerId, newData) => {
           if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
           if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
 
-          // Check if validTo is greater than current date
-          if (newData.validTo && new Date(newData.validTo) > new Date()) {
-               updateFields["offers.$.expired"] = false;
-          } else {
-               // If validTo is smaller than today's date, mark as expired
-               updateFields["offers.$.expired"] = true;
+          if (newData.validTo) {
+               const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+               const currentDate = new Date();
+               validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+
+               if (validToDate >= currentDate) {
+                    updateFields["offers.$.expired"] = false;
+               } else {
+                    updateFields["offers.$.expired"] = true;
+               }
           }
+
+
 
           const carOffer = await carOfferModel.findOneAndUpdate(
               { "offers._id": offerId },

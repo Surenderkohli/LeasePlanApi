@@ -66,32 +66,43 @@ const carOfferSchema = new mongoose.Schema(
 carOfferSchema.methods.isExpired = async function () {
     const currentDate = Date.now();
 
-    this.offers.forEach((offer) => {
-        if (offer.validTo && offer.validTo < currentDate) {
-            offer.expired = true;
+    this.offers.forEach(offer => {
+        if (offer.validTo) {
+            const validTo = new Date(offer.validTo);
+            validTo.setHours(23, 59, 59, 999); // Set to end of day
+
+            if (validTo >= currentDate) {
+                offer.expired = false;
+            } else {
+                offer.expired = true;
+            }
         }
     });
-    // Save the updated document
-    await this.save();
+
+    try {
+        await this.save();
+    } catch (error) {
+        throw new Error(`Error saving document: ${error.message}`);
+    }
 };
+
+
 
 const carOfferModel = mongoose.model('caroffers', carOfferSchema);
 
-
-cron.schedule('0 0 * * *',async()=>{
+cron.schedule('0 0 * * *', async () => {
     try {
-        const carOffers = await carOfferModel.find({})
-        carOffers.forEach(async (offer)=>{
-            await offer.isExpired()
-        })
+        const carOffers = await carOfferModel.find({});
+        await Promise.all(carOffers.map(async offer => {
+            await offer.isExpired();
+        }));
         console.log('Expired field updated successfully.');
-    }catch (error){
+    } catch (error) {
         console.error('Error updating expiry:', error);
     }
 }, {
     scheduled: true,
-    timezone:"Asia/Kolkata"
-   // timezone: "Asia/Dubai"
-})
+    timezone: "Asia/Kolkata"
+});
 
 export default carOfferModel;

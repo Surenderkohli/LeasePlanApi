@@ -69,7 +69,7 @@ carOfferSchema.methods.isExpired = async function () {
 
         const currentDate = Date.now();
 
-        carOffers.forEach(offer => {
+        for (const offer of carOffers) {
             offer.offers.forEach(offerItem => {
                 if (offerItem.validTo) {
                     const validTo = new Date(offerItem.validTo);
@@ -84,14 +84,13 @@ carOfferSchema.methods.isExpired = async function () {
             });
 
             await offer.save();
-        });
+        }
 
         console.log('Expired field updated successfully for all documents.');
     } catch (error) {
         throw new Error(`Error updating expiry: ${error.message}`);
     }
 };
-
 
 
 const carOfferModel = mongoose.model('caroffers', carOfferSchema);

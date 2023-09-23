@@ -5,8 +5,7 @@ import carOfferModel from '../models/carOffer.js';
 import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
 import mongoose from 'mongoose';
-import { parse, format } from 'date-fns';
-import { utcToZonedTime } from 'date-fns-tz';
+
 
 
 // Function to convert "dd/mm/yy" format to "YYYY-MM-DD"
@@ -32,8 +31,14 @@ const convertAndCheckDate = async (dateString) => {
                const day = parseInt(match[1], 10);
                const month = parseInt(match[2], 10) - 1;
                const year = parseInt(match[3], 10) + 2000;
+               console.log('day',day);
+               console.log('month',month);
+
 
                const date = new Date(Date.UTC(year, month, day, 0, 0, 0));
+               console.log('Date',date);
+
+               console.log('date.toISOString()',date.toISOString());
 
                return {
                     date: date.toISOString(), // Store as UTC ISO string
@@ -50,20 +55,18 @@ const convertAndCheckDate = async (dateString) => {
      try {
           let leaseTypes = [];
 
+          const currentDate = new Date();
           const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
           const validToResult = await convertAndCheckDate(carOfferData.validTo);
 
           const validFrom = new Date(validFromResult.date);
           const validTo = new Date(validToResult.date);
 
+          const isSameYear = currentDate.getUTCFullYear() === validTo.getUTCFullYear();
+          const isSameMonth = currentDate.getUTCMonth() === validTo.getUTCMonth();
+          const isSameDay = currentDate.getUTCDate() === validTo.getUTCDate();
 
-          const currentDate = new Date();
-          const expired = currentDate >= validTo || (currentDate.getTime() === validTo.getTime() && currentDate.getHours() !== 0);
-
-          console.log('Current Date:', currentDate);
-          console.log('Valid To Date:', validTo);
-          console.log('Expired:', expired);
-
+          const expired = currentDate >= validTo && !(isSameYear && isSameMonth && isSameDay);
 
 
           if (carOfferData.leaseType && carOfferData.term) {

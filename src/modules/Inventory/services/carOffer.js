@@ -31,14 +31,9 @@ const convertAndCheckDate = async (dateString) => {
                const day = parseInt(match[1], 10);
                const month = parseInt(match[2], 10) - 1;
                const year = parseInt(match[3], 10) + 2000;
-               console.log('day',day);
-               console.log('month',month);
-
-
+               
                const date = new Date(Date.UTC(year, month, day, 0, 0, 0)); //Date 2023-09-15T00:00:00.000Z
-
-
-               console.log('date.toISOString()',date.toISOString());
+              // console.log('date.toISOString()',date.toISOString());
                //date.toISOString() 2023-09-21T00:00:00.000Z
 
                return {
@@ -60,7 +55,7 @@ const convertAndCheckDate = async (dateString) => {
           const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
 
           const validToResult = await convertAndCheckDate(carOfferData.validTo);
-          console.log('validToResult',validToResult);
+
 
           const validFrom = new Date(validFromResult.date);
           const validTo = new Date(validToResult.date);
@@ -172,8 +167,6 @@ const convertAndCheckDate = async (dateString) => {
           if (existingCarOffer) {
                const existingOffer = existingCarOffer.offers.find(
                     (offer) =>
-                         // offer.leaseType === carOfferData.leaseType &&
-                         // offer.term === carOfferData.term &&
                          offer.calculationNo.toString() ===
                          carOfferData.calculationNo
                );
@@ -187,11 +180,7 @@ const convertAndCheckDate = async (dateString) => {
                          : 'No';
                     existingOffer.validFrom = validFrom
                     existingOffer.validTo = validTo,
-                    existingOffer.expired= expired // Add this line
-                    // existingOffer.validFrom = convertDateToYYYYMMDD(carOfferData.validFrom)
-                    // existingOffer.validTo = convertDateToYYYYMMDD(carOfferData.validTo)
-
-
+                    existingOffer.expired= expired
 
                } else {
                     const newOffer = {
@@ -204,10 +193,8 @@ const convertAndCheckDate = async (dateString) => {
                               : 'No',
                           validFrom :validFrom,
                           validTo : validTo,
-                          expired: expired, // Add this line
+                          expired: expired,
 
-                         // validFrom : convertDateToYYYYMMDD(carOfferData.validFrom),
-                         // validTo : convertDateToYYYYMMDD(carOfferData.validTo)
                     };
 
                     if (carOfferData.leaseType && carOfferData.term) {
@@ -240,13 +227,11 @@ const convertAndCheckDate = async (dateString) => {
                                    : 'No',
                               validFrom:  validFrom,
                               validTo:  validTo,
-                              expired: expired, // Add this line
+                              expired: expired,
                          },
                     ],
 
                });
-
-
 
                return newCarOffer;
           }

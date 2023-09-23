@@ -8,6 +8,7 @@ import { createObjectCsvWriter } from 'csv-writer';
 import carDetailModel from '../models/carDetails.js';
 import carOfferModel from '../models/carOffer.js';
 import moment from 'moment';
+import cron from 'node-cron';
 
 dotenv.config();
 
@@ -45,6 +46,33 @@ const router = Router();
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
+
+
+
+
+
+// Define a function to update expired status
+const updateExpiredStatus = async () => {
+     const currentDate = new Date();
+     try {
+          const carOffers = await carOfferModel.find();
+          for (const carOffer of carOffers) {
+               for (const offer of carOffer.offers) {
+                    offer.expired = currentDate > offer.validTo;
+               }
+               await carOffer.save();
+          }
+          console.log('Expired status updated successfully.');
+     } catch (error) {
+          console.error('Error updating expired status:', error);
+     }
+};
+
+// Schedule the update to run every day at midnight
+cron.schedule('0 0 * * *', () => {
+     updateExpiredStatus();
+});
+
 
 async function generateErrorCSV(errorList) {
      const errorFolder = 'errorFile'; // Update with the correct folder name

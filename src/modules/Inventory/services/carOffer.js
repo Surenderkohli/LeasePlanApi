@@ -7,31 +7,6 @@ import carFeatureModel from '../models/carFeatures.js';
 import mongoose from 'mongoose';
 import { parse, format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import cron from 'node-cron';
-
-
-
-// Define a function to update expired status
-const updateExpiredStatus = async () => {
-     const currentDate = new Date();
-     try {
-          const carOffers = await carOfferModel.find();
-          for (const carOffer of carOffers) {
-               for (const offer of carOffer.offers) {
-                    offer.expired = currentDate > offer.validTo;
-               }
-               await carOffer.save();
-          }
-          console.log('Expired status updated successfully.');
-     } catch (error) {
-          console.error('Error updating expired status:', error);
-     }
-};
-
-// Schedule the update to run every day at midnight
-cron.schedule('0 0 * * *', () => {
-     updateExpiredStatus();
-});
 
 
 // Function to convert "dd/mm/yy" format to "YYYY-MM-DD"

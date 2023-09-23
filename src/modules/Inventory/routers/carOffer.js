@@ -74,7 +74,8 @@ const updateExpiredStatus = async () => {
 
 
 // Schedule the update to run every day at midnight
-cron.schedule('*/2 * * * *', async () => {
+// cron.schedule('*/2 * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
      await updateExpiredStatus();
 });
 

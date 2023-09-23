@@ -5,7 +5,7 @@ import carOfferModel from '../models/carOffer.js';
 import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
 import mongoose from 'mongoose';
-import { parse, isPast, isAfter, format } from 'date-fns';
+import { parse, format } from 'date-fns';
 import cron from 'node-cron';
 
 
@@ -62,11 +62,8 @@ const convertAndCheckDate = async (dateString) => {
 
                const date = new Date(year, month, day);
 
-               const expired = isPast(date);
-
                return {
                     date: format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
-                    expired: expired
                };
           } else {
                throw new Error(`Invalid date format: ${dateString}`);
@@ -80,14 +77,20 @@ const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
 
-          const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
+         const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
           const validToResult = await convertAndCheckDate(carOfferData.validTo);
 
           const validFrom = new Date(validFromResult.date);
           const validTo = new Date(validToResult.date);
 
           const currentDate = new Date();
-          const expired = currentDate >= validTo
+          const expired = currentDate > validTo || (currentDate.getTime() === validTo.getTime() && currentDate.getHours() !== 0);
+
+          console.log('Current Date:', currentDate);
+          console.log('Valid To Date:', validTo);
+          console.log('Expired:', expired);
+
+
 
           if (carOfferData.leaseType && carOfferData.term) {
                const existingLeaseType = await leaseTypeModel.findOne({

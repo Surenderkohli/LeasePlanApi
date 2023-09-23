@@ -56,9 +56,11 @@ const convertAndCheckDate = async (dateString) => {
      try {
           let leaseTypes = [];
 
-          const currentDate = new Date();
+               const currentDate = new Date();
           const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
+
           const validToResult = await convertAndCheckDate(carOfferData.validTo);
+          console.log('validToResult',validToResult);
 
           const validFrom = new Date(validFromResult.date);
           const validTo = new Date(validToResult.date);

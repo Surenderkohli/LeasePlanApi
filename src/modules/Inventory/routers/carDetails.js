@@ -56,6 +56,36 @@ const router = Router();
 //      throw new Error('Invalid date format. Please use "dd/mm/yyyy".');
 // }
 
+const convertAndCheckDate = async (dateString) => {
+     try {
+          const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/;
+
+          const match = dateString.match(dateRegex);
+
+          if (match) {
+               const day = parseInt(match[1], 10);
+               const month = parseInt(match[2], 10) - 1;
+               const year = parseInt(match[3], 10) + 2000;
+               console.log('day',day);
+               console.log('month',month);
+
+
+               const date = new Date(Date.UTC(year, month, day, 0, 0, 0)); //Date 2023-09-15T00:00:00.000Z
+
+
+               // console.log('date.toISOString()',date.toISOString());
+               //date.toISOString() 2023-09-21T00:00:00.000Z
+
+               return {
+                    date: date.toISOString(), // Store as UTC ISO string
+               };
+          } else {
+               throw new Error(`Invalid date format: ${dateString}`);
+          }
+     } catch (error) {
+          throw new Error(`Error processing date: ${error.message}`);
+     }
+};
 //Manually car details ,features and offers upload
 router.post(
      '/add',
@@ -116,19 +146,21 @@ router.post(
                               const validTo =
                                   req.body.carOffersData[i].offers[j].validTo
 
+                              const validFromResult = await convertAndCheckDate(validFrom);
+                              const validToResult = await convertAndCheckDate(validTo);
 
-                              // const validToDate = new Date(validTo.replace(/-/g, '/'));
-                              // const validFromDate = new Date(validFrom.replace(/-/g, '/'));
-                              // const currentDate = new Date();
-                              // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
-                              //
-                              // let expired;
-                              //
-                              // if (validToDate >= currentDate ) {
-                              //      expired = true;
-                              // } else {
-                              //      expired = false;
-                              // }
+                              const validFromParsed = new Date(validFromResult.date);
+                              const validToParsed = new Date(validToResult.date);
+
+
+                              const currentDate = new Date();
+
+                              const isSameYear = currentDate.getUTCFullYear() === validToParsed.getUTCFullYear();
+                              const isSameMonth = currentDate.getUTCMonth() === validToParsed.getUTCMonth();
+                              const isSameDay = currentDate.getUTCDate() === validToParsed.getUTCDate();
+
+                              const expired = currentDate >= validToParsed && !(isSameYear && isSameMonth && isSameDay);
+
 
 
                               if (
@@ -144,8 +176,9 @@ router.post(
                                         annualMileage: annualMileage,
                                         monthlyCost: monthlyCost,
                                         calculationNo: calculationNo,
-                                        validFrom: validFrom,
-                                        validTo:validTo,
+                                        validFrom: validFromParsed,
+                                        validTo: validToParsed,
+                                        expired:expired
 
                                    });
                               }

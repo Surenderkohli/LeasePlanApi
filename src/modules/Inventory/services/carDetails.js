@@ -125,12 +125,14 @@ const addNewCar = async (
                carOfferResults.push(carOffer);
           }
 
+
           // Return the new car object
           return {
                carDetails: newCarDetails,
                carFeatures: newCarFeatures,
                carOffers: carOfferResults,
           };
+
      } catch (error) {
           console.log(error);
      }

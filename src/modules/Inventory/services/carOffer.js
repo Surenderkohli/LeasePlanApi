@@ -35,10 +35,11 @@ const convertAndCheckDate = async (dateString) => {
                console.log('month',month);
 
 
-               const date = new Date(Date.UTC(year, month, day, 0, 0, 0));
-               console.log('Date',date);
+               const date = new Date(Date.UTC(year, month, day, 0, 0, 0)); //Date 2023-09-15T00:00:00.000Z
+
 
                console.log('date.toISOString()',date.toISOString());
+               //date.toISOString() 2023-09-21T00:00:00.000Z
 
                return {
                     date: date.toISOString(), // Store as UTC ISO string

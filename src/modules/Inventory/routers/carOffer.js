@@ -58,7 +58,11 @@ const updateExpiredStatus = async () => {
           const carOffers = await carOfferModel.find();
           for (const carOffer of carOffers) {
                for (const offer of carOffer.offers) {
-                    offer.expired = currentDate > offer.validTo;
+                    const validTo = new Date(offer.validTo);
+                    const isSameYear = currentDate.getUTCFullYear() === validTo.getUTCFullYear();
+                    const isSameMonth = currentDate.getUTCMonth() === validTo.getUTCMonth();
+                    const isSameDay = currentDate.getUTCDate() === validTo.getUTCDate();
+                    offer.expired = currentDate > validTo && !(isSameYear && isSameMonth && isSameDay);
                }
                await carOffer.save();
           }
@@ -68,9 +72,10 @@ const updateExpiredStatus = async () => {
      }
 };
 
+
 // Schedule the update to run every day at midnight
-cron.schedule('0 0 * * *', () => {
-     updateExpiredStatus();
+cron.schedule('*/2 * * * *', async () => {
+     await updateExpiredStatus();
 });
 
 

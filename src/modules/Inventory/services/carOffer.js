@@ -714,53 +714,43 @@ const getSingleCar = async (id, duration, annualMileage) => {
 const getSingleCarV2 = async (id, duration, annualMileage) => {
      try {
           const carOffer = await carOfferModel
-               .findOne({ _id: id })
-               .populate('carBrand_id')
-               .populate('carSeries_id');
+              .findOne({ _id: id })
+              .populate('carBrand_id')
+              .populate('carSeries_id');
 
           if (!carOffer) {
                throw new Error('Car not found');
           }
 
           // Filter out expired offers
-          carOffer.offers = carOffer.offers.filter(offer=>!offer.expired)
+          carOffer.offers = carOffer.offers.filter(offer => !offer.expired)
 
           let result = {
                carOffer,
                carDetails: null,
                features: [],
-               monthlyCost: [],
+               availableMileages: [], // Changed from 'annualMileages'
+               monthlyCost: null,
           };
 
-          if (duration) {
-               const selectedOffers = carOffer.offers.filter(
-                    (offer) => offer.duration === Number(duration)
+          if (duration && annualMileage) {
+               // If both duration and annualMileage are provided, find the matching offer
+               const selectedOffer = carOffer.offers.find(
+                   (offer) =>
+                       offer.duration === Number(duration) &&
+                       offer.annualMileage === Number(annualMileage)
                );
 
-               if (selectedOffers.length === 0) {
+               if (!selectedOffer) {
                     throw new Error('Offer not found');
                }
 
-               if (annualMileage) {
-                    const selectedOffer = selectedOffers.find(
-                         (offer) =>
-                              offer.annualMileage === Number(annualMileage)
-                    );
-
-                    if (!selectedOffer) {
-                         throw new Error('Offer not found');
-                    }
-
-                    result.monthlyCost.push({
-                         annualMileage: selectedOffer.annualMileage,
-                         monthlyCost: selectedOffer.monthlyCost,
-                    });
-               } else {
-                    result.monthlyCost = selectedOffers.map((offer) => ({
-                         annualMileage: offer.annualMileage,
-                         monthlyCost: offer.monthlyCost,
-                    }));
-               }
+               result.monthlyCost = selectedOffer.monthlyCost;
+          } else if (duration) {
+               // If only duration is provided, return all associated annualMileage values
+               result.availableMileages = carOffer.offers
+                   .filter((offer) => offer.duration === Number(duration))
+                   .map((offer) => offer.annualMileage);
           }
 
           const carFeatures = await carFeatureModel.findOne({

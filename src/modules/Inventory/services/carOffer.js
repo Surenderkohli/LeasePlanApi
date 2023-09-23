@@ -6,7 +6,9 @@ import carDetailModel from '../models/carDetails.js';
 import carFeatureModel from '../models/carFeatures.js';
 import mongoose from 'mongoose';
 import { parse, format } from 'date-fns';
+import { utcToZonedTime } from 'date-fns-tz';
 import cron from 'node-cron';
+import moment from 'moment';
 
 
 // Define a function to update expired status
@@ -51,19 +53,21 @@ cron.schedule('0 0 * * *', () => {
 
 const convertAndCheckDate = async (dateString) => {
      try {
-          const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/; // Define the date regex
+          const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/;
 
           const match = dateString.match(dateRegex);
 
           if (match) {
                const day = parseInt(match[1], 10);
-               const month = parseInt(match[2], 10) - 1;
-               const year = parseInt(match[3].padStart(4, '20'), 10); // Convert two-digit year to four-digit
+               const month = parseInt(match[2], 10);
+               const year = parseInt(match[3].padStart(4, '20'), 10);
 
-               const date = new Date(year, month, day);
+               const date = moment.utc([year, month - 1, day]);
+
+               const zonedDate = utcToZonedTime(date.toDate(), 'UTC');
 
                return {
-                    date: format(date, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
+                    date: zonedDate.toISOString(),
                };
           } else {
                throw new Error(`Invalid date format: ${dateString}`);
@@ -73,18 +77,20 @@ const convertAndCheckDate = async (dateString) => {
      }
 };
 
-const createCarOffer = async (carOfferData) => {
+
+    const createCarOffer = async (carOfferData) => {
      try {
           let leaseTypes = [];
 
-         const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
+          const validFromResult = await convertAndCheckDate(carOfferData.validFrom);
           const validToResult = await convertAndCheckDate(carOfferData.validTo);
 
           const validFrom = new Date(validFromResult.date);
           const validTo = new Date(validToResult.date);
 
+
           const currentDate = new Date();
-          const expired = currentDate > validTo || (currentDate.getTime() === validTo.getTime() && currentDate.getHours() !== 0);
+          const expired = currentDate >= validTo || (currentDate.getTime() === validTo.getTime() && currentDate.getHours() !== 0);
 
           console.log('Current Date:', currentDate);
           console.log('Valid To Date:', validTo);

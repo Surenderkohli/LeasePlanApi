@@ -8,7 +8,7 @@ import mongoose from 'mongoose';
 import { parse, format } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import cron from 'node-cron';
-import moment from 'moment';
+
 
 
 // Define a function to update expired status
@@ -34,7 +34,6 @@ cron.schedule('0 0 * * *', () => {
 });
 
 
-
 // Function to convert "dd/mm/yy" format to "YYYY-MM-DD"
 // function convertDateToYYYYMMDD(dateString) {
 //      const parts = dateString.split('/');
@@ -48,9 +47,6 @@ cron.schedule('0 0 * * *', () => {
 // }
 
 
-
-
-
 const convertAndCheckDate = async (dateString) => {
      try {
           const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/;
@@ -59,15 +55,13 @@ const convertAndCheckDate = async (dateString) => {
 
           if (match) {
                const day = parseInt(match[1], 10);
-               const month = parseInt(match[2], 10);
-               const year = parseInt(match[3].padStart(4, '20'), 10);
+               const month = parseInt(match[2], 10) - 1;
+               const year = parseInt(match[3], 10) + 2000;
 
-               const date = moment.utc([year, month - 1, day]);
-
-               const zonedDate = utcToZonedTime(date.toDate(), 'UTC');
+               const date = new Date(Date.UTC(year, month, day, 0, 0, 0));
 
                return {
-                    date: zonedDate.toISOString(),
+                    date: date.toISOString(), // Store as UTC ISO string
                };
           } else {
                throw new Error(`Invalid date format: ${dateString}`);
@@ -76,7 +70,6 @@ const convertAndCheckDate = async (dateString) => {
           throw new Error(`Error processing date: ${error.message}`);
      }
 };
-
 
     const createCarOffer = async (carOfferData) => {
      try {

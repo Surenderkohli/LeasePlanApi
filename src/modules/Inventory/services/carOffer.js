@@ -1586,57 +1586,47 @@ const getAllCarWithoutOffers = async () => {
      }
 };
 
-
-// Function to edit an offer by _id
 const editOffer = async (offerId, newData) => {
      try {
           const updateFields = {};
 
-          if (newData.duration) updateFields["offers.$.duration"] = newData.duration;
-          if (newData.annualMileage) updateFields["offers.$.annualMileage"] = newData.annualMileage;
-          if (newData.monthlyCost) updateFields["offers.$.monthlyCost"] = newData.monthlyCost;
-          if (newData.validFrom) updateFields["offers.$.validFrom"] = newData.validFrom;
-          if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
-          if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
+          const fieldMappings = {
+               duration: "offers.$.duration",
+               annualMileage: "offers.$.annualMileage",
+               monthlyCost: "offers.$.monthlyCost",
+               validFrom: "offers.$.validFrom",
+               validTo: "offers.$.validTo",
+               bestDeals: "offers.$.bestDeals",
+          };
 
-          //  UAE time (UTC+4)
-
-
-          /*
-
-            if (newData.validTo) {
-               const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
-               const currentDate = new Date();
-               validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
-
-               // Adjust currentDate to UAE time (UTC+4)
-               const uaeTimeOffset = 4; // UTC+4
-               currentDate.setHours(currentDate.getHours() + uaeTimeOffset);
-
-               if (validToDate >= currentDate) {
-                    updateFields["offers.$.expired"] = false;
-               } else {
-                    updateFields["offers.$.expired"] = true;
+          for (const [newDataKey, updateField] of Object.entries(fieldMappings)) {
+               if (newData[newDataKey]) {
+                    if (newDataKey === 'validFrom' || newDataKey === 'validTo') {
+                         const dateResult = await convertAndCheckDate(newData[newDataKey]);
+                         updateFields[updateField] = new Date(dateResult.date);
+                    } else {
+                         updateFields[updateField] = newData[newDataKey];
+                    }
                }
           }
 
-           */
-
-
           if (newData.validTo) {
-               console.log('newData.validTo',newData.validTo);
-
-               // const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
-               const validToDate = new Date(newData.validTo);
-
+               const validToResult = await convertAndCheckDate(newData.validTo);
+               const validToParsed = new Date(validToResult.date);
                const currentDate = new Date();
-              // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
 
-               if (validToDate >= currentDate) {
-                    updateFields["offers.$.expired"] = false;
-               } else {
-                    updateFields["offers.$.expired"] = true;
-               }
+               const isSameYear = currentDate.getUTCFullYear() === validToParsed.getUTCFullYear();
+               const isSameMonth = currentDate.getUTCMonth() === validToParsed.getUTCMonth();
+               const isSameDay = currentDate.getUTCDate() === validToParsed.getUTCDate();
+
+               const expired = currentDate >= validToParsed && !(isSameYear && isSameMonth && isSameDay);
+               updateFields["offers.$.expired"] = expired;
+          }
+
+          if (newData.validFrom) {
+               const validFromResult = await convertAndCheckDate(newData.validFrom);
+               const validFromParsed = new Date(validFromResult.date);
+               updateFields["offers.$.validFrom"] = validFromParsed;
           }
 
           const carOffer = await carOfferModel.findOneAndUpdate(
@@ -1644,7 +1634,6 @@ const editOffer = async (offerId, newData) => {
               { $set: updateFields },
               { new: true }
           );
-
 
           if (!carOffer) {
                throw new Error('Offer not found');
@@ -1655,6 +1644,76 @@ const editOffer = async (offerId, newData) => {
           throw error;
      }
 };
+
+
+// Function to edit an offer by _id
+// const editOffer = async (offerId, newData) => {
+//      try {
+//           const updateFields = {};
+//
+//           if (newData.duration) updateFields["offers.$.duration"] = newData.duration;
+//           if (newData.annualMileage) updateFields["offers.$.annualMileage"] = newData.annualMileage;
+//           if (newData.monthlyCost) updateFields["offers.$.monthlyCost"] = newData.monthlyCost;
+//           if (newData.validFrom) updateFields["offers.$.validFrom"] = newData.validFrom;
+//           if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
+//           if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
+//
+//           //  UAE time (UTC+4)
+//
+//
+//           /*
+//
+//             if (newData.validTo) {
+//                const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+//                const currentDate = new Date();
+//                validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+//
+//                // Adjust currentDate to UAE time (UTC+4)
+//                const uaeTimeOffset = 4; // UTC+4
+//                currentDate.setHours(currentDate.getHours() + uaeTimeOffset);
+//
+//                if (validToDate >= currentDate) {
+//                     updateFields["offers.$.expired"] = false;
+//                } else {
+//                     updateFields["offers.$.expired"] = true;
+//                }
+//           }
+//
+//            */
+//
+//
+//           if (newData.validTo) {
+//                console.log('newData.validTo',newData.validTo);
+//
+//                // const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
+//                const validToDate = new Date(newData.validTo);
+//
+//                const currentDate = new Date();
+//               // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
+//
+//                if (validToDate >= currentDate) {
+//                     updateFields["offers.$.expired"] = false;
+//                } else {
+//                     updateFields["offers.$.expired"] = true;
+//                }
+//           }
+//
+//           const carOffer = await carOfferModel.findOneAndUpdate(
+//               { "offers._id": offerId },
+//               { $set: updateFields },
+//               { new: true }
+//           );
+//
+//
+//           if (!carOffer) {
+//                throw new Error('Offer not found');
+//           }
+//
+//           return carOffer;
+//      } catch (error) {
+//           throw error;
+//      }
+// };
 // Function to delete an offer
 const deleteOffer = async (offerId) => {
      try {

@@ -800,11 +800,9 @@ router.get('/list_not_offers', async (req, res) => {
 
 
 // Route to edit an offer
-router.put('/editOffer/:offerId', async (req, res) => {
+router.put('/editOffer/:offerId',carUpload.none() ,async (req, res) => {
      const { offerId } = req.params;
      const { duration, annualMileage, monthlyCost, validFrom, validTo, bestDeals } = req.body;
-
-     console.log(req.body,'req.body');
      try {
           const updatedCarOffer = await carOfferService.editOffer(offerId, { duration, annualMileage, monthlyCost, validFrom, validTo, bestDeals });
          return res.json({ message: 'Offer updated successfully',updatedCarOffer });

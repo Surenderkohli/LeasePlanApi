@@ -751,7 +751,7 @@ const getSingleCarV2 = async (id, duration, annualMileage) => {
           });
 
           result.carDetails = carDetails;
-          result.features = carFeatures || [];
+          result.carFeatures = carFeatures || [];
 
           return result;
      } catch (error) {
@@ -1654,56 +1654,36 @@ const editOffer = async (offerId, newData) => {
 //           if (newData.duration) updateFields["offers.$.duration"] = newData.duration;
 //           if (newData.annualMileage) updateFields["offers.$.annualMileage"] = newData.annualMileage;
 //           if (newData.monthlyCost) updateFields["offers.$.monthlyCost"] = newData.monthlyCost;
-//           if (newData.validFrom) updateFields["offers.$.validFrom"] = newData.validFrom;
-//           if (newData.validTo) updateFields["offers.$.validTo"] = newData.validTo;
-//           if(newData.bestDeals) updateFields["offers.$.bestDeals"] = newData.bestDeals
-//
-//           //  UAE time (UTC+4)
-//
-//
-//           /*
-//
-//             if (newData.validTo) {
-//                const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
-//                const currentDate = new Date();
-//                validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
-//
-//                // Adjust currentDate to UAE time (UTC+4)
-//                const uaeTimeOffset = 4; // UTC+4
-//                currentDate.setHours(currentDate.getHours() + uaeTimeOffset);
-//
-//                if (validToDate >= currentDate) {
-//                     updateFields["offers.$.expired"] = false;
-//                } else {
-//                     updateFields["offers.$.expired"] = true;
-//                }
+//           if (newData.validFrom) {
+//                const validFromResult = await convertAndCheckDate(newData.validFrom);
+//                const validFromParsed = new Date(validFromResult.date);
+//                updateFields["offers.$.validFrom"] = validFromParsed;
 //           }
-//
-//            */
-//
-//
 //           if (newData.validTo) {
-//                console.log('newData.validTo',newData.validTo);
-//
-//                // const validToDate = new Date(newData.validTo.replace(/-/g, '/'));
-//                const validToDate = new Date(newData.validTo);
-//
+//                const validToResult = await convertAndCheckDate(newData.validTo);
+//                const validToParsed = new Date(validToResult.date);
 //                const currentDate = new Date();
-//               // validToDate.setHours(23, 59, 59, 999); // Set validToDate to end of day
 //
-//                if (validToDate >= currentDate) {
-//                     updateFields["offers.$.expired"] = false;
-//                } else {
-//                     updateFields["offers.$.expired"] = true;
-//                }
+//                const isSameYear = currentDate.getUTCFullYear() === validToParsed.getUTCFullYear();
+//                const isSameMonth = currentDate.getUTCMonth() === validToParsed.getUTCMonth();
+//                const isSameDay = currentDate.getUTCDate() === validToParsed.getUTCDate();
+//
+//                const expired = currentDate >= validToParsed && !(isSameYear && isSameMonth && isSameDay);
+//
+//                updateFields["offers.$.validTo"] = validToParsed;
+//                updateFields["offers.$.expired"] = expired;
 //           }
+//
+//           console.log('validFrom', newData.validFrom);
+//           console.log('updatedFields', updateFields);
 //
 //           const carOffer = await carOfferModel.findOneAndUpdate(
 //               { "offers._id": offerId },
+//
 //               { $set: updateFields },
 //               { new: true }
 //           );
-//
+//           console.log('carOffer', carOffer.offers);
 //
 //           if (!carOffer) {
 //                throw new Error('Offer not found');
@@ -1714,6 +1694,8 @@ const editOffer = async (offerId, newData) => {
 //           throw error;
 //      }
 // };
+
+
 // Function to delete an offer
 const deleteOffer = async (offerId) => {
      try {

@@ -24,6 +24,7 @@ const carStorage = multer.diskStorage({
           cb(null, file.fieldname + '_' + Date.now() + file.originalname);
      },
 });
+
 const carUpload = multer({
      storage: carStorage,
      limits: { fileSize: 20 * 1024 * 1024 },
@@ -42,20 +43,6 @@ const carUpload = multer({
 });
 
 const router = Router();
-
-
-// Function to convert "dd/mm/yyyy" format to "YYYY-MM-DD"
-// function convertDateToYYYYMMDD(dateString) {
-//      const parts = dateString.split('/');
-//      if (parts.length === 3) {
-//           const day = parts[0];
-//           const month = parts[1];
-//           const year = parts[2];
-//           return `${year}/${month}/${day}`;
-//      }
-//      throw new Error('Invalid date format. Please use "dd/mm/yyyy".');
-// }
-
 const convertAndCheckDate = async (dateString) => {
      try {
           const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/;
@@ -71,11 +58,7 @@ const convertAndCheckDate = async (dateString) => {
 
 
                const date = new Date(Date.UTC(year, month, day, 0, 0, 0)); //Date 2023-09-15T00:00:00.000Z
-
-
-               // console.log('date.toISOString()',date.toISOString());
                //date.toISOString() 2023-09-21T00:00:00.000Z
-
                return {
                     date: date.toISOString(), // Store as UTC ISO string
                };
@@ -86,6 +69,7 @@ const convertAndCheckDate = async (dateString) => {
           throw new Error(`Error processing date: ${error.message}`);
      }
 };
+
 //Manually car details ,features and offers upload
 router.post(
      '/add',
@@ -160,8 +144,6 @@ router.post(
                               const isSameDay = currentDate.getUTCDate() === validToParsed.getUTCDate();
 
                               const expired = currentDate >= validToParsed && !(isSameYear && isSameMonth && isSameDay);
-
-
 
                               if (
                                    duration &&
@@ -255,30 +237,7 @@ router.post(
      })
 );
 
-router.get('/best-deals', async (req, res) => {
-     try {
-          const { limit = 5, skip = 0 } = req.query;
-          const result = await CarServices.getDeals(
-               parseInt(limit),
-               parseInt(skip)
-          );
-
-          if (result) {
-               res.status(200).json({ success: true, data: result });
-          } else {
-               res.status(200).json({
-                    success: false,
-                    message: 'Not found any best deals',
-                    data: [],
-               });
-          }
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
-     }
-});
-
 //   CSV upload
-
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
@@ -302,13 +261,13 @@ async function generateErrorCSV(errorList) {
      }
 }
 
+//CSV Upload
 router.post('/car-details', upload.single('file'), async (req, res) => {
      try {
           let carDetails = [];
           let errorList = []; // Array to store the errors
 
           if (req.file && req.file.mimetype === 'text/csv') {
-               // CSV upload
                const csvString = req.file.buffer.toString('utf8');
                const carDetailData = await csvtojson().fromString(csvString);
 
@@ -525,7 +484,6 @@ function isValidCarDetailData(carDetailData) {
                });
           }
 
-          // Other field validations...
 
           // Check if makeCode is already assigned to a different companyName
           if (
@@ -558,8 +516,6 @@ function isValidCarDetailData(carDetailData) {
                     message: `Company Name ${carDetail.companyName} is already assigned to Make Code ${assignedMakeCode}.`,
                });
           }
-
-          // ...
 
           // Track assigned makeCode to companyName
           if (carDetail.makeCode && carDetail.companyName) {
@@ -638,7 +594,7 @@ function getHeaderIndex(fieldName) {
      return headers.indexOf(fieldName);
 }
 
-//get all cars by brand, series and lease type but different yearModel
+//get all cars by brand, series and lease type but different yearModel  **NOT-IN-USE
 router.get('/list', async (req, res) => {
      const { carBrand_id, carSeries_id } = req.query;
      try {

@@ -45,21 +45,24 @@ const addCarBrand = async (data) => {
 };
 
 const getAllCarBrand = async () => {
-     const response = await carBrandModel.find().populate('leaseType_id');
-     return response;
+     try {
+          const response = await carBrandModel.find().populate('leaseType_id');
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error getting all car brands');
+     }
 };
+
 
 const getSingleCarBrand = async (id) => {
-     const response = await carBrandModel.findById(id);
-     return response;
-};
-
-const deleteCarBrand = async (id) => {
-     const response = await carBrandModel.findOneAndDelete(
-          { _id: id },
-          { is_deleted: true }
-     );
-     return response;
+     try {
+          const response = await carBrandModel.findById(id);
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error getting single car brand');
+     }
 };
 
 const getAllCarBrandByLeaseType = async (leaseType_id) => {
@@ -98,11 +101,23 @@ const getCarsByLeaseTypeAndTerm = async (leaseType, term) => {
      return cars;
 };
 
+const deleteCarBrand = async (id) => {
+     try {
+          const response = await carBrandModel.findOneAndDelete(
+              { _id: id },
+              { is_deleted: true }
+          );
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error deleting car brand');
+     }
+};
 export const carBrandService = {
-     getAllCarBrand,
      addCarBrand,
+     getAllCarBrand,
      getSingleCarBrand,
-     deleteCarBrand,
      getAllCarBrandByLeaseType,
      getCarsByLeaseTypeAndTerm,
+     deleteCarBrand,
 };

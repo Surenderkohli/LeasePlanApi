@@ -4,26 +4,43 @@ import { leaseTypeService } from '../services/leaseType.js';
 
 const router = Router();
 
-router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          const result = await leaseTypeService.getAllLeaseType();
-          res.send(result);
-     })
-);
 
 router.post(
-     '/add',
-     httpHandler(async (req, res) => {
-          const result = await leaseTypeService.addLeaseType(req.body);
-          res.send(result);
-     })
+    '/add',
+    httpHandler(async (req, res) => {
+        try {
+            const result = await leaseTypeService.addLeaseType(req.body);
+            res.send(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    })
 );
 
+router.get(
+    '/',
+    httpHandler(async (req, res) => {
+        try {
+            const result = await leaseTypeService.getAllLeaseType();
+            res.status(200).json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    })
+);
+
+
 router.get('/fetch-single/:id', async (req, res) => {
-     const { id } = req.params;
-     const result = await leaseTypeService.getSingleLeaseType(id);
-     res.send(result);
+    const { id } = req.params;
+    try {
+        const result = await leaseTypeService.getSingleLeaseType(id);
+        res.send(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 router.get(

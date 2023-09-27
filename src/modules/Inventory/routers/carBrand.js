@@ -31,16 +31,21 @@ router.post(
 );
 
 router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          // const {id} = req.params
-          const result = await carBrandService.getAllCarBrand();
-          res.send(result);
-     })
+    '/',
+    httpHandler(async (req, res) => {
+        try {
+            const result = await carBrandService.getAllCarBrand();
+            res.status(200).send(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    })
 );
 
+
 router.get(
-     '/carbrand-single/:id',
+     '/fetch-single/:id',
      httpHandler(async (req, res) => {
           const { id } = req.params;
           const result = await carBrandService.getSingleCarBrand(id);
@@ -49,7 +54,7 @@ router.get(
 );
 
 router.get(
-     '/leaseType_id/:leaseType_id',
+     '/leasetype/:leaseType_id',
      httpHandler(async (req, res) => {
           try {
                const { leaseType_id } = req.params;
@@ -72,7 +77,7 @@ router.get(
      })
 );
 
-// GET /cars?leaseType=:leaseType&term=:term
+// GET /cars?leaseType=:leaseType&term=:term   **NOT-IN-USE
 router.get('/list', async (req, res) => {
      try {
           const { leaseType, term } = req.query;
@@ -107,5 +112,4 @@ router.delete(
           }
      })
 );
-
 export default router;

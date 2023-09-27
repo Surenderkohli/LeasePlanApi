@@ -32,7 +32,7 @@ router.post(
                          `Missing required fields: ${missingFields.join(', ')}`
                     );
                }
-               //...req.body,
+
                const trimmedData = {
                     carBrand_id: carBrand_id,
                     seriesName: seriesName.trim(),
@@ -50,32 +50,9 @@ router.post(
      })
 );
 
+//Get carseries by carbrand_id whose cardetails has not been filled
 router.get(
-     '/get-carBrand_id/:carBrand_id',
-     httpHandler(async (req, res) => {
-          try {
-               const { carBrand_id } = req.params;
-
-               const result = await carSeriesService.getAllCarSeriesByBrandId(
-                    carBrand_id
-               );
-
-               res.status(200).json({
-                    success: true,
-                    data: result,
-               });
-          } catch (error) {
-               console.log(error);
-               res.status(500).json({
-                    success: false,
-                    message: 'Server Error',
-               });
-          }
-     })
-);
-
-router.get(
-     '/get-carBrand_id_V2/:carBrand_id',
+     '/carbrand/:carBrand_id',
      httpHandler(async (req, res) => {
           try {
                const { carBrand_id } = req.params;
@@ -98,38 +75,44 @@ router.get(
      })
 );
 
+router.get(
+    '/',
+    httpHandler(async (req, res) => {
+        try {
+            const result = await carSeriesService.getAllCarSeries();
+            res.send(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    })
+);
+
+router.get('/fetch-single/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await carSeriesService.getSingleCarSeries(id);
+        res.send(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 router.delete(
-     '/delete/:id',
-     httpHandler(async (req, res) => {
-          try {
-               const data = req.body;
-               const { id } = req.params;
-               const result = await carSeriesService.deleteCarSeries(id, data);
-               res.status(200).json({
-                    success: true,
-                    msg: 'carSeries deleted successfully',
-               });
-          } catch (error) {
-               res.send({ status: 400, success: false, msg: error.message });
-          }
-     })
+    '/delete/:id',
+    httpHandler(async (req, res) => {
+        try {
+            const data = req.body;
+            const { id } = req.params;
+            const result = await carSeriesService.deleteCarSeries(id, data);
+            res.status(200).json({
+                success: true,
+                msg: 'carSeries deleted successfully',
+            });
+        } catch (error) {
+            res.send({ status: 400, success: false, msg: error.message });
+        }
+    })
 );
-
-router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          const result = await carSeriesService.getAllCarSeries();
-          res.send(result);
-     })
-);
-
-router.get(
-     '/:id',
-     httpHandler(async (req, res) => {
-          const { id } = req.params;
-          const result = await carSeriesService.getSingleCarSeries(id);
-          res.send(result);
-     })
-);
-
 export default router;

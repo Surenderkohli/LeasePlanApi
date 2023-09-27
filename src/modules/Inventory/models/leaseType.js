@@ -21,5 +21,4 @@ const leaseTypeSchema = new mongoose.Schema(
 );
 
 const leaseTypeModel = mongoose.model('leasetypes', leaseTypeSchema);
-
 export default leaseTypeModel;

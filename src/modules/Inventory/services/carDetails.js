@@ -137,167 +137,6 @@ const addNewCar = async (
           console.log(error);
      }
 };
-
-const updateCar = async (
-     carId,
-     carDetailsData,
-     carFeaturesData,
-     carOffersData
-) => {
-     try {
-          // Validate input
-          if (!carDetailsData || !carFeaturesData || !carOffersData) {
-               throw new Error(
-                    'carDetails, carFeatures, and carOffers must be provided'
-               );
-          }
-
-          // Update car in CarDetails collection
-          const updatedCarDetails = await carDetailModel.findByIdAndUpdate(
-               carId,
-               { ...carDetailsData },
-               { new: true }
-          );
-
-          // Update car in CarFeatures collection
-          const carDetails = await carDetailModel.findById(carId);
-          const { carBrand_id, carSeries_id, yearModel } = carDetails;
-
-          const filter = {
-               carBrand_id,
-               carSeries_id,
-               yearModel,
-          };
-
-          const updateFields = {};
-
-          for (const [key, value] of Object.entries(carDetailsData)) {
-               if (key.endsWith('Features') && Array.isArray(value)) {
-                    const featureIndex = key.slice(0, -8);
-                    value.forEach((featureValue, index) => {
-                         updateFields[`${featureIndex}Features.${index}`] =
-                              featureValue;
-                    });
-               } else {
-                    updateFields[key] = value;
-               }
-          }
-
-          const updatedCarFeatures = await carFeatureModel.findOneAndUpdate(
-               filter,
-               updateFields,
-               { new: true }
-          );
-          // Create an empty array to store all the updated car offers
-          const updatedCarOffers = [];
-
-          // Update carOffers
-          for (const offer of carOffersData.offers) {
-               const filter = {
-                    carSeries_id: updatedCarDetails.carSeries_id,
-                    carBrand_id: updatedCarDetails.carBrand_id,
-                    yearModel: updatedCarDetails.yearModel,
-                    'offers.calculationNo': offer.calculationNo,
-               };
-
-               const update = {
-                    $set: {
-                         'offers.$.duration': offer.duration,
-                         'offers.$.annualMileage': offer.annualMileage,
-                         'offers.$.monthlyCost': offer.monthlyCost,
-                    },
-               };
-
-               const updatedOffer = await carOfferModel.findOneAndUpdate(
-                    filter,
-                    update,
-                    { new: true }
-               );
-
-               // Push the updated offer to the array
-               updatedCarOffers.push(updatedOffer);
-          }
-          // Return the updated car object
-          return {
-               carDetails: updatedCarDetails,
-               carFeatures: updatedCarFeatures,
-               carOffers: updatedCarOffers,
-          };
-     } catch (error) {
-          console.error('Error in updating car:', error);
-          throw new Error(error.message);
-     }
-};
-
-const getDeals = async (query) => {
-     try {
-          const carDetails = await carDetailModel
-               .find({
-                    deals: 'active',
-                    ...query,
-               })
-               .populate(['carBrand_id', 'carSeries_id']);
-
-          const carOffers = await carOfferModel
-               .find({
-                    carBrand_id: {
-                         $in: carDetails.map(
-                              (detail) => detail.carBrand_id._id
-                         ),
-                    },
-                    carSeries_id: {
-                         $in: carDetails.map(
-                              (detail) => detail.carSeries_id._id
-                         ),
-                    },
-                    yearModel: {
-                         $in: carDetails.map((detail) => detail.yearModel),
-                    },
-               })
-               .populate('leaseType_id');
-
-          const result = {
-               carDetails,
-               carOffers,
-          };
-
-          return result;
-     } catch (error) {
-          throw new Error(error.message);
-     }
-};
-
-const getCarsByBrandSeriesLeaseType = async (carBrand_id, carSeries_id) => {
-     try {
-          const cars = await carDetailModel
-               .find({
-                    carBrand_id,
-                    carSeries_id,
-               })
-               .sort({ yearModel: 1 });
-          const uniqueYears = Array.from(
-               new Set(cars.map((car) => car.yearModel))
-          );
-          const result = uniqueYears.map((year) => {
-               const carsWithSameYear = cars.filter(
-                    (car) => car.yearModel === year
-               );
-               return {
-                    companyName: carsWithSameYear[0].carBrand_id.companyName,
-                    seriesName: carsWithSameYear[0].carSeries_id.seriesName,
-                    yearModel: year,
-                    cars: carsWithSameYear,
-               };
-          });
-          return result;
-     } catch (err) {
-          console.error(err);
-          throw new Error(
-               'Error getting cars by brand, series, and lease type'
-          );
-     }
-};
-
 const createCarDetailUpdateExistingCar = async (carDetailData) => {
      try {
           if (!carDetailData.companyName) {
@@ -412,10 +251,40 @@ const createCarDetailUpdateExistingCar = async (carDetailData) => {
      }
 };
 
+const getCarsByBrandSeriesLeaseType = async (carBrand_id, carSeries_id) => {
+     try {
+          const cars = await carDetailModel
+              .find({
+                   carBrand_id,
+                   carSeries_id,
+              })
+              .sort({ yearModel: 1 });
+          const uniqueYears = Array.from(
+              new Set(cars.map((car) => car.yearModel))
+          );
+          const result = uniqueYears.map((year) => {
+               const carsWithSameYear = cars.filter(
+                   (car) => car.yearModel === year
+               );
+               return {
+                    companyName: carsWithSameYear[0].carBrand_id.companyName,
+                    seriesName: carsWithSameYear[0].carSeries_id.seriesName,
+                    yearModel: year,
+                    cars: carsWithSameYear,
+               };
+          });
+          return result;
+     } catch (err) {
+          console.error(err);
+          throw new Error(
+              'Error getting cars by brand, series, and lease type'
+          );
+     }
+};
+
+
 export const CarServices = {
      addNewCar,
-     updateCar,
-     getDeals,
-     getCarsByBrandSeriesLeaseType,
      createCarDetailUpdateExistingCar,
+     getCarsByBrandSeriesLeaseType,
 };

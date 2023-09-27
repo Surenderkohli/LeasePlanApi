@@ -1,10 +1,6 @@
 import carSeriesModel from '../models/carSeries.js';
 import mongoose from 'mongoose';
 
-const getAllCarSeries = async () => {
-     const response = await carSeriesModel.find().populate('carBrand_id');
-     return response;
-};
 
 const addCarSeries = async (data) => {
      try {
@@ -23,7 +19,6 @@ const addCarSeries = async (data) => {
                seriesName: { $regex: new RegExp(`^${data.seriesName}$`, 'i') },
                modelCode: { $ne: data.modelCode }, // Exclude the current modelCode from the search
           });
-
           if (carSeriesWithSameName) {
                throw new Error(
                     `Car series with seriesName '${data.seriesName}' already exists with a different modelCode.`
@@ -46,20 +41,25 @@ const addCarSeries = async (data) => {
           throw error;
      }
 };
-const getSingleCarSeries = async (id) => {
-     const response = await carSeriesModel.findById(id);
-     return response;
-};
 
-const getAllCarSeriesByBrandId = async (carBrand_id) => {
+const getAllCarSeries = async () => {
      try {
-          const response = await carSeriesModel
-               .find({ carBrand_id })
-               .populate('carBrand_id');
-
+          const response = await carSeriesModel.find().populate('carBrand_id');
           return response;
      } catch (error) {
-          throw new Error('Unable to retrieve car Brand');
+
+          console.error(error);
+          throw new Error('Error getting all car series');
+     }
+};
+
+const getSingleCarSeries = async (id) => {
+     try {
+          const response = await carSeriesModel.findById(id);
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error getting single car series');
      }
 };
 
@@ -73,7 +73,7 @@ const getAllCarSeriesByBrandIdV2 = async (carBrand_id) => {
                },
                {
                     $lookup: {
-                         from: 'cardetails', // Assuming the collection name is 'cardetails'
+                         from: 'cardetails',
                          localField: '_id',
                          foreignField: 'carSeries_id',
                          as: 'carDetails',
@@ -95,18 +95,23 @@ const getAllCarSeriesByBrandIdV2 = async (carBrand_id) => {
 };
 
 const deleteCarSeries = async (id) => {
-     const response = await carSeriesModel.findOneAndDelete(
-          { _id: id },
-          { is_deleted: true }
-     );
-     return response;
+     try {
+          const response = await carSeriesModel.findOneAndDelete(
+              { _id: id },
+              { is_deleted: true }
+          );
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error deleting car series');
+     }
 };
 
+
 export const carSeriesService = {
-     getSingleCarSeries,
      addCarSeries,
      getAllCarSeries,
-     getAllCarSeriesByBrandId,
-     deleteCarSeries,
+     getSingleCarSeries,
      getAllCarSeriesByBrandIdV2,
+     deleteCarSeries,
 };

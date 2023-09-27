@@ -36,7 +36,6 @@ const carUpload = multer({
                     )
                );
           }
-
           cb(undefined, true);
      },
 });
@@ -46,10 +45,6 @@ const router = Router();
 const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
-
-
-
-
 
 // Define a function to update expired status
 const updateExpiredStatus = async () => {
@@ -71,7 +66,6 @@ const updateExpiredStatus = async () => {
           console.error('Error updating expired status:', error);
      }
 };
-
 
 // Schedule the update to run every day at midnight
 // cron.schedule('*/2 * * * *', async () => {
@@ -232,62 +226,22 @@ router.get('/', async (req, res) => {
      }
 });
 
-router.get('/single_offer/:id', async (req, res) => {
+router.get('/single-offer/:id', async (req, res) => {
      try {
           const { id } = req.params;
           const getOfferById = await carOfferService.getOfferById(id);
 
-          // Format validFrom and validTo
-          // const formattedOffer = {
-          //      ...getOfferById.toObject(),
-          //      validFrom: moment(getOfferById.validFrom).format('DD/MM/YYYY'),
-          //      validTo: moment(getOfferById.validTo).format('DD/MM/YYYY')
-          // };
+       /*
+         const formattedOffer = {
+               ...getOfferById.toObject(),
+               validFrom: moment(getOfferById.validFrom).format('DD/MM/YYYY'),
+               validTo: moment(getOfferById.validTo).format('DD/MM/YYYY')
+          };
+        */
 
           return res.status(200).json({ msg: "OfferById retrieved successfully", getOfferById });
      } catch (error) {
           return res.status(500).json({ msg: 'Internal Server Error', error });
-     }
-});
-
-router.get('/all-cars', async (req, res) => {
-     try {
-          const {
-               fuelType,
-               priceMin,
-               priceMax,
-               bodyType,
-               annualMileage,
-               yearModel,
-               querySrch,
-          } = req.query;
-
-          const limit = parseInt(req.query.limit) || 1000000;
-          const skip = parseInt(req.query.skip) || 0;
-
-          const result = await carOfferService.getAllCarWithOffers(
-               fuelType,
-               priceMin,
-               priceMax,
-               bodyType,
-               annualMileage,
-               yearModel,
-               querySrch,
-               limit,
-               skip
-          );
-
-          if (result.length) {
-               res.status(200).json({ success: true, data: result });
-          } else {
-               res.status(200).json({
-                    success: false,
-                    message: 'No cars found with the given filters.',
-                    data: [],
-               });
-          }
-     } catch (error) {
-          res.send({ status: 400, success: false, msg: error.message });
      }
 });
 
@@ -304,7 +258,6 @@ router.get('/counts', async (req, res) => {
           res.status(400).json({ success: false, error: error.message });
      }
 });
-
 router.get('/fetch-single/:id', async (req, res) => {
      try {
           const { id } = req.params;
@@ -327,29 +280,7 @@ router.get('/fetch-single/:id', async (req, res) => {
      }
 });
 
-router.get('/fetch-single_V2/:id', async (req, res) => {
-     try {
-          const { id } = req.params;
-          const { duration, annualMileage } = req.query;
-
-          const result = await carOfferService.getSingleCarV2(
-               id,
-               duration,
-               annualMileage
-          );
-          res.status(200).json({ success: true, data: result });
-     } catch (error) {
-          if (error.message === 'Car not found') {
-               res.status(404).json({ success: false, msg: 'Car not found' });
-          } else if (error.message === 'Offer not found') {
-               res.status(404).json({ success: false, msg: 'Offer not found' });
-          } else {
-               res.status(400).json({ success: false, msg: error.message });
-          }
-     }
-});
-
-router.put('/updated/:id', carUpload.array('image', 6), async (req, res) => {
+router.put('/update/:id', carUpload.array('image', 6), async (req, res) => {
      try {
           const id = req.params.id;
           const carDetailsData = req.body;
@@ -735,49 +666,7 @@ function getHeaderIndex(fieldName) {
         console.log('fieldName : ', fieldName)                      fieldName :  leaseType      ||        fieldName calculationNo
  */
 
-router.get('/filter_cars', async (req, res) => {
-     try {
-          const {
-               leaseType,
-               term,
-               carBrand_id,
-               carSeries_id,
-               priceMin,
-               priceMax,
-               annualMileage,
-               bodyType,
-               querySearch,
-          } = req.query;
-
-          const filterOptions = {
-               leaseType,
-               term,
-               carBrand_id,
-               carSeries_id,
-               priceMin,
-               priceMax,
-               annualMileage,
-               bodyType,
-               querySearch,
-          };
-
-          const cars = await carOfferService.filterCarsV9(filterOptions);
-
-          if (cars.length > 0) {
-               res.status(200).json({ success: true, data: cars });
-          } else {
-               res.status(200).json({
-                    success: false,
-                    message: 'No cars found with the given filters.',
-                    data: [],
-               });
-          }
-     } catch (error) {
-          res.status(400).json({ success: false, message: error.message });
-     }
-});
-
-router.delete('/delete_offers/:id', async (req, res) => {
+router.delete('/delete-car/:id', async (req, res) => {
      const { id } = req.params;
      const result = await carOfferService.deletedCarV2(id, req.body);
    return res.send({
@@ -787,7 +676,7 @@ router.delete('/delete_offers/:id', async (req, res) => {
      });
 });
 
-router.get('/list_not_offers', async (req, res) => {
+router.get('/list-not-offers', async (req, res) => {
      try {
           const result = await carOfferService.getAllCarWithoutOffers();
 
@@ -800,7 +689,7 @@ router.get('/list_not_offers', async (req, res) => {
 
 
 // Route to edit an offer
-router.put('/editOffer/:offerId',carUpload.none() ,async (req, res) => {
+router.put('/edit-offer/:offerId',carUpload.none() ,async (req, res) => {
      const { offerId } = req.params;
      const { duration, annualMileage, monthlyCost, validFrom, validTo, bestDeals } = req.body;
      try {
@@ -813,7 +702,7 @@ router.put('/editOffer/:offerId',carUpload.none() ,async (req, res) => {
 
 
 // Route to delete an offer
-router.delete('/v1/deleteoffer/:offerId', async (req, res) => {
+router.delete('/delete-offer/:offerId', async (req, res) => {
      const { offerId } = req.params;
 
      try {
@@ -825,7 +714,7 @@ router.delete('/v1/deleteoffer/:offerId', async (req, res) => {
 });
 
 
-router.get('/active_filter_cars', async (req, res) => {
+router.get('/filter-cars', async (req, res) => {
      try {
           const {
                leaseType,
@@ -852,7 +741,7 @@ router.get('/active_filter_cars', async (req, res) => {
           };
 
 
-          const cars = await carOfferService.filterCarsV18(filterOptions);
+          const cars = await carOfferService.filterCarsV1(filterOptions);
 
           if (cars.length > 0) {
                res.status(200).json({ success: true, data: cars });

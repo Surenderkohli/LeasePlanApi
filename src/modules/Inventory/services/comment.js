@@ -1,3 +1,7 @@
+import carBrandModel from '../models/carBrand.js';
+import carSeriesModel from '../models/carSeries.js';
+import carDetailModel from '../models/carDetails.js';
+import carOfferModel from '../models/carOffer.js';
 // //------------------------------------------------------------------------------------------carDetails.js-----------------------------------------------------------------------------------
 // const getCount = async () => {
 //      const counts = await carDetailModel.aggregate([
@@ -1239,3 +1243,273 @@
          throw new Error('Car features upload failed');
     }
 }; */
+
+
+//////Filter car 1st phase changes
+
+
+// const filterCars = async (filterOptions) => {
+//     try {
+//         const {
+//             leaseType,
+//             term,
+//             carBrand_id,
+//             carSeries_id,
+//             priceMin,
+//             priceMax,
+//             annualMileage,
+//             bodyType,
+//             querySearch,
+//         } = filterOptions;
+//
+//         const query = {};
+//
+//         if (leaseType) {
+//             query['leaseType_id.leaseType'] = leaseType;
+//         }
+//
+//         if (term) {
+//             query['leaseType_id.term'] = term;
+//         }
+//
+//         // if (monthlyCost) {
+//         //      query['offers.monthlyCost'] = monthlyCost;
+//         // }
+//
+//         if (priceMin || priceMax) {
+//             query['offers.monthlyCost'] = {};
+//
+//             if (priceMin) {
+//                 query['offers.monthlyCost']['$gte'] = priceMin;
+//             }
+//
+//             if (priceMax) {
+//                 query['offers.monthlyCost']['$lte'] = priceMax;
+//             }
+//         }
+//
+//         if (annualMileage) {
+//             query['offers.annualMileage'] = annualMileage;
+//         }
+//
+//         if (carBrand_id) {
+//             query.carBrand_id = carBrand_id;
+//         }
+//
+//         if (carSeries_id) {
+//             query.carSeries_id = carSeries_id;
+//         }
+//
+//         if (querySearch) {
+//             const carBrands = await carBrandModel.find({
+//                 companyName: { $regex: querySearch, $options: 'i' },
+//             });
+//
+//             const carBrandIds = carBrands.map((brand) => brand._id);
+//
+//             const carSeries = await carSeriesModel.find({
+//                 seriesName: { $regex: querySearch, $options: 'i' },
+//             });
+//
+//             const carSeriesIds = carSeries.map((series) => series._id);
+//
+//             query.$or = [
+//                 { carBrand_id: { $in: carBrandIds } },
+//                 { carSeries_id: { $in: carSeriesIds } },
+//             ];
+//         }
+//
+//         const carOffers = await carOfferModel
+//             .find({
+//                 ...query,
+//                 isDeleted: false, //  line to filter based on isDeleted property
+//             })
+//             .populate({
+//                 path: 'carBrand_id',
+//                 select: 'makeCode companyName',
+//             })
+//             .populate({
+//                 path: 'carSeries_id',
+//                 select: 'modelCode seriesName',
+//             });
+//
+//         const cars = [];
+//
+//         for (const carOffer of carOffers) {
+//             const car = carOffer.toObject();
+//             const carDetails = await carDetailModel.find({
+//                 carBrand_id: car.carBrand_id,
+//                 carSeries_id: car.carSeries_id,
+//             });
+//             // .populate('carBrand_id')
+//             // .populate('carSeries_id');
+//
+//             car.details = carDetails[0]; // Assuming there is only one matching car detail
+//
+//             if (!leaseType || carOffer.leaseType === leaseType) {
+//                 if (!term || carOffer.term === term) {
+//                     cars.push(car);
+//                 }
+//             }
+//         }
+//
+//         if (bodyType) {
+//             const carsWithBodyType = cars.filter(
+//                 (car) => car.details.bodyType === bodyType
+//             );
+//             return carsWithBodyType;
+//         }
+//
+//         // if (fuelType) {
+//         //      const carsWithFuelType = cars.filter(
+//         //           (car) => car.details.fuelType === fuelType
+//         //      );
+//         //      return carsWithFuelType;
+//         // }
+//
+//         // if (fuelType && bodyType) {
+//         //      const carsWithFuelAndBodyType = cars.filter(
+//         //           (car) =>
+//         //                car.details.fuelType === fuelType &&
+//         //                car.details.bodyType === bodyType
+//         //      );
+//         //      return carsWithFuelAndBodyType;
+//         // }
+//
+//         // if (fuelType && bodyType) {
+//         //      const carsWithFuelAndBodyType = cars.filter(
+//         //           (car) =>
+//         //                car.details.fuelType === fuelType &&
+//         //                car.details.bodyType === bodyType
+//         //      );
+//         //      return carsWithFuelAndBodyType;
+//         // } else if (fuelType) {
+//         //      const carsWithFuelType = cars.filter(
+//         //           (car) => car.details.fuelType === fuelType
+//         //      );
+//         //      return carsWithFuelType;
+//         // } else if (bodyType) {
+//         //      const carsWithBodyType = cars.filter(
+//         //           (car) => car.details.bodyType === bodyType
+//         //      );
+//         //      return carsWithBodyType;
+//         // }
+//
+//         return cars;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
+
+const getAllCarWithOffersV2 = async (
+    fuelType,
+    priceMin,
+    priceMax,
+    bodyType,
+    annualMileage,
+    yearModel,
+    querySrch,
+    limit,
+    skip
+) => {
+    try {
+        const filter = {};
+
+        // Apply price range filter
+        if (priceMin || priceMax) {
+            filter['offers.monthlyCost'] = {};
+            if (priceMin) {
+                filter['offers.monthlyCost'].$gte = parseInt(priceMin);
+            }
+            if (priceMax) {
+                filter['offers.monthlyCost'].$lte = parseInt(priceMax);
+            }
+        }
+
+        // Apply annual mileage filter
+        if (annualMileage) {
+            filter['offers.annualMileage'] = parseInt(annualMileage);
+        }
+
+        // Apply search query filter for car brands and car series
+        if (querySrch) {
+            // Find car brand IDs matching the search query
+            const carBrandIds = await carBrandModel.find(
+                {
+                    companyName: {
+                        $regex: `.*${querySrch}.*`,
+                        $options: 'i',
+                    },
+                },
+                '_id'
+            );
+
+            // Find car series IDs matching the search query
+            const carSeriesIds = await carSeriesModel.find(
+                {
+                    seriesName: {
+                        $regex: `.*${querySrch}.*`,
+                        $options: 'i',
+                    },
+                },
+                '_id'
+            );
+
+            // Apply the $or condition to match either car brand or car series
+            filter.$or = [
+                {
+                    carBrand_id: {
+                        $in: carBrandIds,
+                    },
+                },
+                {
+                    carSeries_id: {
+                        $in: carSeriesIds,
+                    },
+                },
+            ];
+        }
+
+        if (fuelType) {
+            const carDetailsFilter = { fuelType: fuelType };
+            const carDetails = await carDetailModel.find(carDetailsFilter);
+            const carSeriesIds = carDetails.map(
+                (detail) => detail.carSeries_id
+            );
+            filter.carSeries_id = { $in: carSeriesIds };
+        }
+
+        if (bodyType) {
+            const carDetailsFilter = { bodyType: bodyType };
+            const carDetails = await carDetailModel.find(carDetailsFilter);
+            const carSeriesIds = carDetails.map(
+                (detail) => detail.carSeries_id
+            );
+            filter.carSeries_id = { $in: carSeriesIds };
+        }
+
+        if (yearModel) {
+            filter['yearModel'] = parseInt(yearModel);
+        }
+
+        let query = carOfferModel.find(filter);
+
+        if (Object.keys(filter).length > 0) {
+            query = query
+                .populate({
+                    path: 'carBrand_id',
+                    model: 'carBrand',
+                })
+                .populate({
+                    path: 'carSeries_id',
+                    model: 'carSeries',
+                });
+        }
+
+        const response = await query.skip(skip).limit(limit).exec();
+
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+};

@@ -12,20 +12,6 @@ const router = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.get(
-     '/',
-     httpHandler(async (req, res) => {
-          try {
-               const carFeatures = await carFeatureService.getAllCarFeature();
-
-               res.status(200).json({ success: true, data: carFeatures });
-          } catch (error) {
-               console.log(error);
-               res.status(500).send('Server error');
-          }
-     })
-);
-
 async function generateErrorCSV(errorList) {
      const errorFolder = 'errorFile'; // Update with the correct folder name
      const csvWriter = createObjectCsvWriter({
@@ -260,4 +246,16 @@ function getHeaderIndex(fieldName) {
      return headers.indexOf(fieldName);
 }
 
+router.get(
+    '/',
+    httpHandler(async (req, res) => {
+         try {
+              const carFeatures = await carFeatureService.getAllCarFeature();
+              res.status(200).json({ success: true, data: carFeatures });
+         } catch (error) {
+              console.log(error);
+              res.status(500).send('Server error');
+         }
+    })
+);
 export default router;

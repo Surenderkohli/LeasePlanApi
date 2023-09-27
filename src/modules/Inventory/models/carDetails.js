@@ -19,7 +19,6 @@ const carDetailSchema = new mongoose.Schema(
 
                required: false,
           },
-
           yearModel: {
                type: Number,
                required: false,

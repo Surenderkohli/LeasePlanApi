@@ -2,11 +2,6 @@ import carBrandModel from '../models/carBrand.js';
 import carSeriesModel from '../models/carSeries.js';
 import carFeatureModel from '../models/carFeatures.js';
 
-const getAllCarFeature = async () => {
-     const response = await carFeatureModel.find();
-     return response;
-};
-
 const addOrUpdateFeatureDescription = async (
      featureDescriptionData,
      source
@@ -113,7 +108,17 @@ const addOrUpdateFeatureDescription = async (
      }
 };
 
+const getAllCarFeature = async () => {
+     try {
+          const response = await carFeatureModel.find();
+          return response;
+     } catch (error) {
+          console.error(error);
+          throw new Error('Error getting all car features');
+     }
+};
+
 export const carFeatureService = {
-     getAllCarFeature,
      addOrUpdateFeatureDescription,
+     getAllCarFeature,
 };

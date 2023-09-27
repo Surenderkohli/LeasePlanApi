@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-
 const carOfferSchema = new mongoose.Schema(
      {
           carBrand_id: {
@@ -63,50 +62,5 @@ const carOfferSchema = new mongoose.Schema(
      { timestamps: true }
 );
 
-// carOfferSchema.methods.isExpired = async function () {
-//     try {
-//         const carOffers = await this.constructor.find({}); // Fetch all documents
-//
-//         const currentDate = Date.now();
-//
-//         for (const offer of carOffers) {
-//             offer.offers.forEach(offerItem => {
-//                 if (offerItem.validTo) {
-//                     const validTo = new Date(offerItem.validTo);
-//                   // validTo.setHours(23, 59, 59, 999); // Set to end of day
-//                     if (validTo >= currentDate) {
-//                         offerItem.expired = false;
-//                     } else {
-//                         offerItem.expired = true;
-//                     }
-//                 }
-//             });
-//
-//             await offer.save();
-//         }
-//
-//         console.log('Expired field updated successfully for all documents.');
-//     } catch (error) {
-//         throw new Error(`Error updating expiry: ${error.message}`);
-//     }
-// };
-//
-//
 const carOfferModel = mongoose.model('caroffers', carOfferSchema);
-//
-// cron.schedule('0 0 * * *', async () => {
-//     try {
-//         const carOffers = await carOfferModel.find({});
-//         await Promise.all(carOffers.map(async offer => {
-//             await offer.isExpired();
-//         }));
-//         console.log('Expired field updated successfully.');
-//     } catch (error) {
-//         console.error('Error updating expiry:', error);
-//     }
-// }, {
-//     scheduled: true,
-//   //  timezone: "Asia/Kolkata"
-// });
-
 export default carOfferModel;

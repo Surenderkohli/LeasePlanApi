@@ -394,6 +394,65 @@ const getSingleCar = async (id, duration, annualMileage) => {
      }
 };
 
+const getSingleCarDashboard = async (id, duration, annualMileage) => {
+     try {
+          const carOffer = await carOfferModel
+              .findOne({ _id: id })
+              .populate('carBrand_id')
+              .populate('carSeries_id');
+
+          if (!carOffer) {
+               throw new Error('Car not found');
+          }
+
+          let result = {
+               carOffer,
+               carDetails: null,
+               features: [],
+               availableMileages: [], // Changed from 'annualMileages'
+               monthlyCost: null,
+          };
+
+          if (duration && annualMileage) {
+               // If both duration and annualMileage are provided, find the matching offer
+               const selectedOffer = carOffer.offers.find(
+                   (offer) =>
+                       offer.duration === Number(duration) &&
+                       offer.annualMileage === Number(annualMileage)
+               );
+
+               if (!selectedOffer) {
+                    throw new Error('Offer not found');
+               }
+
+               result.monthlyCost = selectedOffer.monthlyCost;
+          } else if (duration) {
+               // If only duration is provided, return all associated annualMileage values
+               result.availableMileages = carOffer.offers
+                   .filter((offer) => offer.duration === Number(duration))
+                   .map((offer) => offer.annualMileage);
+          }
+
+          const carFeatures = await carFeatureModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+          });
+
+          const carDetails = await carDetailModel.findOne({
+               carBrand_id: carOffer.carBrand_id,
+               carSeries_id: carOffer.carSeries_id,
+          });
+
+          result.carDetails = carDetails;
+          result.carFeatures = carFeatures || [];
+
+          return result;
+     } catch (error) {
+          console.log(error);
+          throw error;
+     }
+};
+
 const updateCar = async (
      id,
      carDetailsData,
@@ -1264,5 +1323,6 @@ export const carOfferService = {
      filterCarsV1,
      filterCarsV2,
      filterOffersDirect,
-     getOfferById
+     getOfferById,
+     getSingleCarDashboard
 };

@@ -349,8 +349,9 @@ const getSingleCar = async (id, duration, annualMileage) => {
           let result = {
                carOffer,
                carDetails: null,
-               features: [],
+               // features: [],
                availableMileages: [], // Changed from 'annualMileages'
+               durations : [],
                monthlyCost: null,
           };
 
@@ -372,6 +373,9 @@ const getSingleCar = async (id, duration, annualMileage) => {
                result.availableMileages = carOffer.offers
                    .filter((offer) => offer.duration === Number(duration))
                    .map((offer) => offer.annualMileage);
+          } else if(annualMileage){
+               // If only annualMileage is provided, return all associated durations values
+               result.durations = carOffer.offers.filter((offer) =>offer.annualMileage === Number(annualMileage)).map((offer)=>offer.duration)
           }
 
           const carFeatures = await carFeatureModel.findOne({

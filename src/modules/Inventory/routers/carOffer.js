@@ -824,34 +824,46 @@ router.get('/dashboard/all-cars', async (req, res) => {
 });
 
 
-
-// Define a route to delete a car image
-router.delete('/deleteImage/:id/:imageId', async (req, res) => {
+router.delete('/deleteImage/:id', async (req, res) => {
      try {
           const id = req.params.id; // Car ID
-          const imageId = req.params.imageId; // Image ID to be deleted
+          const imageUrl = req.query.imageUrl; // Image URL to be deleted
+
+          if (!imageUrl) {
+               return res.status(400).json({
+                    success: false,
+                    msg: 'imageUrl parameter is required.',
+               });
+          }
+
+          // Extract the public_id from the image URL
+          const publicIdToDelete = extractPublicIdFromImageUrl(imageUrl);
 
           // Get the car details
-          const car = await carOfferModel.findById({_id:id});
+          const car = await carOfferModel.findById({ _id: id });
 
-          const carBrand_id = car.carBrand_id
-          const carSeries_id = car.carSeries_id
+          if (!car) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Car not found.',
+               });
+          }
 
           // Fetch car details using carBrand_id and carSeries_id
           const carDetails = await carDetailModel.findOne({
-               carBrand_id: carBrand_id,
-               carSeries_id: carSeries_id,
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
           });
 
           if (!carDetails || !carDetails.image) {
                return res.status(404).json({
                     success: false,
-                    msg: 'Car not found or has no images.',
+                    msg: 'Car details not found or has no images.',
                });
           }
 
           // Find the image in the car details image array
-          const imageToDelete = carDetails.image.find((img) => img.publicId === imageId);
+          const imageToDelete = carDetails.image.find((img) => img.publicId === publicIdToDelete);
 
           if (!imageToDelete) {
                return res.status(404).json({
@@ -861,10 +873,10 @@ router.delete('/deleteImage/:id/:imageId', async (req, res) => {
           }
 
           // Delete the image from Cloudinary
-          await cloudinary.uploader.destroy(imageToDelete.publicId);
+          await cloudinary.uploader.destroy(publicIdToDelete);
 
           // Remove the image from the car details image array
-          carDetails.image = carDetails.image.filter((img) => img.publicId !== imageId);
+          carDetails.image = carDetails.image.filter((img) => img.publicId !== publicIdToDelete);
 
           // Update the car details with the modified image array
           const updatedCarDetails = await carDetailModel.findOneAndUpdate(
@@ -884,6 +896,11 @@ router.delete('/deleteImage/:id/:imageId', async (req, res) => {
      }
 });
 
-
-
+// Function to extract public_id from Cloudinary image URL
+function extractPublicIdFromImageUrl(imageUrl) {
+     const parts = imageUrl.split('/');
+     const fileName = parts[parts.length - 1];
+     const publicId = fileName.split('.')[0];
+     return publicId;
+}
 export default router;

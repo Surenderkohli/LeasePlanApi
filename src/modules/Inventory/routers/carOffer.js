@@ -913,5 +913,77 @@ function extractPublicIdFromImageUrl(imageUrl) {
           return null;
      }
 }
+router.post('/addImage/:id',carUpload.array('image', 6), async (req, res) => {
+     try {
+          const id = req.params.id; // Car ID
+
+          const files = req.files
+          // Check if there are new files uploaded
+          if (!files || files.length === 0) {
+               return res.status(400).json({
+                    success: false,
+                    msg: 'No new images provided.',
+               });
+          }
+
+          // Get the car details
+          const car = await carOfferModel.findById({ _id: id });
+
+          if (!car) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Car not found.',
+               });
+          }
+
+          // Fetch car details using carBrand_id and carSeries_id
+          const carDetails = await carDetailModel.findOne({
+               carBrand_id: car.carBrand_id,
+               carSeries_id: car.carSeries_id,
+          });
+
+          if (!carDetails) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Car details not found.',
+               });
+          }
+
+          const images = [];
+
+          if (files) {
+               const uploadPromises = files.map((file) => {
+                    return cloudinary.uploader.upload(file.path);
+               });
+
+               const uploadResults = await Promise.all(uploadPromises); // Wait for all image uploads to finish
+
+               uploadResults.forEach((result) => {
+                    let imageUrl = result.secure_url;
+                    let publicId = result.public_id;
+                    const carDetailsData = { imageUrl, publicId };
+                    images.push(carDetailsData); // For each upload result, push the secure URL to the carImage array
+               });
+          }
+
+
+          // Save the updated car details
+          carDetails.image = [...carDetails.image, ...images];
+          const updatedCarDetails = await carDetailModel.findOneAndUpdate(
+              { carBrand_id: carDetails.carBrand_id, carSeries_id: carDetails.carSeries_id },
+              { image: carDetails.image },
+              { new: true }
+          );
+
+          res.status(200).json({
+               success: true,
+               msg: 'Images added successfully.',
+               data: updatedCarDetails,
+          });
+     } catch (error) {
+          console.error('Error adding car images:', error);
+          res.status(500).json({ success: false, msg: 'Internal server error.' });
+     }
+});
 
 export default router;

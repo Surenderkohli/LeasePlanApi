@@ -823,7 +823,6 @@ router.get('/dashboard/all-cars', async (req, res) => {
      }
 });
 
-
 router.delete('/deleteImage/:id', async (req, res) => {
      try {
           const id = req.params.id; // Car ID
@@ -836,8 +835,15 @@ router.delete('/deleteImage/:id', async (req, res) => {
                });
           }
 
-          // Extract the public_id from the image URL
+          // Extract the public_id from the Cloudinary URL
           const publicIdToDelete = extractPublicIdFromImageUrl(imageUrl);
+
+          if (!publicIdToDelete) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Invalid Cloudinary image URL.',
+               });
+          }
 
           // Get the car details
           const car = await carOfferModel.findById({ _id: id });
@@ -863,12 +869,12 @@ router.delete('/deleteImage/:id', async (req, res) => {
           }
 
           // Find the image in the car details image array
-          const imageToDelete = carDetails.image.find((img) => img.publicId === publicIdToDelete);
+          const imageIndexToDelete = carDetails.image.findIndex((img) => img.imageUrl === imageUrl);
 
-          if (!imageToDelete) {
+          if (imageIndexToDelete === -1) {
                return res.status(404).json({
                     success: false,
-                    msg: 'Image not found for the given ID.',
+                    msg: 'Image not found for the given URL.',
                });
           }
 
@@ -876,7 +882,7 @@ router.delete('/deleteImage/:id', async (req, res) => {
           await cloudinary.uploader.destroy(publicIdToDelete);
 
           // Remove the image from the car details image array
-          carDetails.image = carDetails.image.filter((img) => img.publicId !== publicIdToDelete);
+          carDetails.image.splice(imageIndexToDelete, 1);
 
           // Update the car details with the modified image array
           const updatedCarDetails = await carDetailModel.findOneAndUpdate(
@@ -898,9 +904,14 @@ router.delete('/deleteImage/:id', async (req, res) => {
 
 // Function to extract public_id from Cloudinary image URL
 function extractPublicIdFromImageUrl(imageUrl) {
-     const parts = imageUrl.split('/');
-     const fileName = parts[parts.length - 1];
-     const publicId = fileName.split('.')[0];
-     return publicId;
+     try {
+          const parts = imageUrl.split('/');
+          const publicId = parts[parts.length - 2];
+          return publicId;
+     } catch (error) {
+          console.error('Error extracting public_id:', error);
+          return null;
+     }
 }
+
 export default router;

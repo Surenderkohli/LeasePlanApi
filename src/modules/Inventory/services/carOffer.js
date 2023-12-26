@@ -448,7 +448,7 @@ const getSingleCarDashboard = async (id, duration, annualMileage) => {
           });
 
           result.carDetails = carDetails;
-          result.carFeatures = carFeatures || [];
+          result.features = carFeatures || [];
 
           return result;
      } catch (error) {

@@ -822,4 +822,68 @@ router.get('/dashboard/all-cars', async (req, res) => {
           res.status(400).json({ success: false, message: error.message });
      }
 });
+
+
+
+// Define a route to delete a car image
+router.delete('/deleteImage/:id/:imageId', async (req, res) => {
+     try {
+          const id = req.params.id; // Car ID
+          const imageId = req.params.imageId; // Image ID to be deleted
+
+          // Get the car details
+          const car = await carOfferModel.findById({_id:id});
+
+          const carBrand_id = car.carBrand_id
+          const carSeries_id = car.carSeries_id
+
+          // Fetch car details using carBrand_id and carSeries_id
+          const carDetails = await carDetailModel.findOne({
+               carBrand_id: carBrand_id,
+               carSeries_id: carSeries_id,
+          });
+
+          if (!carDetails || !carDetails.image) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Car not found or has no images.',
+               });
+          }
+
+          // Find the image in the car details image array
+          const imageToDelete = carDetails.image.find((img) => img.publicId === imageId);
+
+          if (!imageToDelete) {
+               return res.status(404).json({
+                    success: false,
+                    msg: 'Image not found for the given ID.',
+               });
+          }
+
+          // Delete the image from Cloudinary
+          await cloudinary.uploader.destroy(imageToDelete.publicId);
+
+          // Remove the image from the car details image array
+          carDetails.image = carDetails.image.filter((img) => img.publicId !== imageId);
+
+          // Update the car details with the modified image array
+          const updatedCarDetails = await carDetailModel.findOneAndUpdate(
+              { carBrand_id: carDetails.carBrand_id, carSeries_id: carDetails.carSeries_id },
+              { image: carDetails.image },
+              { new: true }
+          );
+
+          res.status(200).json({
+               success: true,
+               msg: 'Image deleted successfully.',
+               data: updatedCarDetails,
+          });
+     } catch (error) {
+          console.error('Error deleting car image:', error);
+          res.status(500).json({ success: false, msg: 'Internal server error.' });
+     }
+});
+
+
+
 export default router;
